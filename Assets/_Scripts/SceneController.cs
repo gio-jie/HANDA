@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,6 +30,20 @@ public class SceneController : MonoBehaviour
     }
     // Papunta sa Typhoon levels
     public void GoToTyphoonLevels()
+    {
+        SceneManager.LoadScene("TyphoonLevelSelect");
+    }
+    public void GoToTyphoonLevel1()
+    {
+       SceneManager.LoadScene("Typhoon_Level1"); 
+    }
+    public void GoToTyphoonLevel2()
+    {
+        SceneManager.LoadScene("Typhoon_Level2");
+    }
+
+    // For Back Button (pabalik sa Level Selection)
+    public void GoToTyphoonLevelSelect()
     {
         SceneManager.LoadScene("TyphoonLevelSelect");
     }
