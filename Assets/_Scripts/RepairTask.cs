@@ -3,77 +3,74 @@ using UnityEngine.UI;
 
 public class RepairTask : MonoBehaviour
 {
-    [Header("Task Settings")]
-    public bool isNail; // Check ito kung Pako, Uncheck kung Tape
-    public int hitsNeeded = 3; // Ilang pukpok para bumaon? (3 sa pako, 1 sa tape)
+    [Header("Requirements")]
+    public string requiredTool; // "Hammer" or "Tape"
+    public int hitsNeeded = 3;
     
     [Header("Visuals")]
-    public Image taskImage; // Ang itsura ng object
+    public Image taskImage; 
 
     private int currentHits = 0;
     private bool isFinished = false;
-    
-    // Reference sa Manager (Gagawa tayo nito sa next step)
     private Level2Manager manager;
 
     void Start()
     {
-        // Hanapin ang manager sa scene
         manager = FindFirstObjectByType<Level2Manager>();
         
-        // Setup initial look
-        if (isNail)
+        // Setup initial transparency for Tape
+        if (requiredTool == "Tape")
         {
-            // Kung pako, siguraduhing kulay gray
-            taskImage.color = Color.gray; 
-        }
-        else
-        {
-            // Kung tape, siguraduhing invisible sa simula (transparent)
             var col = taskImage.color;
-            col.a = 0f; // Invisible
+            col.a = 0f; 
             taskImage.color = col;
         }
     }
 
     public void OnClickObject()
     {
-        if (isFinished) return; // Pag tapos na, wag na gumalaw
+        if (isFinished) return; 
 
-        currentHits++;
-
-        if (isNail)
+        // CHECK 1: May hawak bang tool ang player?
+        if (manager.currentSelectedTool == "None")
         {
-            // LOGIC PARA SA PAKO (Hammer Effect)
-            // Bawat click, lumiliit/lumulubog ang pako
-            transform.localScale -= new Vector3(0, 0.2f, 0); 
-            
-            // Pwede magdagdag ng sound effect dito later
-            Debug.Log("Pok!");
+            Debug.Log("Pumili ka muna ng gamit sa baba!");
+            return;
+        }
+
+        // CHECK 2: Tama ba ang tool?
+        if (manager.currentSelectedTool == requiredTool)
+        {
+            // TAMA: Proceed sa action
+            PerformAction();
         }
         else
         {
-            // LOGIC PARA SA TAPE
-            // Pag click, lilitaw ang tape
+            // MALI: Penalty
+            manager.ApplyPenalty();
+        }
+    }
+
+    void PerformAction()
+    {
+        currentHits++;
+
+        if (requiredTool == "Hammer")
+        {
+            transform.localScale -= new Vector3(0, 0.2f, 0); // Hammer Effect
+        }
+        else if (requiredTool == "Tape")
+        {
             var col = taskImage.color;
-            col.a = 1f; // Visible na
+            col.a = 1f; // Show Tape
             taskImage.color = col;
         }
 
-        // Check kung tapos na trabaho
         if (currentHits >= hitsNeeded)
         {
             isFinished = true;
-            Debug.Log("Task Done!");
-            
-            // Disable button para di na mapindot
             GetComponent<Button>().interactable = false;
-
-            // Report sa Manager
-            if(manager != null)
-            {
-                manager.TaskCompleted();
-            }
+            manager.TaskCompleted();
         }
     }
 }

@@ -47,4 +47,12 @@ public class SceneController : MonoBehaviour
     {
         SceneManager.LoadScene("TyphoonLevelSelect");
     }
+    public void GoToTyphoonLevel3()
+    {
+        SceneManager.LoadScene("Typhoon_Level3");
+    }
+    public void GoToTyphoonLevel4()
+    {
+        SceneManager.LoadScene("Typhoon_Level4");
+    }
 }
