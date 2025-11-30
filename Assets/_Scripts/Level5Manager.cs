@@ -35,9 +35,8 @@ public class Level5Manager : MonoBehaviour
     }
 
    [Header("Warning UI")]
-    public GameObject hazardPanel; // Idagdag ito sa taas kasama ng ibang panels
+    public GameObject hazardPanel; 
 
-    // Pinalitan natin ang HitHazard function
     public void HitHazard()
     {
         // 1. Penalty Logic (Same pa rin)
