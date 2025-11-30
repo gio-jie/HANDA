@@ -736,7 +736,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1170ea419a1b37446a6328105c05ba23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MazePlayer
-  moveSpeed: 4500
+  moveSpeed: 5000
   joystick: {fileID: 55778128}
 --- !u!61 &153403105
 BoxCollider2D:
@@ -3591,8 +3591,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Level4Manager, Assembly-CSharp
+      - m_Target: {fileID: 126731066}
+        m_TargetAssemblyTypeName: Level5Manager, Assembly-CSharp
         m_MethodName: PauseGame
         m_Mode: 1
         m_Arguments:
