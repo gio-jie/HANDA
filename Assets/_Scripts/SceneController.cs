@@ -1,62 +1,80 @@
-using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement; // Kailangan ito para makalipat ng scene
 
 public class SceneController : MonoBehaviour
 {
-    // Function para lumipat sa Loading Screen
+    // --- MAIN MENU NAVIGATION ---
+
     public void GoToLoadingScreen()
     {
+        ResumeMusic();
         SceneManager.LoadScene("LoadingScreen");
     }
 
-    // Function para lumipat sa Scenario Selection
     public void GoToScenarios()
     {
+        ResumeMusic();
         SceneManager.LoadScene("ScenarioSelection");
     }
 
-    // Function para bumalik sa Main Menu (Example for back buttons)
     public void GoToMainMenu()
     {
+        ResumeMusic();
         SceneManager.LoadScene("MainMenu");
     }
-    
-    // Function para mag-quit sa game
-    public void QuitGame()
-    {
-        Application.Quit();
-        Debug.Log("Game is exiting..."); // Para makita sa editor na gumagana
-    }
-    // Papunta sa Typhoon levels
+
+    // --- LEVEL SELECTION ---
+
     public void GoToTyphoonLevels()
     {
+        ResumeMusic();
         SceneManager.LoadScene("TyphoonLevelSelect");
     }
+
+    public void GoToTyphoonLevelSelect()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("TyphoonLevelSelect");
+    }
+
     public void GoToTyphoonLevel1()
     {
-       SceneManager.LoadScene("Typhoon_Level1"); 
+        ResumeMusic();
+        SceneManager.LoadScene("Typhoon_Level1");
     }
+
+    // --- NEXT LEVEL NAVIGATION ---
+
     public void GoToTyphoonLevel2()
     {
+        ResumeMusic();
         SceneManager.LoadScene("Typhoon_Level2");
     }
 
-    // For Back Button (pabalik sa Level Selection)
-    public void GoToTyphoonLevelSelect()
-    {
-        SceneManager.LoadScene("TyphoonLevelSelect");
-    }
     public void GoToTyphoonLevel3()
     {
+        ResumeMusic();
         SceneManager.LoadScene("Typhoon_Level3");
     }
-    public void GoToTyphoonLevel4()
+
+    // Pwede mo dagdagan dito para sa Level 4, 5, etc.
+    // public void GoToTyphoonLevel4() { ResumeMusic(); SceneManager.LoadScene("Typhoon_Level4"); }
+
+    // --- SYSTEM FUNCTIONS ---
+
+    public void QuitGame()
     {
-        SceneManager.LoadScene("Typhoon_Level4");
+        Debug.Log("Game is exiting...");
+        Application.Quit();
     }
-    public void GoToTyphoonLevel5()
+
+    // --- HELPER FUNCTION (Para hindi paulit-ulit ang code) ---
+    void ResumeMusic()
     {
-        SceneManager.LoadScene("Typhoon_Level5");
+        // Check kung buhay si DJ, tapos utusan mag-resume
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.ResumeBGM();
+        }
     }
 }

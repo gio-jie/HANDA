@@ -15,6 +15,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip winSound;
     public AudioClip loseSound;
     public AudioClip warningSound;
+    public AudioClip correctSound;
+    public AudioClip wrongSound;   
     // Pwede ka magdagdag dito: public AudioClip hammerSound; etc.
 
     void Awake()
@@ -68,5 +70,22 @@ public class AudioManager : MonoBehaviour
     {
         musicSource.volume = PlayerPrefs.GetFloat("MusicVolume", 1f);
         sfxSource.volume = PlayerPrefs.GetFloat("SFXVolume", 1f);
+    }
+    // Function para i-pause ang Background Music
+    public void PauseBGM()
+    {
+        if (musicSource != null)
+        {
+            musicSource.Pause();
+        }
+    }
+
+    // Function para ituloy ang Background Music
+    public void ResumeBGM()
+    {
+        if (musicSource != null)
+        {
+            musicSource.UnPause();
+        }
     }
 }

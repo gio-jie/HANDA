@@ -18,7 +18,7 @@ public class Level1Manager : MonoBehaviour
     [Header("Data (Do not edit)")]
     public int currentScore = 0;
     private bool isGameActive = true; 
-    private float finalTimeRecorded = 0f; // DITO NATIN ILA-LOCK ANG ORAS
+    private float finalTimeRecorded = 0f; 
 
     [Header("UI Panels")]
     public GameObject winPanel;
@@ -31,6 +31,16 @@ public class Level1Manager : MonoBehaviour
     public Image star3;
     public TMP_Text timeFinishedText; 
     public TMP_Text bestScoreText;    
+    
+    // --- ITO ANG BAGO: LOSE PANEL ELEMENTS ---
+    [Header("Lose Panel Elements")]
+    public Image loseStar1;
+    public Image loseStar2;
+    public Image loseStar3;
+    public TMP_Text loseTimeText;
+    public TMP_Text loseBestScoreText;
+    // -----------------------------------------
+
     public Color earnedColor = Color.yellow;
     public Color missingColor = Color.gray;
 
@@ -55,6 +65,11 @@ public class Level1Manager : MonoBehaviour
         UpdateToggleVisuals();
         Time.timeScale = 1;
         isGameActive = true;
+
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.ResumeBGM();
+        }
     }
 
     void Update()
@@ -64,7 +79,7 @@ public class Level1Manager : MonoBehaviour
             if (timeLimit > 0)
             {
                 timeLimit -= Time.deltaTime;
-                UpdateTimerDisplay(timeLimit); // Separate function para malinis
+                UpdateTimerDisplay(timeLimit); 
             }
             else
             {
@@ -93,8 +108,37 @@ public class Level1Manager : MonoBehaviour
         GameOver(); 
     }
 
-    // --- SCORE & WIN LOGIC ---
+    // --- GAME OVER LOGIC (UPDATED) ---
+    public void GameOver()
+    {
+        isGameActive = false; 
+        if(losePanel != null) losePanel.SetActive(true); 
 
+        // Play Sound
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
+
+        AudioManager.instance.PauseBGM();
+
+        // 1. Set Time to 00:00 (Kasi natalo)
+        if(loseTimeText != null) loseTimeText.text = "Time Left: 00:00";
+
+        // 2. Set ALL Stars to Gray (Kasi talo)
+        if(loseStar1) loseStar1.color = missingColor;
+        if(loseStar2) loseStar2.color = missingColor;
+        if(loseStar3) loseStar3.color = missingColor;
+
+        // 3. Show Best Record (Kinuha sa Memory)
+        float currentBest = PlayerPrefs.GetFloat("Level1_BestTime", 0);
+        int bestSec = Mathf.FloorToInt(currentBest);
+        int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
+
+        if(loseBestScoreText != null)
+        {
+            loseBestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs);
+        }
+    }
+
+    // --- WIN LOGIC ---
     public void AddScore()
     {
         if (!isGameActive) return; 
@@ -103,17 +147,16 @@ public class Level1Manager : MonoBehaviour
         UpdateScoreDisplay();
         StartCoroutine(ShowFeedback(checkIcon));
 
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
+        }
+
         if (currentScore >= itemsNeeded)
         {
-            // SNAPSHOT: I-lock na natin ang oras ngayon din!
             isGameActive = false; 
-            finalTimeRecorded = timeLimit; // COPY THE TIME NOW
-            
-            Debug.Log("Game Won! Locked Time: " + finalTimeRecorded);
-            
-            // I-update ang timer sa screen gamit ang locked time para hindi na gumalaw
+            finalTimeRecorded = timeLimit; 
             UpdateTimerDisplay(finalTimeRecorded);
-
             Invoke("ShowWinScreen", 1.5f);
         }
     }
@@ -122,30 +165,24 @@ public class Level1Manager : MonoBehaviour
     {
         winPanel.SetActive(true);
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+        AudioManager.instance.PauseBGM();
 
-        // GAMITIN ANG finalTimeRecorded, HUWAG ANG timeLimit
         float scoreTime = finalTimeRecorded; 
 
-        // Reset Stars
         if(star1) star1.color = missingColor;
         if(star2) star2.color = missingColor;
         if(star3) star3.color = missingColor;
 
-        // Star 1 (Always earned)
         if(star1) star1.color = earnedColor;
-
-        // Star 2 & 3 Logic
         if (scoreTime >= silverStarThreshold && star2) star2.color = earnedColor;
         if (scoreTime >= goldStarThreshold && star3) star3.color = earnedColor;
 
-        // Display Locked Time
         int seconds = Mathf.FloorToInt(scoreTime);
         int milliseconds = Mathf.FloorToInt((scoreTime * 100) % 100);
         
         if(timeFinishedText != null)
             timeFinishedText.text = string.Format("Time Left: {0:00}.{1:00}s", seconds, milliseconds);
 
-        // High Score Logic
         float currentBest = PlayerPrefs.GetFloat("Level1_BestTime", 0);
 
         if (scoreTime > currentBest)
@@ -173,26 +210,71 @@ public class Level1Manager : MonoBehaviour
         }
     }
 
-    // ... (REST OF THE FUNCTIONS: Copy these exactly) ...
+    // ... (REST OF THE FUNCTIONS: Copy these exactly as before) ...
     
     void UpdateScoreDisplay() { if(scoreTextUI != null) scoreTextUI.text = "Items: " + currentScore + "/" + itemsNeeded; }
-    
-    public void WrongItem() { 
+    public void WrongItem() 
+    { 
         if (!isGameActive) return; 
+        
+        // Show Visual Feedback
         StartCoroutine(ShowFeedback(xIcon)); 
+
+        // Play Sound (Huwag i-pause ang music!)
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
+            // TINANGGAL NATIN YUNG "PauseBGM" DITO PARA TULOY-TULOY ANG TUGTOG
+        }
+
+        // Penalty Logic
         timeLimit -= penaltyTime; 
-        if (timeLimit <= 0) FinalizeGameOver(); 
+        
+        if (timeLimit <= 0) 
+        {
+            FinalizeGameOver(); 
+        }
+    }
+    IEnumerator ShowFeedback(GameObject icon) { if(icon) { icon.SetActive(true); yield return new WaitForSeconds(1.0f); icon.SetActive(false); } }
+    public void RetryLevel()
+    {
+        // --- DAGDAG MO ITO: Resume bago mag-reload ---
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.ResumeBGM();
+        }
+        // ---------------------------------------------
+
+        Time.timeScale = 1; // Siguraduhing umaandar ang oras
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public void PauseGame()
+    {
+        pausePanel.SetActive(true); 
+        Time.timeScale = 0; 
+
+        if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
     }
 
-    IEnumerator ShowFeedback(GameObject icon) { 
-        if(icon) { icon.SetActive(true); yield return new WaitForSeconds(1.0f); icon.SetActive(false); } 
+    public void ResumeGame()
+    {
+        pausePanel.SetActive(false); 
+        Time.timeScale = 1; 
+        
+        if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
     }
+    public void QuitToLevelSelect()
+    {
+        // --- DAGDAG MO ITO: Resume bago bumalik sa menu ---
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.ResumeBGM();
+        }
+        // --------------------------------------------------
 
-    public void GameOver() { isGameActive = false; if(losePanel) losePanel.SetActive(true); }
-    public void RetryLevel() { SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
-    public void PauseGame() { pausePanel.SetActive(true); Time.timeScale = 0; }
-    public void ResumeGame() { pausePanel.SetActive(false); Time.timeScale = 1; }
-    public void QuitToLevelSelect() { Time.timeScale = 1; SceneManager.LoadScene("TyphoonLevelSelect"); }
+        Time.timeScale = 1; 
+        SceneManager.LoadScene("TyphoonLevelSelect");
+    }
     public void ToggleSound() { isSoundOn = !isSoundOn; AudioListener.volume = isSoundOn ? 1 : 0; UpdateToggleVisuals(); }
     public void ToggleMusic() { isMusicOn = !isMusicOn; UpdateToggleVisuals(); }
     void UpdateToggleVisuals() { 

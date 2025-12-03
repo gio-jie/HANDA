@@ -6,18 +6,16 @@ using UnityEngine.SceneManagement;
 public class PauseManager : MonoBehaviour
 {
     [Header("Survival Stats")]
-    public Image statsFillImage; // Yung Green Circle
-    public TextMeshProUGUI statsText; // Yung "%" Text
+    public Image statsFillImage; 
+    public TextMeshProUGUI statsText; 
     
     [Header("Sub-Panels")]
-    public GameObject optionsPanel; // Yung Options Prefab
+    public GameObject optionsPanel; 
 
-    // Reference sa Level Manager para makuha ang score
     private Level1Manager levelManager;
 
     void OnEnable()
     {
-        // Tuwing bubukas ang Pause, hanapin ang Manager at i-update ang stats
         levelManager = FindFirstObjectByType<Level1Manager>();
         UpdateSurvivalStats();
     }
@@ -26,13 +24,8 @@ public class PauseManager : MonoBehaviour
     {
         if (levelManager != null)
         {
-            // Calculation: Current Score / Target Score
             float progress = (float)levelManager.currentScore / levelManager.itemsNeeded;
-            
-            // Update Circle (0.0 to 1.0)
             statsFillImage.fillAmount = progress;
-            
-            // Update Text (0% to 100%)
             statsText.text = Mathf.RoundToInt(progress * 100) + "%";
         }
     }
@@ -41,19 +34,31 @@ public class PauseManager : MonoBehaviour
     
     public void ResumeGame()
     {
-        // Tawagin ang Resume ng Level Manager
+        // Ito okay na to, kasi tinatawag niya yung LevelManager na may ResumeBGM na
         if(levelManager != null) levelManager.ResumeGame();
-        // O kaya direct logic: gameObject.SetActive(false); Time.timeScale = 1;
     }
 
     public void OpenSettings()
     {
-        optionsPanel.SetActive(true); // Labasin ang Options
+        optionsPanel.SetActive(true); 
+        
+        // --- FIX 1: Play Music habang nag-aadjust ng settings ---
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.ResumeBGM();
+        }
     }
 
     public void QuitGame()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene("TyphoonLevelSelect"); // Balik sa Menu
+        
+        // --- FIX 2: Play Music bago bumalik sa Level Selection ---
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.ResumeBGM();
+        }
+
+        SceneManager.LoadScene("TyphoonLevelSelect"); 
     }
 }
