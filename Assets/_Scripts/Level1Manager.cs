@@ -8,17 +8,33 @@ public class Level1Manager : MonoBehaviour
 {
     [Header("Game Settings")]
     public int itemsNeeded = 7;
-    public float timeLimit = 60f; // 60 Seconds countdown
-    public float penaltyTime = 5f; // Bawas oras pag mali
+    public float timeLimit = 60f; 
+    public float penaltyTime = 5f; 
+
+    [Header("Star System")]
+    public float goldStarThreshold = 40f; 
+    public float silverStarThreshold = 20f; 
 
     [Header("Data (Do not edit)")]
     public int currentScore = 0;
     private bool isGameActive = true; 
-    
+    private float finalTimeRecorded = 0f; // DITO NATIN ILA-LOCK ANG ORAS
+
     [Header("UI Panels")]
     public GameObject winPanel;
     public GameObject losePanel; 
     public GameObject pausePanel;
+    
+    [Header("Win Panel Elements")]
+    public Image star1;
+    public Image star2;
+    public Image star3;
+    public TMP_Text timeFinishedText; 
+    public TMP_Text bestScoreText;    
+    public Color earnedColor = Color.yellow;
+    public Color missingColor = Color.gray;
+
+    [Header("In-Game UI")]
     public TMP_Text scoreTextUI;
     public TMP_Text timerTextUI; 
     public GameObject checkIcon;
@@ -48,21 +64,7 @@ public class Level1Manager : MonoBehaviour
             if (timeLimit > 0)
             {
                 timeLimit -= Time.deltaTime;
-                
-                // --- MILLISECONDS WITH FIX ---
-                int seconds = Mathf.FloorToInt(timeLimit);
-                int milliseconds = Mathf.FloorToInt((timeLimit * 100) % 100);
-
-                // GINAMITAN NATIN NG <mspace> PARA HINDI MANGINIG
-                // Ang 0.6em ay ang lapad ng bawat number.
-                if(timerTextUI != null) 
-                    timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", seconds, milliseconds);
-                
-                // Change color if running out (10 seconds left)
-                if(timeLimit <= 10 && timerTextUI != null)
-                {
-                    timerTextUI.color = Color.red;
-                }
+                UpdateTimerDisplay(timeLimit); // Separate function para malinis
             }
             else
             {
@@ -71,25 +73,27 @@ public class Level1Manager : MonoBehaviour
         }
     }
 
+    void UpdateTimerDisplay(float timeToShow)
+    {
+        if(timerTextUI != null)
+        {
+            int seconds = Mathf.FloorToInt(timeToShow);
+            int milliseconds = Mathf.FloorToInt((timeToShow * 100) % 100);
+            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", seconds, milliseconds);
+
+            if(timeToShow <= 10) timerTextUI.color = Color.red;
+        }
+    }
+
     void FinalizeGameOver()
     {
         timeLimit = 0;
+        isGameActive = false;
         if(timerTextUI != null) timerTextUI.text = "00:00";
         GameOver(); 
     }
 
-    public void GameOver()
-    {
-        isGameActive = false; 
-        losePanel.SetActive(true); 
-    }
-
-    public void RetryLevel()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    // --- GAMEPLAY FUNCTIONS ---
+    // --- SCORE & WIN LOGIC ---
 
     public void AddScore()
     {
@@ -101,84 +105,98 @@ public class Level1Manager : MonoBehaviour
 
         if (currentScore >= itemsNeeded)
         {
+            // SNAPSHOT: I-lock na natin ang oras ngayon din!
             isGameActive = false; 
+            finalTimeRecorded = timeLimit; // COPY THE TIME NOW
+            
+            Debug.Log("Game Won! Locked Time: " + finalTimeRecorded);
+            
+            // I-update ang timer sa screen gamit ang locked time para hindi na gumalaw
+            UpdateTimerDisplay(finalTimeRecorded);
+
             Invoke("ShowWinScreen", 1.5f);
-        }
-    }
-
-    void UpdateScoreDisplay()
-    {
-        scoreTextUI.text = "Items: " + currentScore + "/" + itemsNeeded;
-    }
-
-    public void WrongItem()
-    {
-        if (!isGameActive) return;
-        
-        Debug.Log("Mali! Penalty applied.");
-        StartCoroutine(ShowFeedback(xIcon));
-        
-        // PENALTY LOGIC
-        timeLimit -= penaltyTime; 
-        
-        if (timeLimit <= 0)
-        {
-            FinalizeGameOver();
         }
     }
 
     void ShowWinScreen()
     {
         winPanel.SetActive(true);
-        if (AudioManager.instance != null)
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+
+        // GAMITIN ANG finalTimeRecorded, HUWAG ANG timeLimit
+        float scoreTime = finalTimeRecorded; 
+
+        // Reset Stars
+        if(star1) star1.color = missingColor;
+        if(star2) star2.color = missingColor;
+        if(star3) star3.color = missingColor;
+
+        // Star 1 (Always earned)
+        if(star1) star1.color = earnedColor;
+
+        // Star 2 & 3 Logic
+        if (scoreTime >= silverStarThreshold && star2) star2.color = earnedColor;
+        if (scoreTime >= goldStarThreshold && star3) star3.color = earnedColor;
+
+        // Display Locked Time
+        int seconds = Mathf.FloorToInt(scoreTime);
+        int milliseconds = Mathf.FloorToInt((scoreTime * 100) % 100);
+        
+        if(timeFinishedText != null)
+            timeFinishedText.text = string.Format("Time Left: {0:00}.{1:00}s", seconds, milliseconds);
+
+        // High Score Logic
+        float currentBest = PlayerPrefs.GetFloat("Level1_BestTime", 0);
+
+        if (scoreTime > currentBest)
         {
-            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            currentBest = scoreTime;
+            PlayerPrefs.SetFloat("Level1_BestTime", currentBest);
+            PlayerPrefs.Save();
+            
+            if(bestScoreText != null)
+            {
+                bestScoreText.text = "NEW BEST RECORD!";
+                bestScoreText.color = Color.yellow;
+            }
+        }
+        else
+        {
+            int bestSec = Mathf.FloorToInt(currentBest);
+            int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
+            
+            if(bestScoreText != null)
+            {
+                bestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs);
+                bestScoreText.color = Color.white;
+            }
         }
     }
 
-    IEnumerator ShowFeedback(GameObject icon)
-    {
-        icon.SetActive(true);
-        yield return new WaitForSeconds(1.0f);
-        icon.SetActive(false);
+    // ... (REST OF THE FUNCTIONS: Copy these exactly) ...
+    
+    void UpdateScoreDisplay() { if(scoreTextUI != null) scoreTextUI.text = "Items: " + currentScore + "/" + itemsNeeded; }
+    
+    public void WrongItem() { 
+        if (!isGameActive) return; 
+        StartCoroutine(ShowFeedback(xIcon)); 
+        timeLimit -= penaltyTime; 
+        if (timeLimit <= 0) FinalizeGameOver(); 
     }
 
-    // --- PAUSE & TOGGLE FUNCTIONS ---
-
-    public void PauseGame()
-    {
-        pausePanel.SetActive(true); 
-        Time.timeScale = 0; 
+    IEnumerator ShowFeedback(GameObject icon) { 
+        if(icon) { icon.SetActive(true); yield return new WaitForSeconds(1.0f); icon.SetActive(false); } 
     }
 
-    public void ResumeGame()
-    {
-        pausePanel.SetActive(false); 
-        Time.timeScale = 1; 
-    }
-
-    public void QuitToLevelSelect()
-    {
-        Time.timeScale = 1; 
-        SceneManager.LoadScene("TyphoonLevelSelect");
-    }
-
-    public void ToggleSound()
-    {
-        isSoundOn = !isSoundOn;
-        AudioListener.volume = isSoundOn ? 1 : 0;
-        UpdateToggleVisuals();
-    }
-
-    public void ToggleMusic()
-    {
-        isMusicOn = !isMusicOn;
-        UpdateToggleVisuals();
-    }
-
-    void UpdateToggleVisuals()
-    {
-        soundButtonImage.color = isSoundOn ? onColor : offColor;
-        musicButtonImage.color = isMusicOn ? onColor : offColor;
+    public void GameOver() { isGameActive = false; if(losePanel) losePanel.SetActive(true); }
+    public void RetryLevel() { SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void PauseGame() { pausePanel.SetActive(true); Time.timeScale = 0; }
+    public void ResumeGame() { pausePanel.SetActive(false); Time.timeScale = 1; }
+    public void QuitToLevelSelect() { Time.timeScale = 1; SceneManager.LoadScene("TyphoonLevelSelect"); }
+    public void ToggleSound() { isSoundOn = !isSoundOn; AudioListener.volume = isSoundOn ? 1 : 0; UpdateToggleVisuals(); }
+    public void ToggleMusic() { isMusicOn = !isMusicOn; UpdateToggleVisuals(); }
+    void UpdateToggleVisuals() { 
+        if(soundButtonImage) soundButtonImage.color = isSoundOn ? onColor : offColor; 
+        if(musicButtonImage) musicButtonImage.color = isMusicOn ? onColor : offColor; 
     }
 }
