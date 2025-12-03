@@ -9,17 +9,18 @@ public class Level1Manager : MonoBehaviour
     [Header("Game Settings")]
     public int itemsNeeded = 7;
     public float timeLimit = 60f; // 60 Seconds countdown
+    public float penaltyTime = 5f; // Bawas oras pag mali
 
     [Header("Data (Do not edit)")]
     public int currentScore = 0;
-    private bool isGameActive = true; // Para malaman kung tuloy pa ang timer
+    private bool isGameActive = true; 
     
     [Header("UI Panels")]
     public GameObject winPanel;
-    public GameObject losePanel; // BAGONG PANEL
+    public GameObject losePanel; 
     public GameObject pausePanel;
     public TMP_Text scoreTextUI;
-    public TMP_Text timerTextUI; // BAGONG TEXT
+    public TMP_Text timerTextUI; 
     public GameObject checkIcon;
     public GameObject xIcon;
 
@@ -40,48 +41,51 @@ public class Level1Manager : MonoBehaviour
         isGameActive = true;
     }
 
-    // --- ITO ANG BAGONG UPDATE LOOP PARA SA TIMER ---
     void Update()
     {
-        // Kung active ang game, bawasan ang oras
         if (isGameActive)
         {
             if (timeLimit > 0)
             {
-                timeLimit -= Time.deltaTime; // Bawasan base sa real time seconds
-                UpdateTimerDisplay();
+                timeLimit -= Time.deltaTime;
+                
+                // --- MILLISECONDS WITH FIX ---
+                int seconds = Mathf.FloorToInt(timeLimit);
+                int milliseconds = Mathf.FloorToInt((timeLimit * 100) % 100);
+
+                // GINAMITAN NATIN NG <mspace> PARA HINDI MANGINIG
+                // Ang 0.6em ay ang lapad ng bawat number.
+                if(timerTextUI != null) 
+                    timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", seconds, milliseconds);
+                
+                // Change color if running out (10 seconds left)
+                if(timeLimit <= 10 && timerTextUI != null)
+                {
+                    timerTextUI.color = Color.red;
+                }
             }
             else
             {
-                // Pag naubos na (naging 0 or less)
-                timeLimit = 0;
-                UpdateTimerDisplay();
-                GameOver(); // Talo na
+                FinalizeGameOver();
             }
         }
     }
 
-    void UpdateTimerDisplay()
+    void FinalizeGameOver()
     {
-        // Gawing whole number (wag may decimals)
-        timerTextUI.text = Mathf.CeilToInt(timeLimit).ToString();
-        
-        // Optional: Gawing pula pag 10 seconds na lang
-        if(timeLimit <= 10)
-        {
-            timerTextUI.color = Color.red;
-        }
+        timeLimit = 0;
+        if(timerTextUI != null) timerTextUI.text = "00:00";
+        GameOver(); 
     }
 
     public void GameOver()
     {
-        isGameActive = false; // Tigil ang logic
-        losePanel.SetActive(true); // Labas ang talo screen
+        isGameActive = false; 
+        losePanel.SetActive(true); 
     }
 
     public void RetryLevel()
     {
-        // I-reload ang scene para umulit sa simula
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -89,7 +93,7 @@ public class Level1Manager : MonoBehaviour
 
     public void AddScore()
     {
-        if (!isGameActive) return; // Wag magbilang pag game over na
+        if (!isGameActive) return; 
 
         currentScore++;
         UpdateScoreDisplay();
@@ -97,7 +101,7 @@ public class Level1Manager : MonoBehaviour
 
         if (currentScore >= itemsNeeded)
         {
-            isGameActive = false; // TIGIL NA ANG TIMER KASI NANALO NA
+            isGameActive = false; 
             Invoke("ShowWinScreen", 1.5f);
         }
     }
@@ -110,16 +114,26 @@ public class Level1Manager : MonoBehaviour
     public void WrongItem()
     {
         if (!isGameActive) return;
-        Debug.Log("Mali!");
+        
+        Debug.Log("Mali! Penalty applied.");
         StartCoroutine(ShowFeedback(xIcon));
         
-        // Optional: Pwede ka magbawas ng 5 seconds bilang penalty pag nagkamali!
-        // timeLimit -= 5; 
+        // PENALTY LOGIC
+        timeLimit -= penaltyTime; 
+        
+        if (timeLimit <= 0)
+        {
+            FinalizeGameOver();
+        }
     }
 
     void ShowWinScreen()
     {
         winPanel.SetActive(true);
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+        }
     }
 
     IEnumerator ShowFeedback(GameObject icon)
@@ -129,7 +143,7 @@ public class Level1Manager : MonoBehaviour
         icon.SetActive(false);
     }
 
-    // --- PAUSE & TOGGLE FUNCTIONS (SAME AS BEFORE) ---
+    // --- PAUSE & TOGGLE FUNCTIONS ---
 
     public void PauseGame()
     {
