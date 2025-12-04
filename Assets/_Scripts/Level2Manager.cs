@@ -1,31 +1,57 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement; // Need this for Scene loading
+using UnityEngine.SceneManagement; 
 
 public class Level2Manager : MonoBehaviour
 {
-    [Header("Game Status")]
-    public string currentSelectedTool = "None";
+    [Header("Game Settings")]
     public int totalTasks = 5; 
     private int tasksDone = 0;
-    private bool isGameActive = true;
-    
-    [Header("Timer Settings")]
     public float timeLimit = 60f;
-    public TMP_Text timerText;
+    public float penaltyTime = 5f;
 
-    [Header("UI References")]
+    [Header("Star System")]
+    public float goldStarThreshold = 40f; 
+    public float silverStarThreshold = 20f; 
+
+    [Header("Game State")]
+    public string currentSelectedTool = "None";
+    private bool isGameActive = true;
+    private float finalTimeRecorded = 0f;
+
+    [Header("UI Panels")]
     public GameObject winPanel;
     public GameObject losePanel;
     public GameObject pausePanel;
+    public GameObject hazardPanel; // (Optional kung meron)
+
+    [Header("Win Panel Elements")]
+    public Image star1;
+    public Image star2;
+    public Image star3;
+    public TMP_Text timeFinishedText; 
+    public TMP_Text bestScoreText;
+    
+    [Header("Lose Panel Elements")]
+    public Image loseStar1;
+    public Image loseStar2;
+    public Image loseStar3;
+    public TMP_Text loseTimeText;
+    public TMP_Text loseBestScoreText;
+
+    public Color earnedColor = Color.yellow;
+    public Color missingColor = Color.gray;
+
+    [Header("In-Game UI")]
     public TMP_Text scoreText;
-    public GameObject xIcon; // Feedback pag mali
+    public TMP_Text timerText;
+    public GameObject xIcon; // Penalty Feedback
 
     [Header("Tools Setup")]
-    public GameObject[] toolButtons; // Listahan ng Buttons (Hammer, Tape, etc)
+    public GameObject[] toolButtons; 
 
-    [Header("Toggle Buttons (Pause Panel)")]
+    [Header("Toggle Buttons")]
     public Image soundButtonImage; 
     public Image musicButtonImage;
     public Color onColor = Color.green;
@@ -35,9 +61,12 @@ public class Level2Manager : MonoBehaviour
 
     void Start()
     {
-        Time.timeScale = 1; // Unfreeze time
+        Time.timeScale = 1;
         UpdateToggleVisuals();
         if(scoreText != null) scoreText.text = "Repairs: 0/" + totalTasks;
+        
+        // Resume Music
+        if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
     }
 
     void Update()
@@ -47,19 +76,37 @@ public class Level2Manager : MonoBehaviour
             if (timeLimit > 0)
             {
                 timeLimit -= Time.deltaTime;
-                if(timerText != null) 
-                    timerText.text = Mathf.CeilToInt(timeLimit).ToString();
+                UpdateTimerDisplay(timeLimit);
             }
             else
             {
-                timeLimit = 0;
-                if(timerText != null) timerText.text = "0";
-                GameOver();
+                FinalizeGameOver();
             }
         }
     }
 
-    // --- TOOL SELECTION ---
+    void UpdateTimerDisplay(float timeToShow)
+    {
+        if(timerText != null)
+        {
+            int seconds = Mathf.FloorToInt(timeToShow);
+            int milliseconds = Mathf.FloorToInt((timeToShow * 100) % 100);
+            timerText.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", seconds, milliseconds);
+
+            if(timeToShow <= 10) timerText.color = Color.red;
+        }
+    }
+
+    void FinalizeGameOver()
+    {
+        timeLimit = 0;
+        isGameActive = false;
+        if(timerText != null) timerText.text = "00:00";
+        GameOver();
+    }
+
+    // --- LEVEL 2 SPECIFIC LOGIC (Repair) ---
+
     public void SelectTool(GameObject clickedButton)
     {
         if (!isGameActive) return;
@@ -73,7 +120,7 @@ public class Level2Manager : MonoBehaviour
 
         currentSelectedTool = toolName;
         
-        // Reset Visuals
+        // Visual Reset
         foreach (GameObject btn in toolButtons)
         {
             if (btn != null)
@@ -84,22 +131,31 @@ public class Level2Manager : MonoBehaviour
             }
         }
 
-        // Highlight Clicked
+        // Visual Highlight
         clickedButton.transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
         Outline clickedOutline = clickedButton.GetComponent<Outline>();
         if (clickedOutline != null) clickedOutline.enabled = true;
+        
+        // Play Sound
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.clickSound);
     }
 
-    // --- GAMEPLAY LOGIC ---
     public void TaskCompleted()
     {
+        if (!isGameActive) return;
+
         tasksDone++;
         if(scoreText != null) scoreText.text = "Repairs: " + tasksDone + "/" + totalTasks;
 
+        // Play Correct Sound
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
+
         if (tasksDone >= totalTasks)
         {
+            // WIN!
             isGameActive = false;
-            Debug.Log("LEVEL COMPLETE!");
+            finalTimeRecorded = timeLimit;
+            UpdateTimerDisplay(finalTimeRecorded);
             Invoke("ShowWinScreen", 1.0f);
         }
     }
@@ -108,72 +164,93 @@ public class Level2Manager : MonoBehaviour
     {
         if (!isGameActive) return;
         
-        timeLimit -= 5f; // Penalty
+        // Play Wrong Sound
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
+
+        timeLimit -= penaltyTime; 
+        
         if(xIcon != null)
         {
             xIcon.SetActive(true);
             Invoke("HideX", 1f);
         }
+
+        if (timeLimit <= 0) FinalizeGameOver();
     }
 
-    void HideX()
+    void HideX() { if(xIcon != null) xIcon.SetActive(false); }
+
+    // --- WIN/LOSE LOGIC (Copied & Adapted from Level 1) ---
+
+    void ShowWinScreen()
     {
-        if(xIcon != null) xIcon.SetActive(false);
+        winPanel.SetActive(true);
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            AudioManager.instance.PauseBGM();
+        }
+
+        float scoreTime = finalTimeRecorded; 
+
+        // Star Logic
+        if(star1) star1.color = earnedColor; // Star 1 always
+        if(star2) star2.color = (scoreTime >= silverStarThreshold) ? earnedColor : missingColor;
+        if(star3) star3.color = (scoreTime >= goldStarThreshold) ? earnedColor : missingColor;
+
+        // Time Text
+        int seconds = Mathf.FloorToInt(scoreTime);
+        int milliseconds = Mathf.FloorToInt((scoreTime * 100) % 100);
+        if(timeFinishedText != null) timeFinishedText.text = string.Format("Time Left: {0:00}.{1:00}s", seconds, milliseconds);
+
+        // High Score (Note: Gamit tayo ng ibang Key "Level2_BestTime")
+        float currentBest = PlayerPrefs.GetFloat("Level2_BestTime", 0);
+
+        if (scoreTime > currentBest)
+        {
+            currentBest = scoreTime;
+            PlayerPrefs.SetFloat("Level2_BestTime", currentBest);
+            PlayerPrefs.Save();
+            if(bestScoreText != null) { bestScoreText.text = "NEW BEST RECORD!"; bestScoreText.color = Color.yellow; }
+        }
+        else
+        {
+            int bestSec = Mathf.FloorToInt(currentBest);
+            int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
+            if(bestScoreText != null) { bestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs); bestScoreText.color = Color.white; }
+        }
     }
 
     void GameOver()
     {
         isGameActive = false;
         if(losePanel != null) losePanel.SetActive(true);
+        
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
+            AudioManager.instance.PauseBGM();
+        }
+
+        // Lose Panel UI Update
+        if(loseTimeText != null) loseTimeText.text = "Time Left: 00:00";
+        if(loseStar1) loseStar1.color = missingColor;
+        if(loseStar2) loseStar2.color = missingColor;
+        if(loseStar3) loseStar3.color = missingColor;
+
+        float currentBest = PlayerPrefs.GetFloat("Level2_BestTime", 0);
+        int bestSec = Mathf.FloorToInt(currentBest);
+        int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
+        if(loseBestScoreText != null) loseBestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs);
     }
 
-    void ShowWinScreen()
-    {
-        if(winPanel != null) winPanel.SetActive(true);
-    }
-
-    // --- PAUSE & NAVIGATION ---
-    public void PauseGame()
-    {
-        if(pausePanel != null) pausePanel.SetActive(true);
-        Time.timeScale = 0;
-    }
-
-    public void ResumeGame()
-    {
-        if(pausePanel != null) pausePanel.SetActive(false);
-        Time.timeScale = 1;
-    }
-
-    public void RetryLevel()
-    {
-        Time.timeScale = 1;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void QuitToLevelSelect()
-    {
-        Time.timeScale = 1;
-        SceneManager.LoadScene("TyphoonLevelSelect");
-    }
-
-    // --- TOGGLES ---
-    public void ToggleSound()
-    {
-        isSoundOn = !isSoundOn;
-        AudioListener.volume = isSoundOn ? 1 : 0;
-        UpdateToggleVisuals();
-    }
-
-    public void ToggleMusic()
-    {
-        isMusicOn = !isMusicOn;
-        UpdateToggleVisuals();
-    }
-
-    void UpdateToggleVisuals()
-    {
-        if(soundButtonImage != null) soundButtonImage.color = isSoundOn ? onColor : offColor;
-        if(musicButtonImage != null) musicButtonImage.color = isMusicOn ? onColor : offColor;
-    }
+    // --- STANDARD BUTTONS ---
+    public void RetryLevel() { if (AudioManager.instance != null) AudioManager.instance.ResumeBGM(); SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void QuitToLevelSelect() { if (AudioManager.instance != null) AudioManager.instance.ResumeBGM(); SceneManager.LoadScene("TyphoonLevelSelect"); }
+    public void PauseGame() { pausePanel.SetActive(true); Time.timeScale = 0; if (AudioManager.instance != null) AudioManager.instance.PauseBGM(); }
+    public void ResumeGame() { pausePanel.SetActive(false); Time.timeScale = 1; if (AudioManager.instance != null) AudioManager.instance.ResumeBGM(); }
+    
+    public void ToggleSound() { isSoundOn = !isSoundOn; AudioListener.volume = isSoundOn ? 1 : 0; UpdateToggleVisuals(); }
+    public void ToggleMusic() { isMusicOn = !isMusicOn; UpdateToggleVisuals(); }
+    void UpdateToggleVisuals() { if(soundButtonImage) soundButtonImage.color = isSoundOn ? onColor : offColor; if(musicButtonImage) musicButtonImage.color = isMusicOn ? onColor : offColor; }
 }

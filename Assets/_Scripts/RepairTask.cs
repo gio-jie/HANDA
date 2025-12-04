@@ -8,7 +8,9 @@ public class RepairTask : MonoBehaviour
     public int hitsNeeded = 3;
     
     [Header("Visuals")]
-    public Image taskImage; 
+    public Image taskImage; // Ang image na papalitan
+    public Sprite finalSprite; // Dito ilalagay ang "Ulo ng Pako" image
+    public Vector2 finalSize = new Vector2(40, 40); // Size ng ulo ng pako
 
     private int currentHits = 0;
     private bool isFinished = false;
@@ -31,22 +33,18 @@ public class RepairTask : MonoBehaviour
     {
         if (isFinished) return; 
 
-        // CHECK 1: May hawak bang tool ang player?
         if (manager.currentSelectedTool == "None")
         {
             Debug.Log("Pumili ka muna ng gamit sa baba!");
             return;
         }
 
-        // CHECK 2: Tama ba ang tool?
         if (manager.currentSelectedTool == requiredTool)
         {
-            // TAMA: Proceed sa action
             PerformAction();
         }
         else
         {
-            // MALI: Penalty
             manager.ApplyPenalty();
         }
     }
@@ -57,19 +55,38 @@ public class RepairTask : MonoBehaviour
 
         if (requiredTool == "Hammer")
         {
-            transform.localScale -= new Vector3(0, 0.2f, 0); // Hammer Effect
+            // MOVEMENT LOGIC:
+            // Bawat palo, bumababa nang konti para kunwari bumabaon
+            transform.localPosition -= new Vector3(0, 20f, 0); 
+            Debug.Log("Pok!");
         }
         else if (requiredTool == "Tape")
         {
             var col = taskImage.color;
-            col.a = 1f; // Show Tape
+            col.a = 1f; 
             taskImage.color = col;
         }
 
+        // CHECK IF FINAL HIT
         if (currentHits >= hitsNeeded)
         {
             isFinished = true;
             GetComponent<Button>().interactable = false;
+            
+            // --- SPRITE SWAP LOGIC (BAGO!) ---
+            if (requiredTool == "Hammer" && finalSprite != null)
+            {
+                // 1. Palitan ang itsura (Maging bilog)
+                taskImage.sprite = finalSprite;
+                
+                // 2. Palitan ang size (Para maging maliit na bilog, hindi mahabang pako)
+                taskImage.rectTransform.sizeDelta = finalSize;
+                
+                // 3. I-center ang pwesto (Optional adjustment)
+                // transform.localPosition += new Vector3(0, 10f, 0); 
+            }
+            // ---------------------------------
+
             manager.TaskCompleted();
         }
     }
