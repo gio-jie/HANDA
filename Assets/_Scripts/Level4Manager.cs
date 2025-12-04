@@ -106,10 +106,11 @@ public class Level4Manager : MonoBehaviour
         if (!isGameActive) return;
 
         plugsConnected--;
-        plugObject.SetActive(false); // Hide plug
+        
+        // plugObject.SetActive(false); <--- Deleted na to
+        
         UpdateStatusDisplay();
 
-        // Sound Effect (Click or Correct)
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.clickSound);
     }
 
