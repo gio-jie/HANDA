@@ -57,6 +57,18 @@ public class SceneController : MonoBehaviour
         SceneManager.LoadScene("Typhoon_Level3");
     }
 
+    public void GoToTyphoonLevel4()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Typhoon_Level4");
+    }
+
+    public void GoToTyphoonLevel5()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Typhoon_Level5");
+    }
+
     // Pwede mo dagdagan dito para sa Level 4, 5, etc.
     // public void GoToTyphoonLevel4() { ResumeMusic(); SceneManager.LoadScene("Typhoon_Level4"); }
 
