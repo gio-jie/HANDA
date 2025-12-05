@@ -51,9 +51,13 @@ public class Level5Manager : MonoBehaviour
     private bool isSoundOn = true;
     private bool isMusicOn = true;
 
-    void Start()
+    void Awake()
     {
         Time.timeScale = 1;
+    }
+
+    void Start()
+    {
         UpdateToggleVisuals();
         
         if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();

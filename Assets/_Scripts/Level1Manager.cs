@@ -59,11 +59,15 @@ public class Level1Manager : MonoBehaviour
     private bool isSoundOn = true;
     private bool isMusicOn = true;
 
+    void Awake()
+    {
+        Time.timeScale = 1;
+    }
+
     void Start()
     {
         UpdateScoreDisplay();
         UpdateToggleVisuals();
-        Time.timeScale = 1;
         isGameActive = true;
 
         if (AudioManager.instance != null) 

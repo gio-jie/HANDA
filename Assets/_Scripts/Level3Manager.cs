@@ -53,9 +53,13 @@ public class Level3Manager : MonoBehaviour
     private bool isSoundOn = true;
     private bool isMusicOn = true;
 
-    void Start()
+    void Awake()
     {
         Time.timeScale = 1;
+    }
+
+    void Start()
+    {
         UpdateScoreDisplay();
         UpdateToggleVisuals();
         

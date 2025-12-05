@@ -59,9 +59,13 @@ public class Level2Manager : MonoBehaviour
     private bool isSoundOn = true;
     private bool isMusicOn = true;
 
-    void Start()
+    void Awake()
     {
         Time.timeScale = 1;
+    }
+
+    void Start()
+    {
         UpdateToggleVisuals();
         if(scoreText != null) scoreText.text = "Repairs: 0/" + totalTasks;
         
