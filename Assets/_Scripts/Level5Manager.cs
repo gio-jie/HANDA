@@ -1,103 +1,210 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; // For Toggles
 
 public class Level5Manager : MonoBehaviour
 {
+    [Header("Game Settings")]
     public float timeLimit = 60f;
-    public TMP_Text timerText;
-    
+    public float penaltyTime = 10f; // Bawas oras pag bumunggo
+
+    [Header("Star System")]
+    public float goldStarThreshold = 40f; 
+    public float silverStarThreshold = 20f; 
+
+    [Header("Game State")]
+    private bool isGameActive = true;
+    private float finalTimeRecorded = 0f;
+
+    [Header("UI Panels")]
     public GameObject winPanel;
     public GameObject losePanel;
     public GameObject pausePanel;
+    public GameObject hazardPanel; // Yung "DANGER" warning
 
-    private bool isGameActive = true;
+    [Header("Win Panel Elements")]
+    public Image star1;
+    public Image star2;
+    public Image star3;
+    public TMP_Text timeFinishedText; 
+    public TMP_Text bestScoreText;
+    
+    [Header("Lose Panel Elements")]
+    public Image loseStar1;
+    public Image loseStar2;
+    public Image loseStar3;
+    public TMP_Text loseTimeText;
+    public TMP_Text loseBestScoreText;
 
-    // Toggles UI (Optional copy)
-    public Image soundButtonImage;
+    public Color earnedColor = Color.yellow;
+    public Color missingColor = Color.gray;
+
+    [Header("In-Game UI")]
+    public TMP_Text timerText;
+
+    [Header("Toggle Buttons")]
+    public Image soundButtonImage; 
     public Image musicButtonImage;
     public Color onColor = Color.green;
     public Color offColor = Color.gray;
-    private bool isSoundOn = true, isMusicOn = true;
+    private bool isSoundOn = true;
+    private bool isMusicOn = true;
 
-    void Start() { Time.timeScale = 1; UpdateToggleVisuals(); }
+    void Start()
+    {
+        Time.timeScale = 1;
+        UpdateToggleVisuals();
+        
+        if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
+    }
 
     void Update()
     {
-        if (isGameActive && timeLimit > 0)
+        if (isGameActive)
         {
-            timeLimit -= Time.deltaTime;
-            if(timerText != null) timerText.text = Mathf.CeilToInt(timeLimit).ToString();
-            
-            if (timeLimit <= 0) GameOver();
+            if (timeLimit > 0)
+            {
+                timeLimit -= Time.deltaTime;
+                UpdateTimerDisplay(timeLimit);
+            }
+            else
+            {
+                FinalizeGameOver();
+            }
         }
     }
 
-   [Header("Warning UI")]
-    public GameObject hazardPanel; 
+    void UpdateTimerDisplay(float timeToShow)
+    {
+        if(timerText != null)
+        {
+            int seconds = Mathf.FloorToInt(timeToShow);
+            int milliseconds = Mathf.FloorToInt((timeToShow * 100) % 100);
+            timerText.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", seconds, milliseconds);
+
+            if(timeToShow <= 10) timerText.color = Color.red;
+        }
+    }
+
+    void FinalizeGameOver()
+    {
+        timeLimit = 0;
+        isGameActive = false;
+        if(timerText != null) timerText.text = "00:00";
+        GameOver();
+    }
+
+    // --- LEVEL 5 MECHANICS ---
 
     public void HitHazard()
     {
-        // 1. Penalty Logic (Same pa rin)
-        timeLimit -= 10f; 
-        if(timerText != null) timerText.text = Mathf.CeilToInt(timeLimit).ToString();
+        if (!isGameActive) return;
 
-        if (timeLimit <= 0)
-        {
-            timeLimit = 0;
-            if(timerText != null) timerText.text = "0";
-            GameOver();
-            return; // Tigil na dito kung game over
-        }
+        // Penalty
+        timeLimit -= penaltyTime;
+        
+        // Sound
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.warningSound);
 
-        // 2. SHOW WARNING PANEL (Bago!)
+        // Show Warning
         if (hazardPanel != null)
         {
-            hazardPanel.SetActive(true); // Labas ang warning
-            Time.timeScale = 0; // PAUSE GAME (Para mabasa nila)
+            hazardPanel.SetActive(true);
+            Time.timeScale = 0; // Pause game
+            if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
         }
+
+        if (timeLimit <= 0) FinalizeGameOver();
     }
 
-    // Function para sa "OKAY" button
     public void CloseWarning()
     {
-        if (hazardPanel != null) hazardPanel.SetActive(false); // Tago ang warning
-        Time.timeScale = 1; // RESUME GAME
+        if (hazardPanel != null) hazardPanel.SetActive(false);
+        Time.timeScale = 1; 
+        if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
     }
 
     public void ReachGoal()
     {
+        // WIN!
         isGameActive = false;
-        Debug.Log("LEVEL COMPLETE!");
-        Invoke("ShowWin", 1f);
+        finalTimeRecorded = timeLimit;
+        UpdateTimerDisplay(finalTimeRecorded);
+        Invoke("ShowWinScreen", 1f);
     }
 
-    void ShowWin() { if(winPanel) winPanel.SetActive(true); }
-    void GameOver() 
-    { 
-        isGameActive = false; 
+    // --- WIN/LOSE LOGIC ---
+
+    void ShowWinScreen()
+    {
+        winPanel.SetActive(true);
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            AudioManager.instance.PauseBGM();
+        }
+
+        float scoreTime = finalTimeRecorded; 
+
+        // Star Logic
+        if(star1) star1.color = earnedColor;
+        if(star2) star2.color = (scoreTime >= silverStarThreshold) ? earnedColor : missingColor;
+        if(star3) star3.color = (scoreTime >= goldStarThreshold) ? earnedColor : missingColor;
+
+        // Time Text
+        int seconds = Mathf.FloorToInt(scoreTime);
+        int milliseconds = Mathf.FloorToInt((scoreTime * 100) % 100);
+        if(timeFinishedText != null) timeFinishedText.text = string.Format("Time Left: {0:00}.{1:00}s", seconds, milliseconds);
+
+        // High Score (Level 5 Key)
+        float currentBest = PlayerPrefs.GetFloat("Level5_BestTime", 0);
+
+        if (scoreTime > currentBest)
+        {
+            currentBest = scoreTime;
+            PlayerPrefs.SetFloat("Level5_BestTime", currentBest);
+            PlayerPrefs.Save();
+            if(bestScoreText != null) { bestScoreText.text = "NEW BEST RECORD!"; bestScoreText.color = Color.yellow; }
+        }
+        else
+        {
+            int bestSec = Mathf.FloorToInt(currentBest);
+            int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
+            if(bestScoreText != null) { bestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs); bestScoreText.color = Color.white; }
+        }
+    }
+
+    void GameOver()
+    {
+        isGameActive = false;
+        if(losePanel != null) losePanel.SetActive(true);
         
-        // IMPORTANT: I-freeze ang oras para hindi na makagalaw ang player
-        Time.timeScale = 0; 
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
+            AudioManager.instance.PauseBGM();
+        }
 
-        if(losePanel != null) losePanel.SetActive(true); 
+        // Lose Panel UI Update
+        if(loseTimeText != null) loseTimeText.text = "Time Left: 00:00";
+        if(loseStar1) loseStar1.color = missingColor;
+        if(loseStar2) loseStar2.color = missingColor;
+        if(loseStar3) loseStar3.color = missingColor;
+
+        float currentBest = PlayerPrefs.GetFloat("Level5_BestTime", 0);
+        int bestSec = Mathf.FloorToInt(currentBest);
+        int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
+        if(loseBestScoreText != null) loseBestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs);
     }
 
-    // STANDARD FUNCTIONS
-    public void PauseGame() { pausePanel.SetActive(true); Time.timeScale = 0; }
-    public void ResumeGame() { pausePanel.SetActive(false); Time.timeScale = 1; }
-    public void QuitToLevelSelect() { Time.timeScale = 1; SceneManager.LoadScene("TyphoonLevelSelect"); }
-    public void RetryLevel() { Time.timeScale = 1; SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    // --- BUTTONS ---
+    public void RetryLevel() { if (AudioManager.instance != null) AudioManager.instance.ResumeBGM(); SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void QuitToLevelSelect() { if (AudioManager.instance != null) AudioManager.instance.ResumeBGM(); SceneManager.LoadScene("TyphoonLevelSelect"); }
+    public void PauseGame() { pausePanel.SetActive(true); Time.timeScale = 0; if (AudioManager.instance != null) AudioManager.instance.PauseBGM(); }
+    public void ResumeGame() { pausePanel.SetActive(false); Time.timeScale = 1; if (AudioManager.instance != null) AudioManager.instance.ResumeBGM(); }
     
-    // Toggles
     public void ToggleSound() { isSoundOn = !isSoundOn; AudioListener.volume = isSoundOn ? 1 : 0; UpdateToggleVisuals(); }
     public void ToggleMusic() { isMusicOn = !isMusicOn; UpdateToggleVisuals(); }
-    void UpdateToggleVisuals() { 
-        if(soundButtonImage) soundButtonImage.color = isSoundOn ? onColor : offColor;
-        if(musicButtonImage) musicButtonImage.color = isMusicOn ? onColor : offColor;
-    }
-    
-
-
+    void UpdateToggleVisuals() { if(soundButtonImage) soundButtonImage.color = isSoundOn ? onColor : offColor; if(musicButtonImage) musicButtonImage.color = isMusicOn ? onColor : offColor; }
 }
