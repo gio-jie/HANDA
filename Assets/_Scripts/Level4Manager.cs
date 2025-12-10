@@ -7,6 +7,7 @@ public class Level4Manager : MonoBehaviour
 {
     [Header("Game Settings")]
     public int plugsConnected = 3; // Ilan ang nakasaksak?
+    public SwipeInteraction breakerScript;
     public float timeLimit = 60f;
     public float penaltyTime = 5f;
 
@@ -137,6 +138,11 @@ public class Level4Manager : MonoBehaviour
         }
         else
         {
+            if (breakerScript != null)
+            {
+                breakerScript.ResetToActive(); 
+            }
+            
             // FAIL: Warning!
             Debug.Log("Danger! May nakasaksak pa.");
             
