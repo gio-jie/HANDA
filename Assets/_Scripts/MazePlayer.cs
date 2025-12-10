@@ -42,6 +42,20 @@ public class MazePlayer : MonoBehaviour
         // Apply movement physics
         Vector2 movement = new Vector2(x, y);
         rb.linearVelocity = movement * moveSpeed * Time.fixedDeltaTime;
+
+        // --- ITO ANG BAGO: ROTATION LOGIC ---
+        // Iikutin natin si Jobert kung may movement input
+        if (x != 0 || y != 0)
+        {
+            // Kinakalkula ang angle (sa degrees) base sa direction ng joystick
+            float angle = Mathf.Atan2(y, x) * Mathf.Rad2Deg;
+
+            // Ina-apply ang rotation
+            // NOTE: Yung "- 90" ay kung ang sprite ni Jobert ay nakaharap sa TAAS.
+            // Kung nakaharap siya sa KANAN, tanggalin mo yung "- 90".
+            transform.rotation = Quaternion.Euler(0, 0, angle - 90);
+        }
+        // ------------------------------------
     }
 
     // Collision Detection
@@ -50,7 +64,7 @@ public class MazePlayer : MonoBehaviour
         if (other.gameObject.CompareTag("Hazard")) // Baha o Landslide
         {
             Debug.Log("Hit Hazard!");
-            manager.HitHazard(); 
+            if(manager != null) manager.HitHazard(); 
             transform.position = startPos; // Reset position
             rb.linearVelocity = Vector2.zero; // Stop momentum
         }
@@ -59,7 +73,7 @@ public class MazePlayer : MonoBehaviour
             Debug.Log("Goal!");
             isDead = true;
             rb.linearVelocity = Vector2.zero;
-            manager.ReachGoal();
+            if(manager != null) manager.ReachGoal();
         }
     }
 }
