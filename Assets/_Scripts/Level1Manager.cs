@@ -119,10 +119,11 @@ public class Level1Manager : MonoBehaviour
         if(losePanel != null) losePanel.SetActive(true); 
 
         // Play Sound
-        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
-
-        AudioManager.instance.PauseBGM();
-
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
+        }
         // 1. Set Time to 00:00 (Kasi natalo)
         if(loseTimeText != null) loseTimeText.text = "Time Left: 00:00";
 
