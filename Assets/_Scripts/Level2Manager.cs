@@ -7,7 +7,7 @@ public class Level2Manager : MonoBehaviour
 {
     [Header("Game Settings")]
     public int totalTasks = 5; 
-    private int tasksDone = 0;
+    public int tasksDone = 0;
     public float timeLimit = 60f;
     public float penaltyTime = 5f;
 
@@ -189,10 +189,10 @@ public class Level2Manager : MonoBehaviour
     void ShowWinScreen()
     {
         winPanel.SetActive(true);
-        if (AudioManager.instance != null) 
+       if (AudioManager.instance != null) 
         {
             AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
-            AudioManager.instance.PauseBGM();
+            AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
         }
 
         float scoreTime = finalTimeRecorded; 
@@ -232,8 +232,8 @@ public class Level2Manager : MonoBehaviour
         
         if (AudioManager.instance != null) 
         {
-            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
-            AudioManager.instance.PauseBGM();
+            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
         }
 
         // Lose Panel UI Update

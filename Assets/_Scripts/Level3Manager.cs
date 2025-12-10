@@ -7,7 +7,7 @@ public class Level3Manager : MonoBehaviour
 {
     [Header("Game Settings")]
     public int itemsNeeded = 5; // Total na kalat
-    private int currentScore = 0;
+    public int currentScore = 0;
     public float timeLimit = 60f;
     
     [Header("Star System")]
@@ -150,7 +150,7 @@ public class Level3Manager : MonoBehaviour
         if (AudioManager.instance != null) 
         {
             AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
-            AudioManager.instance.PauseBGM();
+            AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
         }
 
         float scoreTime = finalTimeRecorded; 
@@ -190,8 +190,8 @@ public class Level3Manager : MonoBehaviour
         
         if (AudioManager.instance != null) 
         {
-            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
-            AudioManager.instance.PauseBGM();
+            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
         }
 
         // Lose Panel UI Update
