@@ -172,9 +172,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RepairTask
   requiredTool: Hammer
   hitsNeeded: 3
+  hitSound: {fileID: 8300000, guid: 9763ec2a8d466b444a68077c7acc5f64, type: 3}
   taskImage: {fileID: 57418672}
   finalSprite: {fileID: 21300000, guid: 1146eada40b361347bf9009897d34405, type: 3}
   finalSize: {x: 40, y: 40}
+  hammerSound: {fileID: 0}
 --- !u!114 &57418671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -322,9 +324,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RepairTask
   requiredTool: Tape
   hitsNeeded: 1
+  hitSound: {fileID: 8300000, guid: a6855ec843d41ba49850211b306b2e2b, type: 3}
   taskImage: {fileID: 109021430}
   finalSprite: {fileID: 0}
   finalSize: {x: 40, y: 40}
+  hammerSound: {fileID: 0}
 --- !u!114 &109021429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -703,6 +707,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 518679015}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2058477881}
+        m_TargetAssemblyTypeName: ButtonSound, Assembly-CSharp
+        m_MethodName: Click
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1144,9 +1160,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RepairTask
   requiredTool: Hammer
   hitsNeeded: 3
+  hitSound: {fileID: 8300000, guid: 9763ec2a8d466b444a68077c7acc5f64, type: 3}
   taskImage: {fileID: 663240032}
   finalSprite: {fileID: 21300000, guid: 1146eada40b361347bf9009897d34405, type: 3}
   finalSize: {x: 40, y: 40}
+  hammerSound: {fileID: 0}
 --- !u!114 &663240031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1628,9 +1646,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RepairTask
   requiredTool: Hammer
   hitsNeeded: 3
+  hitSound: {fileID: 8300000, guid: 9763ec2a8d466b444a68077c7acc5f64, type: 3}
   taskImage: {fileID: 941493786}
   finalSprite: {fileID: 21300000, guid: 1146eada40b361347bf9009897d34405, type: 3}
   finalSize: {x: 40, y: 40}
+  hammerSound: {fileID: 0}
 --- !u!114 &941493785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2010,9 +2030,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RepairTask
   requiredTool: Tape
   hitsNeeded: 1
+  hitSound: {fileID: 8300000, guid: a6855ec843d41ba49850211b306b2e2b, type: 3}
   taskImage: {fileID: 1100051270}
   finalSprite: {fileID: 0}
   finalSize: {x: 40, y: 40}
+  hammerSound: {fileID: 0}
 --- !u!114 &1100051269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2212,6 +2234,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 1128296914}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2058477881}
+        m_TargetAssemblyTypeName: ButtonSound, Assembly-CSharp
+        m_MethodName: Click
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2485,6 +2519,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &1268172522
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1268172523}
+  - component: {fileID: 1268172525}
+  - component: {fileID: 1268172524}
+  m_Layer: 5
+  m_Name: Image (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1268172523
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268172522}
+  m_LocalRotation: {x: -0, y: -0, z: 0.39741826, w: 0.9176376}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1697492030}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 46.834}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -1.464, y: -15.237}
+  m_SizeDelta: {x: 21.186, y: 208.612}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1268172524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268172522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.09803922}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1268172525
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268172522}
+  m_CullTransparentMesh: 1
 --- !u!114 &1285916426 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8237015576785040278, guid: 33a6d33b5397e3c4f900e1be41e0d8a0, type: 3}
@@ -3332,9 +3441,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RepairTask
   requiredTool: Hammer
   hitsNeeded: 3
+  hitSound: {fileID: 8300000, guid: 9763ec2a8d466b444a68077c7acc5f64, type: 3}
   taskImage: {fileID: 1545015124}
   finalSprite: {fileID: 21300000, guid: 1146eada40b361347bf9009897d34405, type: 3}
   finalSize: {x: 40, y: 40}
+  hammerSound: {fileID: 0}
 --- !u!114 &1545015123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3459,6 +3570,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2113753150}
+  - {fileID: 1268172523}
   - {fileID: 1100051267}
   - {fileID: 109021427}
   m_Father: {fileID: 1404518411}
@@ -3894,6 +4007,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2058477881}
+        m_TargetAssemblyTypeName: ButtonSound, Assembly-CSharp
+        m_MethodName: Click
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1765752455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4318,6 +4443,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 1787999545}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2058477881}
+        m_TargetAssemblyTypeName: ButtonSound, Assembly-CSharp
+        m_MethodName: Click
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -4753,6 +4890,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2058477881}
+        m_TargetAssemblyTypeName: ButtonSound, Assembly-CSharp
+        m_MethodName: Click
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2025110851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4896,6 +5045,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15a8c914e4a01014ba7f5345af46e001, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonSound
+--- !u!1 &2113753149
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2113753150}
+  - component: {fileID: 2113753152}
+  - component: {fileID: 2113753151}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2113753150
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2113753149}
+  m_LocalRotation: {x: -0, y: -0, z: 0.360546, w: -0.93274146}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1697492030}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -42.268}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -6.437, y: -18.32}
+  m_SizeDelta: {x: 21.186, y: 221.95}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2113753151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2113753149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.09803922}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2113753152
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2113753149}
+  m_CullTransparentMesh: 1
 --- !u!114 &2118630525 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8748858938576340850, guid: 33a6d33b5397e3c4f900e1be41e0d8a0, type: 3}

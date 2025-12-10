@@ -6,6 +6,9 @@ public class RepairTask : MonoBehaviour
     [Header("Requirements")]
     public string requiredTool; // "Hammer" or "Tape"
     public int hitsNeeded = 3;
+
+    [Header("Audio")]
+    public AudioClip hitSound;
     
     [Header("Visuals")]
     public Image taskImage; // Ang image na papalitan
@@ -15,6 +18,7 @@ public class RepairTask : MonoBehaviour
     private int currentHits = 0;
     private bool isFinished = false;
     private Level2Manager manager;
+    public AudioClip hammerSound;
 
     void Start()
     {
@@ -59,12 +63,22 @@ public class RepairTask : MonoBehaviour
             // Bawat palo, bumababa nang konti para kunwari bumabaon
             transform.localPosition -= new Vector3(0, 20f, 0); 
             Debug.Log("Pok!");
+
+           if (AudioManager.instance != null && hitSound != null) 
+            {
+                AudioManager.instance.PlaySFX(hitSound);
+            }
         }
         else if (requiredTool == "Tape")
         {
             var col = taskImage.color;
             col.a = 1f; 
             taskImage.color = col;
+
+            if (AudioManager.instance != null && hitSound != null) 
+            {
+                AudioManager.instance.PlaySFX(hitSound);
+            }
         }
 
         // CHECK IF FINAL HIT
