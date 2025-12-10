@@ -168,8 +168,11 @@ public class Level1Manager : MonoBehaviour
     void ShowWinScreen()
     {
         winPanel.SetActive(true);
-        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
-        AudioManager.instance.PauseBGM();
+        if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
+        }
 
         float scoreTime = finalTimeRecorded; 
 
