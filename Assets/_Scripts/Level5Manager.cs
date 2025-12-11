@@ -177,6 +177,22 @@ public class Level5Manager : MonoBehaviour
             int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
             if(bestScoreText != null) { bestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs); bestScoreText.color = Color.white; }
         }
+
+        // --- SAVE SYSTEM FOR LEVEL 5 ---
+        
+        int starsEarned = 1; 
+        if (scoreTime >= silverStarThreshold) starsEarned = 2;
+        if (scoreTime >= goldStarThreshold) starsEarned = 3;
+
+        int currentSavedStars = PlayerPrefs.GetInt("Level5_Stars", 0);
+        if (starsEarned > currentSavedStars)
+        {
+            PlayerPrefs.SetInt("Level5_Stars", starsEarned);
+        }
+
+        PlayerPrefs.SetInt("Level6_Unlocked", 1);
+        
+        PlayerPrefs.Save();
     }
 
     void GameOver()

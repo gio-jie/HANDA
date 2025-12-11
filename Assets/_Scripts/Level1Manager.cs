@@ -216,6 +216,25 @@ public class Level1Manager : MonoBehaviour
                 bestScoreText.color = Color.white;
             }
         }
+
+        // 1. Compute Stars Earned
+        int starsEarned = 1; // Automatic 1 star pag nanalo
+        if (scoreTime >= silverStarThreshold) starsEarned = 2;
+        if (scoreTime >= goldStarThreshold) starsEarned = 3;
+
+        // 2. Save Best Star Record (Para sa Level Selection)
+        // Note: "Level1_Stars" ang key para sa Level 1
+        int currentSavedStars = PlayerPrefs.GetInt("Level1_Stars", 0);
+        if (starsEarned > currentSavedStars)
+        {
+            PlayerPrefs.SetInt("Level1_Stars", starsEarned);
+        }
+
+        // 3. Unlock Next Level (Level 2)
+        // "Level2_Unlocked" = 1 means BUKAS NA.
+        PlayerPrefs.SetInt("Level2_Unlocked", 1);
+        
+        PlayerPrefs.Save();
     }
 
     // ... (REST OF THE FUNCTIONS: Copy these exactly as before) ...

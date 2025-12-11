@@ -181,6 +181,22 @@ public class Level3Manager : MonoBehaviour
             int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
             if(bestScoreText != null) { bestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs); bestScoreText.color = Color.white; }
         }
+
+        // --- SAVE SYSTEM FOR LEVEL 3 ---
+        
+        int starsEarned = 1; 
+        if (scoreTime >= silverStarThreshold) starsEarned = 2;
+        if (scoreTime >= goldStarThreshold) starsEarned = 3;
+
+        int currentSavedStars = PlayerPrefs.GetInt("Level3_Stars", 0);
+        if (starsEarned > currentSavedStars)
+        {
+            PlayerPrefs.SetInt("Level3_Stars", starsEarned);
+        }
+
+        PlayerPrefs.SetInt("Level4_Unlocked", 1);
+        
+        PlayerPrefs.Save();
     }
 
     void GameOver()

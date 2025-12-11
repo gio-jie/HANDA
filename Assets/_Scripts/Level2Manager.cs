@@ -223,6 +223,25 @@ public class Level2Manager : MonoBehaviour
             int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
             if(bestScoreText != null) { bestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs); bestScoreText.color = Color.white; }
         }
+
+        // --- SAVE SYSTEM FOR LEVEL 2 ---
+        
+        // 1. Compute Stars
+        int starsEarned = 1; 
+        if (scoreTime >= silverStarThreshold) starsEarned = 2;
+        if (scoreTime >= goldStarThreshold) starsEarned = 3;
+
+        // 2. Save Level 2 Stars (Palitan ang key ng "Level2_Stars")
+        int currentSavedStars = PlayerPrefs.GetInt("Level2_Stars", 0);
+        if (starsEarned > currentSavedStars)
+        {
+            PlayerPrefs.SetInt("Level2_Stars", starsEarned);
+        }
+
+        // 3. Unlock Level 3 (Palitan ang key ng "Level3_Unlocked")
+        PlayerPrefs.SetInt("Level3_Unlocked", 1);
+        
+        PlayerPrefs.Save();
     }
 
     void GameOver()
