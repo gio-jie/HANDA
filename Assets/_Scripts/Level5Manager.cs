@@ -107,6 +107,13 @@ public class Level5Manager : MonoBehaviour
 
         // Penalty
         timeLimit -= penaltyTime;
+
+        if (PlayerPrefs.GetInt("VibrationOn", 1) == 1)
+        {
+            // Ito ang utos para yumugyog ang phone
+            Handheld.Vibrate(); 
+            Debug.Log("Brrrzt! Vibrate dahil mali ang item."); // Para makita mo sa Console
+        }
         
         // Sound
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.warningSound);
@@ -202,7 +209,7 @@ public class Level5Manager : MonoBehaviour
         
         if (AudioManager.instance != null) 
         {
-            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
             AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
         }
 

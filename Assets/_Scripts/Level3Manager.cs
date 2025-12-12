@@ -206,7 +206,7 @@ public class Level3Manager : MonoBehaviour
         
         if (AudioManager.instance != null) 
         {
-            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
             AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
         }
 

@@ -121,7 +121,7 @@ public class Level1Manager : MonoBehaviour
         // Play Sound
         if (AudioManager.instance != null) 
         {
-            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
             AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
         }
         // 1. Set Time to 00:00 (Kasi natalo)
@@ -252,6 +252,13 @@ public class Level1Manager : MonoBehaviour
         {
             AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
             // TINANGGAL NATIN YUNG "PauseBGM" DITO PARA TULOY-TULOY ANG TUGTOG
+        }
+
+        if (PlayerPrefs.GetInt("VibrationOn", 1) == 1)
+        {
+            // Ito ang utos para yumugyog ang phone
+            Handheld.Vibrate(); 
+            Debug.Log("Brrrzt! Vibrate dahil mali ang item."); // Para makita mo sa Console
         }
 
         // Penalty Logic
