@@ -75,6 +75,61 @@ public class SceneController : MonoBehaviour
         SceneManager.LoadScene("Typhoon_Level6");
     }
 
+    //Scenario 2 --- FLOOD ----
+
+    public void GoToFloodLevelSelect()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("FloodLevelSelect");
+    }
+
+    public void GoToFloodLevel1()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Flood_Level1");
+    }
+
+    //Scenario 3 --- EARTHQUAKE ----
+
+    public void GoToEarthquakeLevelSelect()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("EarthquakeLevelSelect");
+    }
+    public void GoToEarthquakeLevel1()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Earthquake_Level1");
+    }
+
+    // Scenario 4 --- LANDSLIDE ---
+
+    public void GoToLandslideLevelSelect()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("LandslideLevelSelect");
+    }
+    
+    public void GoToLandslideLevel1()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Landslide_Level1");
+    }
+
+    // Scenario 5 --- Multi-Disaster ---
+
+    public void GoToMultiDisasterLevelSelect()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("MultiDisasterLevelSelect");
+    }
+
+    public void GoToMultiDisasterLevel1()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("MultiDisaster_Level1");
+    }
+
     // Pwede mo dagdagan dito para sa Level 4, 5, etc.
     // public void GoToTyphoonLevel4() { ResumeMusic(); SceneManager.LoadScene("Typhoon_Level4"); }
 
