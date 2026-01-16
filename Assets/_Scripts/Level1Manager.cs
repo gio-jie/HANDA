@@ -32,7 +32,6 @@ public class Level1Manager : MonoBehaviour
     public TMP_Text timeFinishedText; 
     public TMP_Text bestScoreText;    
     
-    // --- ITO ANG BAGO: LOSE PANEL ELEMENTS ---
     [Header("Lose Panel Elements")]
     public Image loseStar1;
     public Image loseStar2;
@@ -92,15 +91,23 @@ public class Level1Manager : MonoBehaviour
         }
     }
 
+    // --- ITO ANG BINAGO: Calculation for Minutes:Seconds ---
     void UpdateTimerDisplay(float timeToShow)
     {
         if(timerTextUI != null)
         {
-            int seconds = Mathf.FloorToInt(timeToShow);
-            int milliseconds = Mathf.FloorToInt((timeToShow * 100) % 100);
-            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", seconds, milliseconds);
+            // Siguraduhing hindi mag-negative ang display
+            if (timeToShow < 0) timeToShow = 0;
+
+            // Kinukuha ang minutes at seconds mula sa total time
+            float minutes = Mathf.FloorToInt(timeToShow / 60); 
+            float seconds = Mathf.FloorToInt(timeToShow % 60);
+
+            // Format: 00:00 (Minutes:Seconds)
+            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", minutes, seconds);
 
             if(timeToShow <= 10) timerTextUI.color = Color.red;
+            else timerTextUI.color = Color.white; // Binalik ko sa white pag lampas 10s
         }
     }
 
@@ -108,11 +115,12 @@ public class Level1Manager : MonoBehaviour
     {
         timeLimit = 0;
         isGameActive = false;
+        // Set to 00:00 manually
         if(timerTextUI != null) timerTextUI.text = "00:00";
         GameOver(); 
     }
 
-    // --- GAME OVER LOGIC (UPDATED) ---
+    // --- GAME OVER LOGIC (UPDATED: Removed MS) ---
     public void GameOver()
     {
         isGameActive = false; 
@@ -122,24 +130,26 @@ public class Level1Manager : MonoBehaviour
         if (AudioManager.instance != null) 
         {
             AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
-            AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
+            AudioManager.instance.PauseBGM(); 
         }
-        // 1. Set Time to 00:00 (Kasi natalo)
+        
+        // 1. Set Time to 00:00
         if(loseTimeText != null) loseTimeText.text = "Time Left: 00:00";
 
-        // 2. Set ALL Stars to Gray (Kasi talo)
+        // 2. Set ALL Stars to Gray
         if(loseStar1) loseStar1.color = missingColor;
         if(loseStar2) loseStar2.color = missingColor;
         if(loseStar3) loseStar3.color = missingColor;
 
-        // 3. Show Best Record (Kinuha sa Memory)
+        // 3. Show Best Record (Format: MM:SS)
         float currentBest = PlayerPrefs.GetFloat("Level1_BestTime", 0);
-        int bestSec = Mathf.FloorToInt(currentBest);
-        int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
+        float bestMin = Mathf.FloorToInt(currentBest / 60);
+        float bestSec = Mathf.FloorToInt(currentBest % 60);
 
         if(loseBestScoreText != null)
         {
-            loseBestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs);
+            // Format changed to MM:SS
+            loseBestScoreText.text = string.Format("Best Record: {0:00}:{1:00}", bestMin, bestSec);
         }
     }
 
@@ -166,13 +176,14 @@ public class Level1Manager : MonoBehaviour
         }
     }
 
+    // --- WIN SCREEN LOGIC (UPDATED: Removed MS) ---
     void ShowWinScreen()
     {
         winPanel.SetActive(true);
         if (AudioManager.instance != null) 
         {
             AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
-            AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
+            AudioManager.instance.PauseBGM(); 
         }
 
         float scoreTime = finalTimeRecorded; 
@@ -185,11 +196,12 @@ public class Level1Manager : MonoBehaviour
         if (scoreTime >= silverStarThreshold && star2) star2.color = earnedColor;
         if (scoreTime >= goldStarThreshold && star3) star3.color = earnedColor;
 
-        int seconds = Mathf.FloorToInt(scoreTime);
-        int milliseconds = Mathf.FloorToInt((scoreTime * 100) % 100);
+        // Computation for Display (MM:SS)
+        float min = Mathf.FloorToInt(scoreTime / 60);
+        float sec = Mathf.FloorToInt(scoreTime % 60);
         
         if(timeFinishedText != null)
-            timeFinishedText.text = string.Format("Time Left: {0:00}.{1:00}s", seconds, milliseconds);
+            timeFinishedText.text = string.Format("Time Left: {0:00}:{1:00}", min, sec);
 
         float currentBest = PlayerPrefs.GetFloat("Level1_BestTime", 0);
 
@@ -207,79 +219,72 @@ public class Level1Manager : MonoBehaviour
         }
         else
         {
-            int bestSec = Mathf.FloorToInt(currentBest);
-            int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
+            // Display Best Record as MM:SS
+            float bestMin = Mathf.FloorToInt(currentBest / 60);
+            float bestSec = Mathf.FloorToInt(currentBest % 60);
             
             if(bestScoreText != null)
             {
-                bestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs);
+                bestScoreText.text = string.Format("Best Record: {0:00}:{1:00}", bestMin, bestSec);
                 bestScoreText.color = Color.white;
             }
         }
 
         // 1. Compute Stars Earned
-        int starsEarned = 1; // Automatic 1 star pag nanalo
+        int starsEarned = 1; 
         if (scoreTime >= silverStarThreshold) starsEarned = 2;
         if (scoreTime >= goldStarThreshold) starsEarned = 3;
 
-        // 2. Save Best Star Record (Para sa Level Selection)
-        // Note: "Level1_Stars" ang key para sa Level 1
+        // 2. Save Best Star Record
         int currentSavedStars = PlayerPrefs.GetInt("Level1_Stars", 0);
         if (starsEarned > currentSavedStars)
         {
             PlayerPrefs.SetInt("Level1_Stars", starsEarned);
         }
 
-        // 3. Unlock Next Level (Level 2)
-        // "Level2_Unlocked" = 1 means BUKAS NA.
+        // 3. Unlock Next Level
         PlayerPrefs.SetInt("Level2_Unlocked", 1);
         
         PlayerPrefs.Save();
     }
 
-    // ... (REST OF THE FUNCTIONS: Copy these exactly as before) ...
+    // ... (REST OF THE FUNCTIONS: No Changes needed below) ...
     
     void UpdateScoreDisplay() { if(scoreTextUI != null) scoreTextUI.text = "Items: " + currentScore + "/" + itemsNeeded; }
     public void WrongItem() 
     { 
         if (!isGameActive) return; 
         
-        // Show Visual Feedback
         StartCoroutine(ShowFeedback(xIcon)); 
 
-        // Play Sound (Huwag i-pause ang music!)
         if (AudioManager.instance != null)
         {
             AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
-            // TINANGGAL NATIN YUNG "PauseBGM" DITO PARA TULOY-TULOY ANG TUGTOG
         }
 
         if (PlayerPrefs.GetInt("VibrationOn", 1) == 1)
         {
-            // Ito ang utos para yumugyog ang phone
             Handheld.Vibrate(); 
-            Debug.Log("Brrrzt! Vibrate dahil mali ang item."); // Para makita mo sa Console
         }
 
-        // Penalty Logic
         timeLimit -= penaltyTime; 
         
         if (timeLimit <= 0) 
         {
             FinalizeGameOver(); 
         }
+        // Force update timer visual immediately para makita ang bawas
+        UpdateTimerDisplay(timeLimit);
     }
     IEnumerator ShowFeedback(GameObject icon) { if(icon) { icon.SetActive(true); yield return new WaitForSeconds(1.0f); icon.SetActive(false); } }
     public void RetryLevel()
     {
-        // --- DAGDAG MO ITO: Resume bago mag-reload ---
         if (AudioManager.instance != null) 
         {
             AudioManager.instance.ResumeBGM();
         }
-        // ---------------------------------------------
 
-        Time.timeScale = 1; // Siguraduhing umaandar ang oras
+        Time.timeScale = 1; 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
     public void PauseGame()
@@ -299,12 +304,10 @@ public class Level1Manager : MonoBehaviour
     }
     public void QuitToLevelSelect()
     {
-        // --- DAGDAG MO ITO: Resume bago bumalik sa menu ---
         if (AudioManager.instance != null) 
         {
             AudioManager.instance.ResumeBGM();
         }
-        // --------------------------------------------------
 
         Time.timeScale = 1; 
         SceneManager.LoadScene("TyphoonLevelSelect");
