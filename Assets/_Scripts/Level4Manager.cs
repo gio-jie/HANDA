@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class Level4Manager : MonoBehaviour
 {
     [Header("Game Settings")]
-    public int plugsConnected = 3; // Ilan ang nakasaksak?
+    public int plugsConnected = 3;
     public SwipeInteraction breakerScript;
     public float timeLimit = 60f;
     public float penaltyTime = 5f;
@@ -23,7 +23,7 @@ public class Level4Manager : MonoBehaviour
     public GameObject winPanel;
     public GameObject losePanel;
     public GameObject pausePanel;
-    public GameObject safetyPanel; // Specific sa Level 4 (Warning)
+    public GameObject safetyPanel; 
 
     [Header("Win Panel Elements")]
     public Image star1;
@@ -86,13 +86,28 @@ public class Level4Manager : MonoBehaviour
 
     void UpdateTimerDisplay(float timeToShow)
     {
-        if(timerText != null)
+        if (timerText != null)
         {
-            int seconds = Mathf.FloorToInt(timeToShow);
-            int milliseconds = Mathf.FloorToInt((timeToShow * 100) % 100);
-            timerText.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", seconds, milliseconds);
+            // Siguraduhing hindi mag-negative ang display
+            if (timeToShow < 0) timeToShow = 0;
 
-            if(timeToShow <= 10) timerText.color = Color.red;
+            float seconds = Mathf.FloorToInt(timeToShow);
+
+            // Format: 00 (Seconds na lang, wala nang "00:" sa unahan)
+            timerText.text = string.Format("<mspace=0.6em>{0:00}</mspace>", seconds);
+
+            if (timeToShow <= 10) 
+            {
+                timerText.color = Color.red;
+            }
+            else 
+            {
+                Color customGreen;
+                if (ColorUtility.TryParseHtmlString("#37B900", out customGreen))
+                {
+                    timerText.color = customGreen;
+                }
+            }
         }
     }
 

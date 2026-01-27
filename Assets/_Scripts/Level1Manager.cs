@@ -94,23 +94,30 @@ public class Level1Manager : MonoBehaviour
     // --- ITO ANG BINAGO: Calculation for Minutes:Seconds ---
     void UpdateTimerDisplay(float timeToShow)
     {
-        if(timerTextUI != null)
+        if (timerTextUI != null)
         {
             // Siguraduhing hindi mag-negative ang display
             if (timeToShow < 0) timeToShow = 0;
 
-            // Kinukuha ang minutes at seconds mula sa total time
-            float minutes = Mathf.FloorToInt(timeToShow / 60); 
-            float seconds = Mathf.FloorToInt(timeToShow % 60);
+            float seconds = Mathf.FloorToInt(timeToShow);
 
-            // Format: 00:00 (Minutes:Seconds)
-            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", minutes, seconds);
+            // Format: 00 (Seconds na lang, wala nang "00:" sa unahan)
+            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}</mspace>", seconds);
 
-            if(timeToShow <= 10) timerTextUI.color = Color.red;
-            else timerTextUI.color = Color.white; // Binalik ko sa white pag lampas 10s
+            if (timeToShow <= 10) 
+            {
+                timerTextUI.color = Color.red;
+            }
+            else 
+            {
+                Color customGreen;
+                if (ColorUtility.TryParseHtmlString("#37B900", out customGreen))
+                {
+                    timerTextUI.color = customGreen;
+                }
+            }
         }
-    }
-
+    }    
     void FinalizeGameOver()
     {
         timeLimit = 0;

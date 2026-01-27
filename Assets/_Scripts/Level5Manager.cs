@@ -81,13 +81,28 @@ public class Level5Manager : MonoBehaviour
 
     void UpdateTimerDisplay(float timeToShow)
     {
-        if(timerText != null)
+        if (timerText != null)
         {
-            int seconds = Mathf.FloorToInt(timeToShow);
-            int milliseconds = Mathf.FloorToInt((timeToShow * 100) % 100);
-            timerText.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", seconds, milliseconds);
+            // Siguraduhing hindi mag-negative ang display
+            if (timeToShow < 0) timeToShow = 0;
 
-            if(timeToShow <= 10) timerText.color = Color.red;
+            float seconds = Mathf.FloorToInt(timeToShow);
+
+            // Format: 00 (Seconds na lang, wala nang "00:" sa unahan)
+            timerText.text = string.Format("<mspace=0.6em>{0:00}</mspace>", seconds);
+
+            if (timeToShow <= 10) 
+            {
+                timerText.color = Color.red;
+            }
+            else 
+            {
+                Color customGreen;
+                if (ColorUtility.TryParseHtmlString("#37B900", out customGreen))
+                {
+                    timerText.color = customGreen;
+                }
+            }
         }
     }
 
