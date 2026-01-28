@@ -257,7 +257,7 @@ public class Level1Manager : MonoBehaviour
 
     // ... (REST OF THE FUNCTIONS: No Changes needed below) ...
     
-    void UpdateScoreDisplay() { if(scoreTextUI != null) scoreTextUI.text = "Items: " + currentScore + "/" + itemsNeeded; }
+    void UpdateScoreDisplay() { if(scoreTextUI != null) scoreTextUI.text = " " + currentScore + "/" + itemsNeeded; }
     public void WrongItem() 
     { 
         if (!isGameActive) return; 
