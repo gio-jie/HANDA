@@ -89,6 +89,30 @@ public class SceneController : MonoBehaviour
         SceneManager.LoadScene("Flood_Level1");
     }
 
+    public void GoToFloodLevel2()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Flood_Level2");
+    }
+
+    public void GoToFloodLevel3()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Flood_Level3");
+    }
+
+    public void GoToFloodLevel4()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Flood_Level4");
+    }
+
+    public void GoToFloodLevel5()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Flood_Level5");
+    }
+
     //Scenario 3 --- EARTHQUAKE ----
 
     public void GoToEarthquakeLevelSelect()

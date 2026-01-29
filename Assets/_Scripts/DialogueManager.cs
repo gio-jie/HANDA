@@ -16,6 +16,8 @@ public class DialogueManager : MonoBehaviour
 
     private int index = 0; // Pang-ilang sentence na tayo?
 
+    public int CurrentIndex => index;
+
     void Start()
     {
         // CHECKING: Kung "1" ang value nito, ibig sabihin nakita na. ITAGO ang panel.
