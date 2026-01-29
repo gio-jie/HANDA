@@ -2,14 +2,13 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager instance; // Singleton: Para matawag siya kahit saan
+    public static AudioManager instance;
 
     [Header("Audio Sources")]
     public AudioSource musicSource;
     public AudioSource sfxSource;
 
     [Header("Clips (Library)")]
-    // Dito mo i-d-drag lahat ng sounds mo para organized
     public AudioClip backgroundMusic; 
     public AudioClip clickSound;
     public AudioClip winSound;
@@ -17,19 +16,17 @@ public class AudioManager : MonoBehaviour
     public AudioClip warningSound;
     public AudioClip correctSound;
     public AudioClip wrongSound;   
-    // Pwede ka magdagdag dito: public AudioClip hammerSound; etc.
 
     void Awake()
     {
-        // SINGLETON PATTERN: Sisiguraduhin na isa lang ang DJ sa buong laro
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // HUWAG SIRAIN PAG LIPAT NG SCENE
+            DontDestroyOnLoad(gameObject); 
         }
         else
         {
-            Destroy(gameObject); // May DJ na, layas ka na
+            Destroy(gameObject);
         }
     }
 
@@ -61,7 +58,18 @@ public class AudioManager : MonoBehaviour
     {
         if (clip != null)
         {
-            sfxSource.PlayOneShot(clip);
+            // Check natin kung ang pinapapatugtog ba ay yung WIN SOUND
+            if (clip == winSound || clip == loseSound)
+            {
+                // Kung Win Sound, lakasan natin (Example: 1.0f = Normal, 3.0f = Sobrang Lakas)
+                // Pwede mong baguhin yung "2.0f" kung kulang pa
+                sfxSource.PlayOneShot(clip, 20.0f); 
+            }
+            else
+            {
+                // Kung ibang sound (click, warning, etc.), normal volume lang
+                sfxSource.PlayOneShot(clip, 2.0f);
+            }
         }
     }
 
