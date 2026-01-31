@@ -16,7 +16,9 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     void Awake()
     {
         // Hanapin ang Canvas sa scene (ang lolo ng item na ito)
-        canvasTransform = GetComponentInParent<Canvas>().transform;
+        // Note: Naglagay ako ng check para safe
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas != null) canvasTransform = canvas.transform;
         
         // Magdagdag ng CanvasGroup kung wala pa (kailangan ito para tumagos ang mouse click)
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
@@ -31,7 +33,7 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         originalParent = transform.parent;
 
         // 2. Ilipat siya sa Canvas level para lumutang siya sa ibabaw ng lahat
-        transform.SetParent(canvasTransform);
+        if(canvasTransform != null) transform.SetParent(canvasTransform);
 
         // 3. I-disable muna ang harang sa mouse para ma-detect natin kung nasa ibabaw siya ng bag
         canvasGroup.blocksRaycasts = false;
@@ -48,6 +50,13 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         canvasGroup.blocksRaycasts = true;
 
         // Check kung gaano kalapit sa Bag (Distance check)
+        // Note: Siguraduhing naka-assign ang bagTarget sa Inspector para di mag error
+        if (bagTarget == null) 
+        {
+            ReturnToShelf();
+            return;
+        }
+
         float distance = Vector3.Distance(transform.position, bagTarget.position);
 
         // Kung malapit sa bag (Distance < 200 pixels example)
@@ -55,8 +64,11 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         {
             if (isCorrectItem)
             {
-                // TAMA: Tawagin ang manager at sirain ang item
-                manager.AddScore();
+                // --- ITO ANG BINAGO KO: ---
+                // Ipinapasa na natin ang PANGALAN ng item (gameObject.name)
+                // para malaman ng Manager kung alin sa checklist ang iche-check.
+                manager.AddScore(gameObject.name); 
+                
                 Destroy(gameObject); 
             }
             else

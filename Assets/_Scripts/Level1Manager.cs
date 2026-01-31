@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class Level1Manager : MonoBehaviour
 {
     [Header("Game Settings")]
-    public int itemsNeeded = 7;
+    public int itemsNeeded = 8; // Gawin nating 8 kasi sabi mo 8 items
     public float timeLimit = 60f; 
     public float penaltyTime = 5f; 
 
@@ -19,6 +19,18 @@ public class Level1Manager : MonoBehaviour
     public int currentScore = 0;
     private bool isGameActive = true; 
     private float finalTimeRecorded = 0f; 
+
+    // --- BAGONG DAGDAG: CHECKLIST SYSTEM ---
+    [System.Serializable]
+    public struct MissionItem
+    {
+        public string itemName;       // Pangalan ng Item (Dapat match sa Hierarchy name ng item sa lamesa)
+        public GameObject checkmarkUI; // Yung Checkmark image sa HUD
+    }
+    
+    [Header("Checklist Configuration")]
+    public MissionItem[] missionItems; // Dito mo ida-drag sa Inspector
+    // ----------------------------------------
 
     [Header("UI Panels")]
     public GameObject winPanel;
@@ -38,15 +50,14 @@ public class Level1Manager : MonoBehaviour
     public Image loseStar3;
     public TMP_Text loseTimeText;
     public TMP_Text loseBestScoreText;
-    // -----------------------------------------
 
     public Color earnedColor = Color.yellow;
     public Color missingColor = Color.gray;
 
     [Header("In-Game UI")]
-    public TMP_Text scoreTextUI;
+    public TMP_Text scoreTextUI; // Pwede mo na alisin to kung checklist na gamit mo, pero stay muna
     public TMP_Text timerTextUI; 
-    public GameObject checkIcon;
+    public GameObject checkIcon; // Yung malaking check sa gitna
     public GameObject xIcon;
 
     [Header("Toggle Buttons")]
@@ -91,17 +102,12 @@ public class Level1Manager : MonoBehaviour
         }
     }
 
-    // --- ITO ANG BINAGO: Calculation for Minutes:Seconds ---
     void UpdateTimerDisplay(float timeToShow)
     {
         if (timerTextUI != null)
         {
-            // Siguraduhing hindi mag-negative ang display
             if (timeToShow < 0) timeToShow = 0;
-
             float seconds = Mathf.FloorToInt(timeToShow);
-
-            // Format: 00 (Seconds na lang, wala nang "00:" sa unahan)
             timerTextUI.text = string.Format("<mspace=0.6em>{0:00}</mspace>", seconds);
 
             if (timeToShow <= 10) 
@@ -118,53 +124,71 @@ public class Level1Manager : MonoBehaviour
             }
         }
     }    
+
     void FinalizeGameOver()
     {
         timeLimit = 0;
         isGameActive = false;
-        // Set to 00:00 manually
-        if(timerTextUI != null) timerTextUI.text = "00:00";
+        if(timerTextUI != null) timerTextUI.text = "00";
         GameOver(); 
     }
 
-    // --- GAME OVER LOGIC (UPDATED: Removed MS) ---
     public void GameOver()
     {
         isGameActive = false; 
         if(losePanel != null) losePanel.SetActive(true); 
 
-        // Play Sound
         if (AudioManager.instance != null) 
         {
             AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
             AudioManager.instance.PauseBGM(); 
         }
         
-        // 1. Set Time to 00:00
         if(loseTimeText != null) loseTimeText.text = "Time Left: 00:00";
 
-        // 2. Set ALL Stars to Gray
         if(loseStar1) loseStar1.color = missingColor;
         if(loseStar2) loseStar2.color = missingColor;
         if(loseStar3) loseStar3.color = missingColor;
 
-        // 3. Show Best Record (Format: MM:SS)
         float currentBest = PlayerPrefs.GetFloat("Level1_BestTime", 0);
         float bestMin = Mathf.FloorToInt(currentBest / 60);
         float bestSec = Mathf.FloorToInt(currentBest % 60);
 
         if(loseBestScoreText != null)
         {
-            // Format changed to MM:SS
             loseBestScoreText.text = string.Format("Best Record: {0:00}:{1:00}", bestMin, bestSec);
         }
     }
 
-    // --- WIN LOGIC ---
-    public void AddScore()
+    // --- NEW ADD SCORE LOGIC ---
+    // Ngayon, kailangan na natin ng pangalan ng item para malaman alin ang iche-check
+    public void AddScore(string collectedItemName)
     {
         if (!isGameActive) return; 
 
+        // 1. Check if nasa listahan at i-on ang checkmark
+        bool foundInList = false;
+        foreach (var mission in missionItems)
+        {
+            // Pagparehas ang pangalan ng item na nakuha at nasa listahan
+            if (mission.itemName == collectedItemName)
+            {
+                if(mission.checkmarkUI != null) 
+                {
+                    mission.checkmarkUI.SetActive(true); // LABAS CHECKMARK!
+                }
+                foundInList = true;
+                break;
+            }
+        }
+
+        // Kung wala sa listahan, baka mali ang spelling o ibang object
+        if (!foundInList)
+        {
+            Debug.LogWarning("Item na nakuha (" + collectedItemName + ") ay wala sa Mission List! Check names.");
+        }
+
+        // 2. Add Score Logic
         currentScore++;
         UpdateScoreDisplay();
         StartCoroutine(ShowFeedback(checkIcon));
@@ -183,7 +207,6 @@ public class Level1Manager : MonoBehaviour
         }
     }
 
-    // --- WIN SCREEN LOGIC (UPDATED: Removed MS) ---
     void ShowWinScreen()
     {
         winPanel.SetActive(true);
@@ -203,7 +226,6 @@ public class Level1Manager : MonoBehaviour
         if (scoreTime >= silverStarThreshold && star2) star2.color = earnedColor;
         if (scoreTime >= goldStarThreshold && star3) star3.color = earnedColor;
 
-        // Computation for Display (MM:SS)
         float min = Mathf.FloorToInt(scoreTime / 60);
         float sec = Mathf.FloorToInt(scoreTime % 60);
         
@@ -226,7 +248,6 @@ public class Level1Manager : MonoBehaviour
         }
         else
         {
-            // Display Best Record as MM:SS
             float bestMin = Mathf.FloorToInt(currentBest / 60);
             float bestSec = Mathf.FloorToInt(currentBest % 60);
             
@@ -237,60 +258,37 @@ public class Level1Manager : MonoBehaviour
             }
         }
 
-        // 1. Compute Stars Earned
         int starsEarned = 1; 
         if (scoreTime >= silverStarThreshold) starsEarned = 2;
         if (scoreTime >= goldStarThreshold) starsEarned = 3;
 
-        // 2. Save Best Star Record
         int currentSavedStars = PlayerPrefs.GetInt("Level1_Stars", 0);
         if (starsEarned > currentSavedStars)
         {
             PlayerPrefs.SetInt("Level1_Stars", starsEarned);
         }
 
-        // 3. Unlock Next Level
         PlayerPrefs.SetInt("Level2_Unlocked", 1);
-        
         PlayerPrefs.Save();
     }
 
-    // ... (REST OF THE FUNCTIONS: No Changes needed below) ...
-    
     void UpdateScoreDisplay() { if(scoreTextUI != null) scoreTextUI.text = "" + currentScore + "/" + itemsNeeded; }
+    
     public void WrongItem() 
     { 
         if (!isGameActive) return; 
-        
         StartCoroutine(ShowFeedback(xIcon)); 
-
-        if (AudioManager.instance != null)
-        {
-            AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
-        }
-
-        if (PlayerPrefs.GetInt("VibrationOn", 1) == 1)
-        {
-            Handheld.Vibrate(); 
-        }
-
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
+        if (PlayerPrefs.GetInt("VibrationOn", 1) == 1) Handheld.Vibrate(); 
         timeLimit -= penaltyTime; 
-        
-        if (timeLimit <= 0) 
-        {
-            FinalizeGameOver(); 
-        }
-        // Force update timer visual immediately para makita ang bawas
+        if (timeLimit <= 0) FinalizeGameOver(); 
         UpdateTimerDisplay(timeLimit);
     }
     IEnumerator ShowFeedback(GameObject icon) { if(icon) { icon.SetActive(true); yield return new WaitForSeconds(1.0f); icon.SetActive(false); } }
+    
     public void RetryLevel()
     {
-        if (AudioManager.instance != null) 
-        {
-            AudioManager.instance.ResumeBGM();
-        }
-
+        if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
         Time.timeScale = 1; 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -298,24 +296,17 @@ public class Level1Manager : MonoBehaviour
     {
         pausePanel.SetActive(true); 
         Time.timeScale = 0; 
-
         if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
     }
-
     public void ResumeGame()
     {
         pausePanel.SetActive(false); 
         Time.timeScale = 1; 
-        
         if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
     }
     public void QuitToLevelSelect()
     {
-        if (AudioManager.instance != null) 
-        {
-            AudioManager.instance.ResumeBGM();
-        }
-
+        if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
         Time.timeScale = 1; 
         SceneManager.LoadScene("TyphoonLevelSelect");
     }
