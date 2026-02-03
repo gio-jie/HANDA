@@ -14,11 +14,6 @@ public class PauseManager : MonoBehaviour
 
     // Tinanggal natin yung "private Level1Manager levelManager" kasi masyadong specific yun.
 
-    void OnEnable()
-    {
-        UpdateSurvivalStats();
-    }
-
     void UpdateSurvivalStats()
     {
         float progress = 0f;
