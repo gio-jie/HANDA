@@ -207,8 +207,8 @@ public class IntroVisualController : MonoBehaviour
 
     IEnumerator RotateMapThenShowTyphoon()
     {
-        Quaternion rot1 = Quaternion.Euler(21.383f, 0f, 0f);
-        Quaternion rot2 = Quaternion.Euler(21.383f, 34.559f, 0f);
+        Quaternion rot1 = Quaternion.Euler(27.765f, 0f, 0f);
+        Quaternion rot2 = Quaternion.Euler(27.765f, 36.667f, 0f);
 
         yield return StartCoroutine(RotateMap(rot1, 0.6f));
         yield return StartCoroutine(RotateMap(rot2, 0.6f));
