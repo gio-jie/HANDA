@@ -20,12 +20,16 @@ public class HouseRoomManager : MonoBehaviour
     public GameObject homeOffice;
     public GameObject houseBlueprint;
 
+    public GameObject kitchenBG;
+    public GameObject bathroomBG;
+
     [Header("Fade")]
     public CanvasGroup fadeCanvas;
     public float fadeDuration = 0.35f;
 
     bool isTransitioning = false;
     public GameObject houseBlueprintButton;
+    public GameObject inventoryButton;
 
     void Start()
     {
@@ -34,6 +38,7 @@ public class HouseRoomManager : MonoBehaviour
 
         houseBlueprint.SetActive(true);
         houseBlueprintButton.SetActive(false);
+        inventoryButton.SetActive(true);
     }
 
     public void GoToKitchen()
@@ -75,13 +80,16 @@ public class HouseRoomManager : MonoBehaviour
 
         houseBlueprint.SetActive(false);
         houseBlueprintButton.SetActive(true);
+        inventoryButton.SetActive(false);
 
         HideAllRooms();
+        HideAllBackgrounds();
 
         switch (room)
         {
             case HouseRoom.Kitchen:
                 kitchen.SetActive(true);
+                kitchenBG.SetActive(true);
                 break;
 
             case HouseRoom.Bedroom:
@@ -90,6 +98,7 @@ public class HouseRoomManager : MonoBehaviour
 
             case HouseRoom.Bathroom:
                 bathroom.SetActive(true);
+                bathroomBG.SetActive(true);
                 break;
 
             case HouseRoom.LivingRoom:
@@ -113,10 +122,18 @@ public class HouseRoomManager : MonoBehaviour
     public void ReturnToBlueprint()
     {
         HideAllRooms();
+        HideAllBackgrounds();
         houseBlueprint.SetActive(true);
         houseBlueprintButton.SetActive(false);
+        inventoryButton.SetActive(true);
 
         ObjectiveManager.Instance.HideObjectives();
+    }
+
+    void HideAllBackgrounds()
+    {
+        kitchenBG.SetActive(false);
+        bathroomBG.SetActive(false);
     }
 
     void HideAllRooms()

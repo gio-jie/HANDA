@@ -1,11 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 public class IntroVisualController : MonoBehaviour
 {
     [Header("References")]
     public DialogueManager dialogueManager;
+
+    [Header("NPC")]
+    public Image npcImage;
+    public Sprite neutralSprite;
+    public Sprite dykSprite;
+    public Sprite shockSprite;
+    public Sprite happySprite;
+    public Sprite neutralHandSprite;
+    public Sprite amazedSprite;
 
     [Header("Images")]
     public RectTransform cagayanMap;
@@ -46,6 +56,9 @@ public class IntroVisualController : MonoBehaviour
 
     private string floodIntroKey = "FloodIntroSeen";
     bool meterShown = false;
+    private Vector2 npcOriginalPos;
+    private Vector2 npcOriginalSize;
+    public TextMeshProUGUI buttonText;
 
     float GetWaterLevelForIndex(int index)
     {
@@ -84,6 +97,13 @@ public class IntroVisualController : MonoBehaviour
             if (dialogueManager != null)
                 PlayerPrefs.SetInt("JobertTriviaSeen", 1);
         }
+
+        if (npcImage != null)
+        {
+            RectTransform rt = npcImage.rectTransform;
+            npcOriginalPos = rt.anchoredPosition;
+            npcOriginalSize = rt.sizeDelta;
+        }
     }
 
     void Update()
@@ -95,6 +115,63 @@ public class IntroVisualController : MonoBehaviour
 
         lastIndex = index;
         HandleVisuals(index);
+        UpdateNpcEmotion(index);
+    }
+
+    void UpdateNpcEmotion(int dialogueIndex)
+    {
+        if (npcImage == null) return;
+
+        RectTransform rt = npcImage.rectTransform;
+
+        switch (dialogueIndex)
+        {
+            case 0:
+                npcImage.sprite = neutralSprite;
+                rt.anchoredPosition = npcOriginalPos;
+                rt.sizeDelta = npcOriginalSize;
+                break;
+            case 1:
+            case 2:
+                npcImage.sprite = dykSprite;
+                rt.anchoredPosition = npcOriginalPos;
+                rt.sizeDelta = npcOriginalSize;
+                break;
+            case 3:
+            case 8:
+                npcImage.sprite = shockSprite;
+                rt.anchoredPosition = npcOriginalPos;
+                rt.sizeDelta = npcOriginalSize;
+                break;
+            case 4:
+            case 5:
+            case 9:
+                npcImage.sprite = happySprite;
+                rt.anchoredPosition = npcOriginalPos;
+                rt.sizeDelta = npcOriginalSize;
+                break;
+            case 6:
+                npcImage.sprite = neutralSprite;
+                rt.anchoredPosition = npcOriginalPos;
+                rt.sizeDelta = npcOriginalSize;
+                break;
+            case 7:
+                npcImage.sprite = neutralHandSprite;
+                rt.anchoredPosition = npcOriginalPos;
+                rt.sizeDelta = npcOriginalSize;
+                break;
+            case 10:
+                npcImage.sprite = amazedSprite;
+                rt.anchoredPosition = new Vector2(-347.3635f, 194.2306f);
+                rt.sizeDelta = new Vector2(705.65f, 666.1307f);
+                if(buttonText != null) buttonText.text = "LET'S GO!";
+                break;
+            default:
+                npcImage.sprite = neutralSprite;
+                rt.anchoredPosition = npcOriginalPos;
+                rt.sizeDelta = npcOriginalSize;
+                break;
+        }
     }
 
     void HandleVisuals(int index)
@@ -480,5 +557,10 @@ public class IntroVisualController : MonoBehaviour
 
         if (gameplayUIRoot != null)
             gameplayUIRoot.SetActive(true);
+    }
+
+    public void Skip()
+    {
+        ExitIntroMode();
     }
 }

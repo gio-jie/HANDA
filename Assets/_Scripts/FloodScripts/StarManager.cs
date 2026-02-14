@@ -2,22 +2,30 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class StarManager : MonoBehaviour
 {
+    public static StarManager Instance;
+
     [Header("Level")]
     public int levelIndex = 1;
-    public float levelDuration = 180f;
+    public float levelDuration;
 
     [Header("UI")]
     public Image[] stars;
     public Slider starSlider;
     public TMP_Text timerText;
     public GameObject losePanel;
+    public GameObject winPanel;
 
-    [Header("Panels")]
-    public TMP_Text panelTimeLeftText;
-    public TMP_Text panelBestTimeText;
+    [Header("Lose Panel UI")]
+    public TMP_Text losePanelTimeLeftText;
+    public TMP_Text losePanelBestTimeText;
+
+    [Header("Win Panel UI")]
+    public TMP_Text winPanelTimeLeftText;
+    public TMP_Text winPanelBestTimeText;
 
     public Color activeColor = Color.white;
     public Color inactiveColor = Color.gray;
@@ -29,8 +37,16 @@ public class StarManager : MonoBehaviour
     private Coroutine sliderCoroutine;
     private bool levelEnded = false;
 
+    [Header("Penalty Settings")]
+    public float wrongItemPenalty = 5f;
+    public int maxConsecutiveWrongs = 3;
+
+    private int consecutiveWrongCount = 0;
+
     void Start()
     {
+        Instance = this;
+
         remainingTime = levelDuration;
         timePerStar = levelDuration / 3f;
 
@@ -38,8 +54,8 @@ public class StarManager : MonoBehaviour
         UpdateSliderImmediate();
         UpdateTimerText();
 
-        if (losePanel != null)
-            losePanel.SetActive(false);
+        if (losePanel != null) losePanel.SetActive(false);
+        if (winPanel != null) winPanel.SetActive(false);
     }
 
     void Update()
@@ -50,15 +66,40 @@ public class StarManager : MonoBehaviour
         remainingTime = Mathf.Max(0f, remainingTime);
 
         UpdateTimerText();
-        UpdatePanelTimeLeft();
 
         int newStars = Mathf.Clamp(Mathf.CeilToInt(remainingTime / timePerStar), 0, 3);
-
-        if (newStars != currentStars)
-            UpdateStars(newStars);
+        if (newStars != currentStars) UpdateStars(newStars);
 
         if (remainingTime <= 0f)
             TriggerLose();
+    }
+
+    public void RegisterCorrectItem()
+    {
+        consecutiveWrongCount = 0;
+    }
+
+    public void RegisterWrongItem()
+    {
+        if (levelEnded) return;
+
+        remainingTime -= wrongItemPenalty;
+        remainingTime = Mathf.Max(0f, remainingTime);
+
+        UpdateTimerText();
+
+        consecutiveWrongCount++;
+
+        if (consecutiveWrongCount >= maxConsecutiveWrongs)
+        {
+            TriggerLose();
+            return;
+        }
+
+        if (remainingTime <= 0f)
+        {
+            TriggerLose();
+        }
     }
 
     private void UpdateTimerText()
@@ -66,16 +107,6 @@ public class StarManager : MonoBehaviour
         int minutes = Mathf.FloorToInt(remainingTime / 60f);
         int seconds = Mathf.FloorToInt(remainingTime % 60f);
         timerText.text = $"{minutes:0}:{seconds:00}";
-    }
-
-    private void UpdatePanelTimeLeft()
-    {
-        if (panelTimeLeftText != null)
-        {
-            int minutes = Mathf.FloorToInt(remainingTime / 60f);
-            int seconds = Mathf.FloorToInt(remainingTime % 60f);
-            panelTimeLeftText.text = $"Time Left: {minutes:0}:{seconds:00}";
-        }
     }
 
     private void UpdateStars(int newCount)
@@ -91,7 +122,6 @@ public class StarManager : MonoBehaviour
     private void UpdateSliderImmediate()
     {
         if (starSlider == null) return;
-
         starSlider.value = GetSliderValueForStars(currentStars);
     }
 
@@ -121,6 +151,13 @@ public class StarManager : MonoBehaviour
     private IEnumerator SlideSlider(float targetValue)
     {
         float startValue = starSlider.value;
+
+        if (targetValue < startValue)
+        {
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlaySFX(AudioManager.instance.starReducedSound);
+        }
+
         float duration = 0.4f;
         float t = 0f;
 
@@ -135,18 +172,94 @@ public class StarManager : MonoBehaviour
         starSlider.value = targetValue;
     }
 
+    public void EndLevel(bool isWin)
+    {
+        if (levelEnded) return;
+        levelEnded = true;
+        consecutiveWrongCount = 0;
+
+        SaveStars();
+
+        if (!isWin)
+        {
+            StartCoroutine(FinishSliderAndShowLosePanel());
+        }
+        else
+        {
+            ShowWinPanel();
+        }
+    }
+
+    private IEnumerator FinishSliderAndShowLosePanel()
+    {
+        if (starSlider != null)
+        {
+            if (sliderCoroutine != null) StopCoroutine(sliderCoroutine);
+            yield return StartCoroutine(SlideSlider(0f));
+        }
+
+        currentStars = 0;
+        for (int i = 0; i < stars.Length; i++)
+        {
+            stars[i].color = inactiveColor;
+        }
+
+        yield return new WaitForSeconds(0.1f);
+
+        if (losePanel != null)
+        {
+            int remainingSeconds = Mathf.CeilToInt(remainingTime);
+            int minutes = remainingSeconds / 60;
+            int seconds = remainingSeconds % 60;
+
+            int bestSeconds = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+            int bestMin = bestSeconds / 60;
+            int bestSec = bestSeconds % 60;
+
+            if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
+            if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
+            losePanel.SetActive(true);
+
+            if (losePanelTimeLeftText != null)
+                losePanelTimeLeftText.text = $"Time Left: {minutes:0}:{seconds:00}";
+
+            if (losePanelBestTimeText != null)
+                losePanelBestTimeText.text = $"Best Record: {bestMin:0}:{bestSec:00}";
+        }
+    }
+
+    private void ShowWinPanel()
+    {
+        if (winPanel != null)
+        {
+            int remainingSeconds = Mathf.CeilToInt(remainingTime);
+            int minutes = remainingSeconds / 60;
+            int seconds = remainingSeconds % 60;
+
+            int bestSeconds = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+            int bestMin = bestSeconds / 60;
+            int bestSec = bestSeconds % 60;
+
+            if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
+            if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
+            winPanel.SetActive(true);
+
+            if (winPanelTimeLeftText != null)
+                winPanelTimeLeftText.text = $"Time Left: {minutes:0}:{seconds:00}";
+
+            if (winPanelBestTimeText != null)
+                winPanelBestTimeText.text = $"Best Record: {bestMin:0}:{bestSec:00}";
+        }
+    }
+
     public void SaveStars()
     {
         int previous = PlayerPrefs.GetInt("Level_" + levelIndex, 0);
         if (currentStars > previous)
             PlayerPrefs.SetInt("Level_" + levelIndex, currentStars);
 
+        PlayerPrefs.Save();
         SaveBestTime();
-    }
-
-    public int GetSavedStars()
-    {
-        return PlayerPrefs.GetInt("Level_" + levelIndex, 0);
     }
 
     private void SaveBestTime()
@@ -155,29 +268,32 @@ public class StarManager : MonoBehaviour
         int previousBest = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
 
         if (remainingSeconds > previousBest)
-            PlayerPrefs.SetInt("Level_" + levelIndex + "_BestTime", remainingSeconds);
-
-        UpdatePanelBestTime();
-    }
-
-    private void UpdatePanelBestTime()
-    {
-        if (panelBestTimeText != null)
         {
-            int bestSeconds = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
-            int minutes = Mathf.FloorToInt(bestSeconds / 60f);
-            int seconds = Mathf.FloorToInt(bestSeconds % 60f);
-            panelBestTimeText.text = $"Best Record: {minutes:0}:{seconds:00}";
+            PlayerPrefs.SetInt("Level_" + levelIndex + "_BestTime", remainingSeconds);
+            PlayerPrefs.Save();
         }
     }
 
     private void TriggerLose()
     {
-        levelEnded = true;
-
-        if (losePanel != null)
-            losePanel.SetActive(true);
-
-        SaveStars();
+        EndLevel(false);
     }
+
+    public void RetryLevel()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void LoadNextLevel()
+    {
+        Time.timeScale = 1f;
+        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        SceneManager.LoadScene(nextSceneIndex);
+    }
+
+    public int GetCurrentStars() => currentStars;
+    public int GetRemainingSeconds() => Mathf.CeilToInt(remainingTime);
+    public int GetSavedStars() => PlayerPrefs.GetInt("Level_" + levelIndex, 0);
+    public int GetBestTime() => PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
 }

@@ -1,5 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine.UI;
+using System.Collections;
 
 public class ObjectiveManager : MonoBehaviour
 {
@@ -12,6 +15,16 @@ public class ObjectiveManager : MonoBehaviour
         public GameObject objectivePanel;
     }
 
+    [Header("Collection Settings")]
+    public int targetItems = 15;
+    private int currentItems = 0;
+
+    public TMP_Text counterText;
+    public GameObject winPanel;
+    public Image radialFill;
+    Vector3 originalScale;
+    Coroutine fillRoutine;
+
     public List<RoomObjectives> rooms;
 
     Dictionary<string, ObjectiveIcon> icons = new Dictionary<string, ObjectiveIcon>();
@@ -19,6 +32,9 @@ public class ObjectiveManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        UpdateCounter();
+        winPanel.SetActive(false);
+        originalScale = counterText.transform.localScale;
     }
 
     public void ShowObjectives(HouseRoom room)
@@ -47,6 +63,61 @@ public class ObjectiveManager : MonoBehaviour
                 }
 
         CacheIcons();
+    }
+
+    public void CollectItem(string id)
+    {
+        currentItems++;
+
+        counterText.transform.localScale = originalScale * 1.15f;
+        Invoke(nameof(ResetScale), 0.1f);
+
+        UpdateCounter();
+
+        MarkComplete(id);
+
+        if(currentItems >= targetItems)
+            //WinGame();
+            fillRoutine = StartCoroutine(AnimateFill((float)currentItems / targetItems, true));
+    }
+
+    void ResetScale()
+    {
+        counterText.transform.localScale = originalScale;
+    }
+
+    void UpdateCounter()
+    {
+        counterText.text = currentItems + "/" + targetItems;
+            
+        fillRoutine = StartCoroutine(AnimateFill((float)currentItems / targetItems));
+    }
+
+    IEnumerator AnimateFill(float target, bool triggerWin = false)
+    {
+        float start = radialFill.fillAmount;
+        float time = 0f;
+
+        while(time < 0.2f)
+        {
+            time += Time.unscaledDeltaTime;
+            radialFill.fillAmount = Mathf.Lerp(start, target, time / 0.2f);
+            yield return null;
+        }
+
+        radialFill.fillAmount = target;
+
+        if (triggerWin)
+        {
+            FindObjectOfType<StarManager>().EndLevel(true);
+            WinGame();
+        }
+    }
+
+    void WinGame()
+    {
+        winPanel.SetActive(true);
+        Time.timeScale = 0f;
     }
 
     public void HideObjectives()
