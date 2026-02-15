@@ -75,6 +75,30 @@ public class SceneController : MonoBehaviour
         SceneManager.LoadScene("Typhoon_Level6");
     }
 
+    public void GoToTyphoonLevel7()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Typhoon_Level7");
+    }
+
+    public void GoToTyphoonLevel8()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Typhoon_Level8");
+    }
+
+    public void GoToTyphoonLevel9()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Typhoon_Level9");
+    }
+
+    public void GoToTyphoonLevel10()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Typhoon_Level10");
+    }
+
     //Scenario 2 --- FLOOD ----
 
     public void GoToFloodLevelSelect()
