@@ -22,7 +22,7 @@ public class MosquitoBehavior : MonoBehaviour
     {
         // Kapag naubos ang oras (NAKAGAT):
         // Hanapin ang GameManager at bawasan ang buhay
-        FindObjectOfType<GameManager>().TakeDamage();
+        FindObjectOfType<Level7Manager>().TakeDamage();
 
         // Mawawala ang lamok pagkatapos kumagat
         Destroy(gameObject);

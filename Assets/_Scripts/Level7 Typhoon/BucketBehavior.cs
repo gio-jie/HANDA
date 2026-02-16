@@ -27,7 +27,7 @@ public class BucketBehavior : MonoBehaviour
     void BreedMosquito()
     {
         // Kapag naubos ang oras (HINDI NALINIS):
-        FindObjectOfType<GameManager>().TakeDamage();
+        FindObjectOfType<Level7Manager>().TakeDamage();
         
         Debug.Log("DANGER! Namahayan ng lamok ang tubig!");
         

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class Level7Manager : MonoBehaviour
 {
     public GameObject mosquitoPrefab; // Slot para sa Lamok
     public GameObject bucketPrefab;   // BAGONG SLOT: Slot para sa Timba
