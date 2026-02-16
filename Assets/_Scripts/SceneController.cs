@@ -63,10 +63,10 @@ public class SceneController : MonoBehaviour
         SceneManager.LoadScene("Typhoon_Level4");
     }
 
-    public void GoToTyphoonLevel5()
+    public void GoToTyphoonLevel5_v2()
     {
         ResumeMusic();
-        SceneManager.LoadScene("Typhoon_Level5");
+        SceneManager.LoadScene("Typhoon_Level5_v2");
     }
 
     public void GoToTyphoonLevel6()
@@ -80,6 +80,13 @@ public class SceneController : MonoBehaviour
         ResumeMusic();
         SceneManager.LoadScene("Typhoon_Level7");
     }
+
+    public void GoToLevel7_Part2()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Level7_Part2");
+    }
+
 
     public void GoToTyphoonLevel8()
     {

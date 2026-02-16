@@ -1,59 +1,129 @@
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement; 
 
 public class Level7Manager : MonoBehaviour
 {
-    public GameObject mosquitoPrefab; // Slot para sa Lamok
-    public GameObject bucketPrefab;   // BAGONG SLOT: Slot para sa Timba
+    public static Level7Manager instance; 
+
+    [Header("Phase 1 Settings (No Timer)")]
+    public int targetKills = 20;    
+    public int maxHealth = 5;       
+
+    [HideInInspector] public bool isGameActive = true; 
+    private int currentKills = 0;
+    private int currentHealth;
+
+    [Header("Jobert's Visuals")]
+    public SpriteRenderer jobertRenderer; 
+    public Sprite[] jobertPantalSprites; 
+    public Sprite jobertHappySprite; 
+
+    [Header("UI Panels")]
+    // Inalis na natin ang Win Panel dito dahil Scene transition ang kapalit
+    public GameObject losePanel; 
+    public GameObject pausePanel;
     
-    public float spawnTime = 1.0f;
-    public int playerHealth = 5;
-    public bool isGameOver = false;
+    [Header("In-Game UI")]
+    public TMP_Text scoreTextUI; 
+
+    void Awake()
+    {
+        instance = this; 
+        Time.timeScale = 1;
+    }
 
     void Start()
     {
-        InvokeRepeating("SpawnEnemy", 0f, spawnTime);
+        currentHealth = maxHealth;
+        UpdateScoreDisplay();
+        isGameActive = true;
+
+        if (jobertPantalSprites.Length > 0) jobertRenderer.sprite = jobertPantalSprites[0];
+
+        if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
     }
 
-    void SpawnEnemy()
+    // --- GAMEPLAY LOGIC ---
+
+    public void AddScore()
     {
-        if (isGameOver) return;
+        if (!isGameActive) return; 
 
-        // Gumawa ng random position
-        float randomX = Random.Range(-8f, 8f);
-        float randomY = Random.Range(-4f, 4f);
-        Vector2 spawnPos = new Vector2(randomX, randomY);
+        currentKills++;
+        UpdateScoreDisplay();
 
-        // BAGONG LOGIC: Coin Toss (Random 0 or 1)
-        // Kung 0 = Lamok, Kung 1 = Timba
-        int randomPick = Random.Range(0, 2); 
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
 
-        if (randomPick == 0)
+        if (currentKills >= targetKills)
         {
-            Instantiate(mosquitoPrefab, spawnPos, Quaternion.identity);
-        }
-        else
-        {
-            Instantiate(bucketPrefab, spawnPos, Quaternion.identity);
+            isGameActive = false; 
+
+            // Palitan si Jobert ng Happy Sprite
+            if (jobertHappySprite != null) jobertRenderer.sprite = jobertHappySprite;
+
+            // Imbes na Win Panel, tatawagin natin ang Next Scene pagkalipas ng 1.5 seconds
+            Invoke("LoadPhase2", 1.5f);
         }
     }
 
     public void TakeDamage()
     {
-        if (isGameOver) return;
+        if (!isGameActive) return;
 
-        playerHealth = playerHealth - 1;
-        Debug.Log("ARAY! Health: " + playerHealth);
+        currentHealth--; 
+        int damageTaken = maxHealth - currentHealth; 
 
-        if (playerHealth <= 0)
+        if (damageTaken < jobertPantalSprites.Length)
         {
-            GameOver();
+            jobertRenderer.sprite = jobertPantalSprites[damageTaken];
+        }
+
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
+
+        // GAME OVER: Naubos ang buhay ni Jobert
+        if (currentHealth <= 0)
+        {
+            isGameActive = false;
+            if (losePanel != null) losePanel.SetActive(true);
+            if (AudioManager.instance != null) 
+            {
+                AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
+                AudioManager.instance.PauseBGM();
+            }
         }
     }
 
-    void GameOver()
+    void UpdateScoreDisplay() { if(scoreTextUI != null) scoreTextUI.text = currentKills + " / " + targetKills; }
+
+    // --- SCENE TRANSITION ---
+    void LoadPhase2()
     {
-        isGameOver = true;
-        Debug.Log("GAME OVER! Na-Dengue ka na!");
-        CancelInvoke("SpawnEnemy");
+        // Ito ang pangalan ng susunod na Scene na gagawin natin
+        SceneManager.LoadScene("Level7_Part2"); 
+    }
+
+    // --- BUTTON CONTROLS ---
+    public void RetryLevel()
+    {
+        Time.timeScale = 1; 
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public void PauseGame()
+    {
+        if (pausePanel != null) pausePanel.SetActive(true); 
+        Time.timeScale = 0; 
+        if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
+    }
+    public void ResumeGame()
+    {
+        if (pausePanel != null) pausePanel.SetActive(false); 
+        Time.timeScale = 1; 
+        if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
+    }
+    public void QuitToLevelSelect()
+    {
+        Time.timeScale = 1; 
+        SceneManager.LoadScene("TyphoonLevelSelect");
     }
 }

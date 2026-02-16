@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8117114691377662442}
   - component: {fileID: 1390209007774513876}
   - component: {fileID: 5318719671929915222}
-  - component: {fileID: -4900633267587927272}
+  - component: {fileID: -749723968632416513}
   m_Layer: 0
   m_Name: Mosquito
   m_TagString: Untagged
@@ -128,7 +128,7 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &-4900633267587927272
+--- !u!114 &-749723968632416513
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,7 +137,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6530143656950177425}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a04edae01316701438dd8eb03eb7d4b2, type: 3}
+  m_Script: {fileID: 11500000, guid: f18fc73cdcbcba846a4745ab6bfc5144, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MosquitoBehavior
-  lifeTime: 3
+  m_EditorClassIdentifier: Assembly-CSharp::FlyingMosquito
+  speed: 3
+  minX: -7
+  maxX: 7
+  minY: -4
+  maxY: 4
