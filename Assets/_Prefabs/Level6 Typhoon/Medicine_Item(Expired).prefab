@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9065182415878795262}
   m_Layer: 5
   m_Name: Medicine_Item(Expired)
-  m_TagString: Medical
+  m_TagString: Reject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -91,6 +91,6 @@ MonoBehaviour:
   itemName: Medicine
   weight: 20 g
   expirationDate: 11/ 16/ 2025
-  correctBoxTag: Medical
-  moveSpeed: 100
+  correctBoxTag: Reject
+  moveSpeed: 50
   despawnX: -100
