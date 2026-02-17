@@ -16,17 +16,12 @@ public class ScenarioLoader : MonoBehaviour
 
     public void LoadFloodScenario()
     {
-        int floodSeen = PlayerPrefs.GetInt("FloodIntroSeen", 0);
+        //change 0-1 here to not flash the dialogue
+        int floodSeen = PlayerPrefs.GetInt("FloodIntroSeen", 1);
 
         if (floodSeen == 0)
         {
-            PlayerPrefs.SetInt("FloodIntroSeen", 1);
-            PlayerPrefs.SetInt("JobertTriviaSeen", 0);
-            PlayerPrefs.Save();
-        }
-        else
-        {
-            PlayerPrefs.SetInt("JobertTriviaSeen", 1);
+            PlayerPrefs.SetInt("FloodIntroSeen", 0);
             PlayerPrefs.Save();
         }
 
