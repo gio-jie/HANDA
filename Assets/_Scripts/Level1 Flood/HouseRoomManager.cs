@@ -24,6 +24,7 @@ public class HouseRoomManager : MonoBehaviour
     public GameObject bathroomBG;
     public GameObject studyRoomBG;
     public GameObject livingRoomBG;
+    public GameObject BedroomBG;
 
     [Header("Fade")]
     public CanvasGroup fadeCanvas;
@@ -96,6 +97,7 @@ public class HouseRoomManager : MonoBehaviour
 
             case HouseRoom.Bedroom:
                 bedroom.SetActive(true);
+                BedroomBG.SetActive(true);
                 break;
 
             case HouseRoom.Bathroom:
@@ -140,6 +142,7 @@ public class HouseRoomManager : MonoBehaviour
         bathroomBG.SetActive(false);
         studyRoomBG.SetActive(false);
         livingRoomBG.SetActive(false);
+        BedroomBG.SetActive(false);
     }
 
     void HideAllRooms()
