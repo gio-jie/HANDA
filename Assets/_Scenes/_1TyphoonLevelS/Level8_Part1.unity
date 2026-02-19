@@ -1033,6 +1033,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RationDragItem
   itemType: Biscuit
+  startPos: {x: 0, y: 0, z: 0}
+  startParent: {fileID: 0}
+  isLocked: 0
 --- !u!114 &651237459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1384,6 +1387,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RationDragItem
   itemType: Sanitizer
+  startPos: {x: 0, y: 0, z: 0}
+  startParent: {fileID: 0}
+  isLocked: 0
 --- !u!114 &1045262028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1719,6 +1725,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RationDragItem
   itemType: Soap
+  startPos: {x: 0, y: 0, z: 0}
+  startParent: {fileID: 0}
+  isLocked: 0
 --- !u!114 &1181963455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2110,6 +2119,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RationDragItem
   itemType: Towel
+  startPos: {x: 0, y: 0, z: 0}
+  startParent: {fileID: 0}
+  isLocked: 0
 --- !u!114 &1346294318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2663,7 +2675,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1696991399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3192,6 +3204,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RationDragItem
   itemType: Water
+  startPos: {x: 0, y: 0, z: 0}
+  startParent: {fileID: 0}
+  isLocked: 0
 --- !u!114 &1941897576
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -3,11 +3,16 @@ using UnityEngine.EventSystems;
 
 public class RationDragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    public string itemType; // I-type sa Inspector kung "Food" o "Water"
-    
-    private Vector3 startPos;
-    private Transform startParent;
+    public string itemType; 
+    public static RationDragItem currentlyDraggedItem;
+
+    // Ginawa nating Public para ma-access ng pasyente
+    public Vector3 startPos; 
+    public Transform startParent; 
     private CanvasGroup canvasGroup;
+    
+    // BAGONG DAGDAG: Para pwedeng i-lock sa ere o sa pasyente
+    public bool isLocked = false; 
 
     void Start() 
     { 
@@ -17,26 +22,38 @@ public class RationDragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
     public void OnBeginDrag(PointerEventData eventData) 
     {
+        if (isLocked) return; // Wag pagalawin kung naka-lock na
+
+        currentlyDraggedItem = this;
         startPos = transform.position;
         startParent = transform.parent;
         
-        // Ilabas sa panel para tagos sa buong screen pag dinrag
         transform.SetParent(transform.root); 
-        transform.SetAsLastSibling(); // Ilagay sa pinaka-ibabaw
+        transform.SetAsLastSibling(); 
         canvasGroup.blocksRaycasts = false;
     }
 
     public void OnDrag(PointerEventData eventData) 
     {
-        transform.position = Input.mousePosition; // Sumunod sa mouse/daliri
+        if (isLocked) return;
+        transform.position = Input.mousePosition; 
     }
 
     public void OnEndDrag(PointerEventData eventData) 
     {
+        if (isLocked) return; // Wag pabalikin sa lamesa kung naka-lock!
+        
+        currentlyDraggedItem = null;
         canvasGroup.blocksRaycasts = true;
         
-        // Ibalik sa lamesa (Inventory) kahit saan mo pa mabitawan
+        ReturnToTable();
+    }
+
+    // BAGONG DAGDAG: Command para pabalikin sa lamesa manually
+    public void ReturnToTable()
+    {
         transform.SetParent(startParent);
         transform.position = startPos; 
+        canvasGroup.blocksRaycasts = true;
     }
 }
