@@ -50,6 +50,9 @@ public class StarManager : MonoBehaviour
         remainingTime = levelDuration;
         timePerStar = levelDuration / 3f;
 
+        InventoryManager.Instance.ClearRuntimeInventory();
+        InventoryUI.Instance.RefreshUI(InventoryManager.Instance.runtimeItems);
+
         UpdateStars(3);
         UpdateSliderImmediate();
         UpdateTimerText();
@@ -257,6 +260,7 @@ public class StarManager : MonoBehaviour
                 winPanelBestTimeText.text = $"Best Record: {bestMin:0}:{bestSec:00}";
 
             //StageProgressManager.Instance.UpdateProgress();
+            InventoryManager.Instance.SaveInventorySet();
             SaveStars();
         }
     }

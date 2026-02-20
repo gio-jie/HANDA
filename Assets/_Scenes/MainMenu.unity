@@ -2860,6 +2860,78 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15a8c914e4a01014ba7f5345af46e001, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonSound
+--- !u!1 &1110329242
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1110329243}
+  - component: {fileID: 1110329244}
+  m_Layer: 0
+  m_Name: ItemDatabase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1110329243
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1110329242}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -164.34949, y: -31.300598, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1583427550}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1110329244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1110329242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd316066d675a624aa278a137c5d74ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDatabase
+  items:
+  - {fileID: 11400000, guid: 62353411d7594a64cb3c97aac8a4bc19, type: 2}
+  - {fileID: 11400000, guid: 0881ebb9a79aaa949a8dd8dc3028f1bf, type: 2}
+  - {fileID: 11400000, guid: aa3242d0ee9d2e346825959689009291, type: 2}
+  - {fileID: 11400000, guid: 953085585b3c9934cb45614cf3253cc5, type: 2}
+  - {fileID: 11400000, guid: a321e6a78ea5ab14dbadcd9d266eba4f, type: 2}
+  - {fileID: 11400000, guid: efddc4ce28f1f9f47913ca666ba1a265, type: 2}
+  - {fileID: 11400000, guid: 5f708adee39151a4eba21f555149cc80, type: 2}
+  - {fileID: 11400000, guid: df1b32bf25cc5df49885ac19d8916ab3, type: 2}
+  - {fileID: 11400000, guid: 2cf8eadf0920346478cbce333c103f3c, type: 2}
+  - {fileID: 11400000, guid: 850a4e62e7c102c458d94e5c5b7a5d27, type: 2}
+  - {fileID: 11400000, guid: 46927fb55d8840b42929f043ebbe5282, type: 2}
+  - {fileID: 11400000, guid: 994b5105ff22a6e4cbdb1a876ef8ed14, type: 2}
+  - {fileID: 11400000, guid: f8a0ed56c40231b4aad4a1fc62a7f236, type: 2}
+  - {fileID: 11400000, guid: dc12233e5a86cee4aaf60f6387098130, type: 2}
+  - {fileID: 11400000, guid: d3183365b3b8a514b92427690a2f7d0d, type: 2}
+  - {fileID: 11400000, guid: 818d93b069a3a3c4fa15693efec737fd, type: 2}
+  - {fileID: 11400000, guid: 8e11ee9af6b5c0a40895af5d8e368dfa, type: 2}
+  - {fileID: 11400000, guid: 8c136fde5796f1e4e94eea1022f2f0fa, type: 2}
+  - {fileID: 11400000, guid: 999c778817d7b7d458ee5bedcdf46419, type: 2}
+  - {fileID: 11400000, guid: 974b3fd05291cff42b21649a8e1c7479, type: 2}
+  - {fileID: 11400000, guid: 0b95a6a3fbb601048ad4ded1c4a81874, type: 2}
+  - {fileID: 11400000, guid: c603267394b27644690d25f3df0ebe86, type: 2}
+  - {fileID: 11400000, guid: aaa784770912ff44aa3e65c5805a32c2, type: 2}
+  - {fileID: 11400000, guid: 5d254742066eac14092f74c93b97b8f9, type: 2}
+  - {fileID: 11400000, guid: 38eb5aa51343e404a8b163f5a45bb9bb, type: 2}
+  - {fileID: 11400000, guid: acda5abc9ba20a7468d780d12fb7dc65, type: 2}
+  - {fileID: 11400000, guid: f28cc17e8bcd0b04fb27dda34ba9c046, type: 2}
 --- !u!1 &1115535489
 GameObject:
   m_ObjectHideFlags: 0
@@ -3986,6 +4058,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15a8c914e4a01014ba7f5345af46e001, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonSound
+--- !u!1 &1583427549
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1583427550}
+  m_Layer: 0
+  m_Name: FloodManagers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1583427550
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583427549}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1258.5199, y: 643.4312, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1110329243}
+  - {fileID: 2019081061}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1611137629
 GameObject:
   m_ObjectHideFlags: 0
@@ -4669,6 +4774,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1977383018}
   m_CullTransparentMesh: 1
+--- !u!1 &2019081060
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2019081061}
+  - component: {fileID: 2019081062}
+  m_Layer: 0
+  m_Name: InventoryManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2019081061
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019081060}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -164.34949, y: -31.300598, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1583427550}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2019081062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019081060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b261384a418c16418af9309653837b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
+  runtimeItems: []
+  savedItems: []
 --- !u!1 &2094851266
 GameObject:
   m_ObjectHideFlags: 0
@@ -4934,3 +5085,4 @@ SceneRoots:
   - {fileID: 2117415048}
   - {fileID: 1233109822}
   - {fileID: 419812644}
+  - {fileID: 1583427550}

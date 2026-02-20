@@ -51,6 +51,8 @@ public class StarManagerLevel4 : MonoBehaviour
         UpdateSliderImmediate();
         UpdateTimerText();
 
+        InventoryUI.Instance.RefreshUI(InventoryManager.Instance.GetSavedInventory());
+        
         if (losePanel) losePanel.SetActive(false);
         if (completionPanel) completionPanel.SetActive(false);
         if (winPanel) winPanel.SetActive(false);

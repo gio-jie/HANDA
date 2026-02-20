@@ -55,7 +55,7 @@ public class ObjectiveItem : MonoBehaviour
         StarManager.Instance.RegisterCorrectItem();
 
         ObjectiveManager.Instance.CollectItem(itemID);
-        InventoryManager.Instance.AddItem(itemID);
+        InventoryManager.Instance.CollectItem(itemID);
 
         Destroy(gameObject);
     }
@@ -161,7 +161,7 @@ public class ObjectiveItem : MonoBehaviour
 
         Destroy(tempUI);
         ObjectiveManager.Instance.CollectItem(itemID);
-        InventoryManager.Instance.AddItem(itemID);
+        InventoryManager.Instance.CollectItem(itemID);
 
         isAnimating = false;
         Destroy(gameObject);

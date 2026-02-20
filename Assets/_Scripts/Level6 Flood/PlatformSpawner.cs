@@ -59,8 +59,6 @@ public class PlatformSpawnerLevel6 : MonoBehaviour
 
         if (highJump)
         {
-            dynamicSpacing = 0.05f;
-            dynamicOffset += 0.05f;
             extraLayers = 3;
         }
 
@@ -93,9 +91,7 @@ public class PlatformSpawnerLevel6 : MonoBehaviour
 
             activePlatforms.Add(platform);
 
-            float adjustedChance = highJump ? cookieSpawnChance * 0.005f : cookieSpawnChance;
-
-            if (Random.value < adjustedChance)
+            if (Random.value < cookieSpawnChance)
             {
                 Vector3 cookiePos = spawnPos + Vector3.up * 1.5f;
                 GameObject cookie = Instantiate(cookiePrefab, cookiePos, Quaternion.identity);

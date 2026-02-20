@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -12,11 +13,13 @@ public class InventoryUI : MonoBehaviour
     {
         Instance = this;
         inventoryPanel.SetActive(false);
+        RefreshUI(InventoryManager.Instance.GetSavedInventory());
 
-        foreach (ItemData item in InventoryManager.Instance.collectedItems)
-        {
-            AddItemToUI(item);
-        }
+        // foreach (ItemData item in InventoryManager.Instance.collectedItems)
+        // {
+        //     AddItemToUI(item);
+        // }
+
     }
 
     public void ToggleInventory()
@@ -36,5 +39,20 @@ public class InventoryUI : MonoBehaviour
     {
         GameObject slot = Instantiate(itemSlotPrefab, content);
         slot.GetComponent<ItemSlot>().Setup(item);
+    }
+
+    public void ClearUI()
+    {
+        foreach (Transform child in content)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    public void RefreshUI(List<ItemData> items)
+    {
+        ClearUI();
+        foreach (ItemData item in items)
+            AddItemToUI(item);
     }
 }

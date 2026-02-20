@@ -77,6 +77,8 @@ public class StarManagerLevel6 : MonoBehaviour
         UpdateStars(currentStars);
         UpdateTimerText();
 
+        InventoryUI.Instance.RefreshUI(InventoryManager.Instance.GetSavedInventory());
+
         losePanel?.SetActive(false);
         winPanel?.SetActive(false);
         powerUpPanel?.SetActive(false);

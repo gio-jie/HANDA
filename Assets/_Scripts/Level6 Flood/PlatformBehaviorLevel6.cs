@@ -9,6 +9,8 @@ public class PlatformBehaviorLevel6 : MonoBehaviour
     public float moveSpeed;      // moving platform
     public float fallSpeed = 5f;      // falling after collision
     public float moveDirection;  // left/right
+    private float startX;
+    public float moveRange = 2f;
 
     private bool playerLanded = false;
     Rigidbody2D rb;
@@ -16,22 +18,23 @@ public class PlatformBehaviorLevel6 : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        startX = transform.position.x;
     }
 
     void Update()
     {
         if (platformType == PlatformType.Moving)
         {
-            transform.position += Vector3.right * moveSpeed * moveDirection * Time.deltaTime;
+            float leftBound = startX - moveRange;
+            float rightBound = startX + moveRange;
 
-            float camHalfWidth = Camera.main.orthographicSize * Camera.main.aspect;
-            float leftBound = Camera.main.transform.position.x - camHalfWidth;
-            float rightBound = Camera.main.transform.position.x + camHalfWidth;
+            float newX = transform.position.x + moveSpeed * moveDirection * Time.deltaTime;
+            newX = Mathf.Clamp(newX, leftBound, rightBound);
 
-            if (transform.position.x < leftBound || transform.position.x > rightBound)
-            {
+            if (newX <= leftBound || newX >= rightBound)
                 moveDirection *= -1f;
-            }
+
+            transform.position = new Vector3(newX, transform.position.y, transform.position.z);
         }
 
         if (platformType == PlatformType.Falling && playerLanded)

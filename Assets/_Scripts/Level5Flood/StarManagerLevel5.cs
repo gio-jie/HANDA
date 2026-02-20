@@ -67,6 +67,8 @@ public class StarManagerLevel5 : MonoBehaviour
         UpdateStars(currentStars);
         UpdateTimerText();
 
+        InventoryUI.Instance.RefreshUI(InventoryManager.Instance.GetSavedInventory());
+
         if (meterSlider != null)
         {
             meterSlider.maxValue = goalMeters;
