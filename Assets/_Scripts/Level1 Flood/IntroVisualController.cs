@@ -33,6 +33,7 @@ public class IntroVisualController : MonoBehaviour
     [Header("Flood Water")]
     public Image floodWaterImage;
     public float waterRiseDuration = 0.6f;
+    private Vector2 waterStartPos;
 
     [Header("Dialogue Background")]
     public Image dialogueBackground;
@@ -64,11 +65,11 @@ public class IntroVisualController : MonoBehaviour
     {
         switch (index)
         {
-            case 5: return 0.647f;
-            case 6: return 0.721f;
-            case 7: return 0.839f;
-            case 8: return 1.00f;
-            default: return floodWaterImage.fillAmount;
+            case 5: return -598f;
+            case 6: return -493f;
+            case 7: return -375f;
+            case 8: return -185f;
+            default: return floodWaterImage.rectTransform.anchoredPosition.y;
         }
     }
 
@@ -105,6 +106,11 @@ public class IntroVisualController : MonoBehaviour
             RectTransform rt = npcImage.rectTransform;
             npcOriginalPos = rt.anchoredPosition;
             npcOriginalSize = rt.sizeDelta;
+        }
+
+        if (floodWaterImage != null)
+        {
+            waterStartPos = floodWaterImage.rectTransform.anchoredPosition;
         }
     }
 
@@ -349,19 +355,31 @@ public class IntroVisualController : MonoBehaviour
         StartCoroutine(RaiseWater(targetFill));
     }
 
-    IEnumerator RaiseWater(float target)
+    IEnumerator RaiseWater(float targetY)
     {
-        float start = floodWaterImage.fillAmount;
+        RectTransform waterRT = floodWaterImage.rectTransform;
+
+        float startY = waterRT.anchoredPosition.y;
         float t = 0f;
 
         while (t < waterRiseDuration)
         {
             t += Time.deltaTime;
-            floodWaterImage.fillAmount = Mathf.Lerp(start, target, t / waterRiseDuration);
+
+            float newY = Mathf.Lerp(startY, targetY, t / waterRiseDuration);
+
+            waterRT.anchoredPosition = new Vector2(
+                waterRT.anchoredPosition.x,
+                newY
+            );
+
             yield return null;
         }
 
-        floodWaterImage.fillAmount = target;
+        waterRT.anchoredPosition = new Vector2(
+            waterRT.anchoredPosition.x,
+            targetY
+        );
     }
 
     void ShowExclamation()
@@ -395,18 +413,25 @@ public class IntroVisualController : MonoBehaviour
     {
         float duration = 0.5f;
 
-        float startFill = floodWaterImage.fillAmount;
         float startMeterAlpha = meterCanvas.alpha;
         float startExclaimAlpha = exclamationCanvas.alpha;
 
         float t = 0f;
+
+        float startY = floodWaterImage.rectTransform.anchoredPosition.y;
 
         while (t < duration)
         {
             t += Time.deltaTime;
             float lerp = t / duration;
 
-            floodWaterImage.fillAmount = Mathf.Lerp(startFill, 0f, lerp);
+            float newY = Mathf.Lerp(startY, waterStartPos.y, lerp);
+
+            floodWaterImage.rectTransform.anchoredPosition =
+                new Vector2(
+                    floodWaterImage.rectTransform.anchoredPosition.x,
+                    newY
+                );
 
             meterCanvas.alpha = Mathf.Lerp(startMeterAlpha, 0f, lerp);
             exclamationCanvas.alpha = Mathf.Lerp(startExclaimAlpha, 0f, lerp);
@@ -414,7 +439,6 @@ public class IntroVisualController : MonoBehaviour
             yield return null;
         }
 
-        floodWaterImage.fillAmount = 0f;
         meterCanvas.alpha = 0f;
         exclamationCanvas.alpha = 0f;
 
@@ -436,7 +460,7 @@ public class IntroVisualController : MonoBehaviour
         cagayanText.gameObject.SetActive(false);
         waterLevelMeter.gameObject.SetActive(false);
         typhoonImage.gameObject.SetActive(false);
-        floodWaterImage.fillAmount = 0f;
+        waterStartPos = floodWaterImage.rectTransform.anchoredPosition;
 
         mapCanvas.alpha = 0f;
         mapTextCanvas.alpha = 0f;

@@ -11,6 +11,7 @@ public class StarManagerLevel5 : MonoBehaviour
     public int levelIndex;
     public float levelDuration = 90f;
     public float goalMeters = 100f;
+    
     [Header("Star UI")]
     public Image[] stars;
     public Slider starSlider;
@@ -240,8 +241,29 @@ public class StarManagerLevel5 : MonoBehaviour
             AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
         }
 
-        if (losePanel)
+        if (losePanel != null)
+        {
+            int remainingSeconds = Mathf.CeilToInt(remainingTime);
+            int minutes = remainingSeconds / 60;
+            int seconds = remainingSeconds % 60;
+
+            int bestSeconds = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+            int bestMin = bestSeconds / 60;
+            int bestSec = bestSeconds % 60;
+
+            if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
+            if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
             losePanel.SetActive(true);
+
+            if (losePanelTimeLeftText != null)
+                losePanelTimeLeftText.text = $"Time Left: {minutes:0}:{seconds:00}";
+
+            if (losePanelBestTimeText != null)
+                losePanelBestTimeText.text = $"Best Record: {bestMin:0}:{bestSec:00}";
+        }
+
+        // if (losePanel)
+        //     losePanel.SetActive(true);
     }
 
     #endregion

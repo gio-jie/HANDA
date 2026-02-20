@@ -6821,6 +6821,7 @@ GameObject:
   - component: {fileID: 2101439449}
   - component: {fileID: 2101439451}
   - component: {fileID: 2101439450}
+  - component: {fileID: 2101439452}
   m_Layer: 5
   m_Name: WaterScreen
   m_TagString: Untagged
@@ -6867,7 +6868,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7347807141318761694, guid: bbe2444931f4f9a46b129a84450a5f7f, type: 3}
+  m_Sprite: {fileID: 8353382733223480381, guid: 667c422d53850334f80a30709ef5fced, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6885,6 +6886,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2101439448}
   m_CullTransparentMesh: 1
+--- !u!95 &2101439452
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101439448}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7cd8f6989de64d447855d6426cffe4b4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2125489618
 GameObject:
   m_ObjectHideFlags: 0

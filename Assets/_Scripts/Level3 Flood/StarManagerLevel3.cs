@@ -222,8 +222,31 @@ public class StarManagerLevel3 : MonoBehaviour
     private void TriggerLose()
     {
         currentStars = 0;
+
+        if (losePanel != null)
+        {
+            int remainingSeconds = Mathf.CeilToInt(remainingTime);
+            int minutes = remainingSeconds / 60;
+            int seconds = remainingSeconds % 60;
+
+            int bestSeconds = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+            int bestMin = bestSeconds / 60;
+            int bestSec = bestSeconds % 60;
+
+            if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
+            if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
+            losePanel.SetActive(true);
+
+            if (losePanelTimeLeftText != null)
+                losePanelTimeLeftText.text = $"Time Left: {minutes:0}:{seconds:00}";
+
+            if (losePanelBestTimeText != null)
+                losePanelBestTimeText.text = $"Best Record: {bestMin:0}:{bestSec:00}";
+        }
+
         SaveStars();
-        if (losePanel) losePanel.SetActive(true);
+
+        // if (losePanel) losePanel.SetActive(true);
     }
 
     #endregion
