@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement; 
 
 public class Level8Part2Manager : MonoBehaviour
 {
@@ -20,23 +21,45 @@ public class Level8Part2Manager : MonoBehaviour
     public TMP_Text penaltyTextUI;
     public float fallSpeed = 50f;
     public float fadeDuration = 1f;
+    private Vector3 penaltyOriginalPos;
 
     [Header("Slide Transitions")]
-    public RectTransform[] patientUIs; // Ilalagay natin dito sina Patient 1, 2, at 3
-    public RectTransform[] tableUIs;   // Ilalagay natin dito ang mga Lamesa nila
-    public float slideDuration = 1f;   // Gaano kabilis mag-slide
+    public RectTransform[] patientUIs; 
+    public RectTransform[] tableUIs;   
+    public float slideDuration = 1f;   
     private int currentPatientIndex = 0;
+
+    [Header("Scene Transition (Fade In)")]
+    public Image fadeOverlay; // Ang itim na screen na liliwanag
     
-    // Distansya sa labas ng screen (2500 pixels)
     private float offScreenRight = 2500f; 
     private float offScreenLeft = -2500f;
 
-    private Vector3 penaltyOriginalPos;
+    [Header("Star System")]
+    public float goldStarThreshold = 60f;   // 3 Stars pag may natira pang 1 min (60s)
+    public float silverStarThreshold = 30f; // 2 Stars pag may natira pang 30s
+
+    [Header("UI Panels")]
+    public GameObject winPanel;
+    public GameObject losePanel; 
+    public GameObject pausePanel;
+    
+    [Header("Win Panel Elements")]
+    public Image star1; public Image star2; public Image star3;
+    public TMP_Text timeFinishedText; 
+    
+    [Header("Lose Panel Elements")]
+    public Image loseStar1; public Image loseStar2; public Image loseStar3;
+
+    public Color earnedColor = Color.yellow;
+    public Color missingColor = Color.gray;
+
     [HideInInspector] public bool isGameActive = true;
 
     void Awake() 
     { 
         instance = this; 
+        Time.timeScale = 1; 
     }
 
     void Start()
@@ -50,28 +73,37 @@ public class Level8Part2Manager : MonoBehaviour
         if(checkIcon) checkIcon.SetActive(false);
         if(xIcon) xIcon.SetActive(false);
 
-        // --- I-SETUP ANG MGA PASYENTE SA UMPISA ---
+        // I-setup ang mga pasyente
         for (int i = 0; i < patientUIs.Length; i++)
         {
             if (patientUIs[i] == null || tableUIs[i] == null) continue;
 
             if (i == 0)
             {
-                // Si Patient 1 at Table 1 ay nasa gitna (X = 0)
                 patientUIs[i].anchoredPosition = new Vector2(0, patientUIs[i].anchoredPosition.y);
                 tableUIs[i].anchoredPosition = new Vector2(0, tableUIs[i].anchoredPosition.y);
             }
             else
             {
-                // Ang ibang Pasyente ay itatago muna sa labas sa kanan
                 patientUIs[i].anchoredPosition = new Vector2(offScreenRight, patientUIs[i].anchoredPosition.y);
                 tableUIs[i].anchoredPosition = new Vector2(offScreenRight, tableUIs[i].anchoredPosition.y);
             }
         }
+
+        // --- BAGONG DAGDAG: SIMULAN ANG FADE IN ---
+        if (fadeOverlay != null)
+            {
+                fadeOverlay.gameObject.SetActive(true);
+                Color c = fadeOverlay.color;
+                c.a = 1f; // Solid Black sa simula
+                fadeOverlay.color = c;
+                StartCoroutine(FadeInRoutine());
+            }
     }
 
     void Update()
     {
+        // Inaayos yung bug na tumutunog pa rin kahit game over na
         if (isGameActive && timeLimit > 0)
         {
             timeLimit -= Time.deltaTime;
@@ -79,8 +111,7 @@ public class Level8Part2Manager : MonoBehaviour
             
             if (timeLimit <= 0) 
             {
-                Debug.Log("GAME OVER! Time's Up!");
-                isGameActive = false;
+                FinalizeGameOver(); 
             }
         }
     }
@@ -89,19 +120,34 @@ public class Level8Part2Manager : MonoBehaviour
     {
         if (timerTextUI != null)
         {
+            if (time < 0) time = 0;
             float sec = Mathf.Max(0, Mathf.FloorToInt(time));
             timerTextUI.text = string.Format("<mspace=0.6em>{0:00}</mspace>", sec);
             timerTextUI.color = (time <= 10) ? Color.red : Color.white;
         }
     }
 
-    public void CorrectStep() { StartCoroutine(ShowIcon(checkIcon)); }
+    // --- AUDIO ADDED HERE ---
+    public void CorrectStep() 
+    { 
+        StartCoroutine(ShowIcon(checkIcon)); 
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
+    }
     
+    // --- AUDIO & VIBRATION ADDED HERE ---
     public void WrongItem()
     {
+        if (!isGameActive) return;
+
         StartCoroutine(ShowIcon(xIcon));
+        
+        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
+        if (PlayerPrefs.GetInt("VibrationOn", 1) == 1) Handheld.Vibrate(); 
+
         timeLimit -= penaltyTime;
         if (penaltyTextUI != null) StartCoroutine(AnimatePenaltyText());
+
+        if (timeLimit <= 0) FinalizeGameOver();
     }
 
     IEnumerator ShowIcon(GameObject icon)
@@ -128,7 +174,6 @@ public class Level8Part2Manager : MonoBehaviour
         penaltyTextUI.gameObject.SetActive(false);
     }
 
-    // --- BAGONG DAGDAG: ANG SLIDE ANIMATION TRIGGER ---
     public void NextPatient()
     {
         if (currentPatientIndex < patientUIs.Length - 1)
@@ -140,7 +185,7 @@ public class Level8Part2Manager : MonoBehaviour
         {
             Debug.Log("LAHAT NG PASYENTE GAMOT NA! YOU WIN THE LEVEL!");
             isGameActive = false;
-            // Dito natin pwedeng i-trigger ang Win Panel next time!
+            Invoke("ShowWinScreen", 1.5f); 
         }
     }
 
@@ -155,18 +200,80 @@ public class Level8Part2Manager : MonoBehaviour
         while (time < slideDuration)
         {
             time += Time.deltaTime;
-            // Pampadulas ng animation (SmoothStep)
             float t = Mathf.SmoothStep(0f, 1f, time / slideDuration); 
 
-            // Ilabas pa-kaliwa ang current
             currentPatient.anchoredPosition = new Vector2(Mathf.Lerp(0, offScreenLeft, t), currentPatient.anchoredPosition.y);
             currentTable.anchoredPosition = new Vector2(Mathf.Lerp(0, offScreenLeft, t), currentTable.anchoredPosition.y);
 
-            // Ipasok mula kanan ang susunod
             nextPatient.anchoredPosition = new Vector2(Mathf.Lerp(offScreenRight, 0, t), nextPatient.anchoredPosition.y);
             nextTable.anchoredPosition = new Vector2(Mathf.Lerp(offScreenRight, 0, t), nextTable.anchoredPosition.y);
 
             yield return null;
         }
+    }
+
+    // ==========================================
+    // --- WIN, LOSE, AT PAUSE PANEL COMMANDS ---
+    // ==========================================
+
+    void FinalizeGameOver()
+    {
+        timeLimit = 0; 
+        isGameActive = false;
+        if(timerTextUI != null) timerTextUI.text = "00";
+        if(losePanel != null) losePanel.SetActive(true); 
+        
+        // --- LOSE AUDIO ADDED HERE ---
+        if (AudioManager.instance != null) { 
+            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound); 
+            AudioManager.instance.PauseBGM(); 
+        }
+    }
+
+    void ShowWinScreen()
+    {
+        if(winPanel != null) winPanel.SetActive(true);
+
+        // --- WIN AUDIO ADDED HERE ---
+        if (AudioManager.instance != null) { 
+            AudioManager.instance.PlaySFX(AudioManager.instance.winSound); 
+            AudioManager.instance.PauseBGM(); 
+        }
+
+        float scoreTime = timeLimit; 
+        
+        if(star1) star1.color = earnedColor;
+        if (scoreTime >= silverStarThreshold && star2) star2.color = earnedColor;
+        if (scoreTime >= goldStarThreshold && star3) star3.color = earnedColor;
+
+        float min = Mathf.FloorToInt(scoreTime / 60); 
+        float sec = Mathf.FloorToInt(scoreTime % 60);
+        if(timeFinishedText != null) timeFinishedText.text = string.Format("Time Left: {0:00}:{1:00}", min, sec);
+
+        PlayerPrefs.SetInt("Level9_Unlocked", 1);
+        PlayerPrefs.Save();
+    }
+
+    public void RetryLevel() { Time.timeScale = 1; SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void PauseGame() { if(pausePanel != null) pausePanel.SetActive(true); Time.timeScale = 0; }
+    public void ResumeGame() { if(pausePanel != null) pausePanel.SetActive(false); Time.timeScale = 1; }
+    public void QuitToLevelSelect() { Time.timeScale = 1; SceneManager.LoadScene("TyphoonLevelSelect"); }
+
+    // --- BAGONG DAGDAG: ANIMATION PALILIWANAGIN ANG SCREEN ---
+    IEnumerator FadeInRoutine()
+    {
+        float timer = 0f;
+        Color c = fadeOverlay.color;
+        float fadeTime = 1.5f; // 1.5 seconds bago lumiwanag ng buo
+
+        while (timer < fadeTime)
+        {
+            timer += Time.deltaTime;
+            c.a = Mathf.Lerp(1f, 0f, timer / fadeTime); // Mula 1 (Solid) papuntang 0 (Transparent)
+            fadeOverlay.color = c;
+            yield return null;
+        }
+
+        fadeOverlay.gameObject.SetActive(false); // Itago pagkatapos para hindi maka-block ng clicks
     }
 }
