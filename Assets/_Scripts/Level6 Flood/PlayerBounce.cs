@@ -22,6 +22,7 @@ public class PlayerBounce : MonoBehaviour
     private Rigidbody2D rb;
 
     public AudioClip jumpClip;
+    public AudioClip powerUpSfx;
     public AudioSource audioSource;
 
     void Awake()
@@ -93,7 +94,7 @@ public class PlayerBounce : MonoBehaviour
         switch (collision.gameObject.tag)
         {
             case "PowerUp":
-                AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
+                audioSource.PlayOneShot(powerUpSfx);
                 if (playerLanded)
                 {
                     ActivatePowerUp();

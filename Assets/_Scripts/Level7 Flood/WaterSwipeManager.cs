@@ -20,12 +20,14 @@ public class WaterSwipeLevelManager : MonoBehaviour
     private int totalItems;
     private int answeredCount = 0;
 
+    public WaterCardDatabase database;
+
     void Awake() { Instance = this; }
 
     void Start()
     {
         List<WaterCardData> shuffled =
-            WaterCardDatabase.Instance.allCards.OrderBy(x => Random.value).ToList();
+            database.allCards.OrderBy(x => Random.value).ToList();
 
         cardQueue = new Queue<WaterCardData>(shuffled);
         totalItems = shuffled.Count;

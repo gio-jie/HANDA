@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbab68fd8dd5b994f9ad228d34230b98, type: 3}
+  m_Name: Level8Database
+  m_EditorClassIdentifier: Assembly-CSharp::Level8Database
+  allScenarios:
+  - scenarioName: Evacuation room with lights off
+    scenarioImage: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+    correctItemID: Flashlight
+  - scenarioName: No electricity
+    scenarioImage: {fileID: 2113577052621506512, guid: 10bb43f6776dd4940b70c226ae08082f, type: 3}
+    correctItemID: Radio
+  - scenarioName: Empty water dispenser
+    scenarioImage: {fileID: 6047422901285707487, guid: 94a357f14be1c254dba0aabc57c48705, type: 3}
+    correctItemID: Water
+  - scenarioName: Injury
+    scenarioImage: {fileID: -6362021468548693658, guid: b1a4375c625b2894081d4b08614b9641, type: 3}
+    correctItemID: FirstAidKit
+  - scenarioName: Dirty Clothes
+    scenarioImage: {fileID: -5894477914018313871, guid: 584fe4bad4cb46347b7a1a31252ad4ab, type: 3}
+    correctItemID: Clothing
+  - scenarioName: Hunger
+    scenarioImage: {fileID: -5064873243018364556, guid: 4fab59ce5c1f60b4e95d58d9a7668471, type: 3}
+    correctItemID: CannedGoods
+  - scenarioName: Dirty teeth
+    scenarioImage: {fileID: 6699013155421899918, guid: f6e347f18c33ec04ab97800103680078, type: 3}
+    correctItemID: Toothbrush
+  - scenarioName: Rescuer passing by outside the house
+    scenarioImage: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+    correctItemID: Whistle
+  - scenarioName: Registration table for identity check
+    scenarioImage: {fileID: -2875471311189636055, guid: 05cd15a3137a3c04798512cb14029b35, type: 3}
+    correctItemID: Identifications
+  - scenarioName: Evacuation center sari-sari store
+    scenarioImage: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+    correctItemID: Wallet

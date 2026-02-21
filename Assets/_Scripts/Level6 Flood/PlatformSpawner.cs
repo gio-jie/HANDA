@@ -14,8 +14,8 @@ public class PlatformSpawnerLevel6 : MonoBehaviour
 
     [Header("Spawn Settings")]
     public bool spawningEnabled = false;
-    public float spawnOffsetYAboveCamera = 5f;
-    public float minVerticalSpacing = 2.5f;
+    public float spawnOffsetYAboveCamera = 1f;
+    public float minVerticalSpacing = 1f;
 
     private int lastLane = -1;
     private float lastSpawnY = float.MinValue;
