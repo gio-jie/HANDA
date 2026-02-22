@@ -9,28 +9,29 @@ public class Level9Part2Manager : MonoBehaviour
 
     [Header("Player Status")]
     public bool isWearingBoots = false;
-    public GameObject bootsOnPlayerImage;
+    public Image jobertImage; // Ang mismong UI Image ni Jobert sa Canvas
+    public Sprite jobertWithBootsSprite; // Ang bagong drawing niya na naka-bota na
 
-    [Header("Infection Meter (Leptospirosis/Dengue)")]
-    public float currentInfection = 0f;
+    [Header("Infection Meter (Parusa)")]
+    public float currentInfection = 0f;      
+    private float displayedInfection = 0f;   
     public float maxInfection = 100f;
     public Image infectionBarFill;
     public float infectionPenalty = 25f;
+    public float barFillSpeed = 30f;         
 
-    [Header("Game Settings & Timer")]
-    public float timeLimit = 60f; // 1 minute para maglinis
-    public int totalHazards = 3; // Putik, Tubig, Disinfect(Floor)
+    [Header("Game Timer (Countdown Lang)")]
+    public float timeLimit = 60f; 
+    public int totalHazards = 3; 
     [HideInInspector] public int clearedHazards = 0;
 
     [Header("UI Feedback")]
     public TMP_Text statusText;
     public TMP_Text timerTextUI;
-    public GameObject checkIcon;
-    public GameObject xIcon;
 
     [Header("Star System")]
-    public float goldStarThreshold = 30f;
-    public float silverStarThreshold = 15f;
+    public float goldStarThreshold = 30f; 
+    public float silverStarThreshold = 15f; 
 
     [Header("UI Panels")]
     public GameObject winPanel;
@@ -48,14 +49,14 @@ public class Level9Part2Manager : MonoBehaviour
     {
         instance = this;
         Time.timeScale = 1;
-        if (bootsOnPlayerImage != null) bootsOnPlayerImage.SetActive(false);
+        // Tinanggal na natin dito yung bootsOnPlayerImage na nagpa-error!
     }
 
     void Update()
     {
         if (!isGameActive) return;
 
-        // Timer Logic
+        // --- PURE COUNTDOWN TIMER LOGIC ---
         if (timeLimit > 0)
         {
             timeLimit -= Time.deltaTime;
@@ -63,16 +64,25 @@ public class Level9Part2Manager : MonoBehaviour
             if (timeLimit <= 0) FinalizeGameOver("Naubusan ng oras!");
         }
 
-        // Infection Bar Logic
+        // --- INFECTION BAR ANIMATION LOGIC ---
+        if (displayedInfection < currentInfection)
+        {
+            displayedInfection = Mathf.MoveTowards(displayedInfection, currentInfection, barFillSpeed * Time.deltaTime);
+        }
+
         if (infectionBarFill != null)
         {
-            infectionBarFill.fillAmount = currentInfection / maxInfection;
-            if (currentInfection > 70f) infectionBarFill.color = Color.red;
-            else if (currentInfection > 40f) infectionBarFill.color = Color.yellow;
+            infectionBarFill.fillAmount = displayedInfection / maxInfection;
+            
+            if (displayedInfection > 70f) infectionBarFill.color = Color.red;
+            else if (displayedInfection > 40f) infectionBarFill.color = Color.yellow;
             else infectionBarFill.color = Color.green;
         }
 
-        if (currentInfection >= maxInfection) FinalizeGameOver("Na-infect ng sakit si Jobert!");
+        if (displayedInfection >= maxInfection) 
+        {
+            FinalizeGameOver("Na-infect ng sakit si Jobert!");
+        }
     }
 
     void UpdateTimerDisplay(float time)
@@ -88,41 +98,42 @@ public class Level9Part2Manager : MonoBehaviour
     public void WearBoots()
     {
         isWearingBoots = true;
-        if (bootsOnPlayerImage != null) bootsOnPlayerImage.SetActive(true);
+        
+        // --- DITO MAGPAPALIT NG DRAWING ---
+        if (jobertImage != null && jobertWithBootsSprite != null)
+        {
+            jobertImage.sprite = jobertWithBootsSprite;
+            jobertImage.SetNativeSize(); // I-a-adjust ang size base sa bagong drawing
+        }
+
         if (statusText != null) statusText.text = "Ligtas na! Pwede nang maglinis.";
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
     }
 
-    // --- TATAWAGIN PAG TAMA ANG LINIS ---
     public void HazardCleaned()
     {
         clearedHazards++;
-        if (checkIcon != null) { checkIcon.SetActive(true); Invoke("HideCheck", 1f); }
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
 
         if (clearedHazards >= totalHazards)
         {
             isGameActive = false;
-            statusText.text = "Ligtas at malinis na ang bahay!";
+            if (statusText != null) statusText.text = "Ligtas at malinis na ang bahay!";
             Invoke("ShowWinScreen", 1.5f);
         }
     }
 
-    // --- TATAWAGIN PAG MALI O DELIKADO ---
     public void AddInfection(string warningMessage)
     {
         if (!isGameActive) return;
 
-        currentInfection += infectionPenalty;
+        currentInfection += infectionPenalty; 
+        
         if (statusText != null) statusText.text = warningMessage;
         
-        if (xIcon != null) { xIcon.SetActive(true); Invoke("HideX", 1f); }
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
         if (PlayerPrefs.GetInt("VibrationOn", 1) == 1) Handheld.Vibrate();
     }
-
-    void HideCheck() { if(checkIcon) checkIcon.SetActive(false); }
-    void HideX() { if(xIcon) xIcon.SetActive(false); }
 
     void FinalizeGameOver(string reason)
     {
