@@ -220,6 +220,9 @@ public class Level8ScenarioManager : MonoBehaviour
         if (remainingScenarios.Count == 0) return;
 
         // Put current scenario back into the pool
+        PowerupManager.Instance.pendingPowerup = null;
+        PowerupManager.Instance.ClearHighlights();
+        
         remainingScenarios.Add(currentScenario);
 
         // Optional: reshuffle so it doesn't appear immediately again

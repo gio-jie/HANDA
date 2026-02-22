@@ -49,6 +49,13 @@ public class StarManagerLevel6 : MonoBehaviour
     [Header("Player Reference")]
     public Transform player;
 
+    [Header("Win Animation")]
+    public RectTransform flagIcon;
+    public float flagAnimDuration = 0.6f;
+    public float flagScaleMultiplier;
+
+    private bool isWinning = false;
+
     private float startY;
 
     private float remainingTime;
@@ -113,8 +120,44 @@ public class StarManagerLevel6 : MonoBehaviour
         meterSlider.value = heightTravelled;
         meterText.text = Mathf.FloorToInt(heightTravelled) + "m";
 
-        if (heightTravelled >= goalMeters)
-            TriggerWin();
+        if (heightTravelled >= goalMeters && !isWinning)
+            StartCoroutine(AnimateFlagAndWin());
+            //TriggerWin();
+    }
+
+    IEnumerator AnimateFlagAndWin()
+    {
+        isWinning = true;
+
+        Time.timeScale = 0f;
+
+        Vector2 startPos = flagIcon.anchoredPosition;
+        Vector3 startScale = flagIcon.localScale;
+
+        Vector2 centerPos = Vector2.zero;
+
+        float timer = 0f;
+
+        while (timer < flagAnimDuration)
+        {
+            timer += Time.unscaledDeltaTime;
+            float t = timer / flagAnimDuration;
+
+            t = 1f - Mathf.Pow(1f - t, 3f);
+
+            flagIcon.anchoredPosition = Vector2.Lerp(startPos, centerPos, t);
+
+            flagIcon.localScale = Vector3.Lerp(startScale, Vector3.one * 3f, t);
+
+            yield return null;
+        }
+
+        flagIcon.anchoredPosition = centerPos;
+        flagIcon.localScale = Vector3.one * 3f;
+
+        yield return new WaitForSecondsRealtime(0.2f);
+
+        TriggerWin();
     }
 
     void UpdateStarCalculation()

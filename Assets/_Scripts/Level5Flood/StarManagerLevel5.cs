@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class StarManagerLevel5 : MonoBehaviour
 {
@@ -40,6 +41,13 @@ public class StarManagerLevel5 : MonoBehaviour
     [Header("Travel Settings")]
     public float baseTravelTime;
     public int maxWaterHits = 3;
+
+    [Header("Win Animation")]
+    public RectTransform flagIcon;
+    public float flagAnimDuration = 0.6f;
+    public float flagScaleMultiplier;
+
+    private bool isWinning = false;
 
     private float remainingTime;
     private float timePerStar;
@@ -108,9 +116,46 @@ public class StarManagerLevel5 : MonoBehaviour
 
         if (meterText != null)
             meterText.text = Mathf.FloorToInt(progress * goalMeters) + "m";
+        
+        if (travelTimeAccumulated >= requiredTravelTime && !isWinning)
+        {
+            StartCoroutine(AnimateFlagAndWin());
+        }
+    }
 
-        if (travelTimeAccumulated >= requiredTravelTime)
-            TriggerWin();
+    IEnumerator AnimateFlagAndWin()
+    {
+        isWinning = true;
+
+        Time.timeScale = 0f;
+
+        Vector2 startPos = flagIcon.anchoredPosition;
+        Vector3 startScale = flagIcon.localScale;
+
+        Vector2 centerPos = Vector2.zero;
+
+        float timer = 0f;
+
+        while (timer < flagAnimDuration)
+        {
+            timer += Time.unscaledDeltaTime;
+            float t = timer / flagAnimDuration;
+
+            t = 1f - Mathf.Pow(1f - t, 3f);
+
+            flagIcon.anchoredPosition = Vector2.Lerp(startPos, centerPos, t);
+
+            flagIcon.localScale = Vector3.Lerp(startScale, Vector3.one * 3f, t);
+
+            yield return null;
+        }
+
+        flagIcon.anchoredPosition = centerPos;
+        flagIcon.localScale = Vector3.one * 3f;
+
+        yield return new WaitForSecondsRealtime(0.2f);
+
+        TriggerWin();
     }
 
     #endregion

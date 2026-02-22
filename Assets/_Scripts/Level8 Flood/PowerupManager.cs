@@ -24,31 +24,35 @@ public class PowerupManager : MonoBehaviour
     public AudioClip powerUpSfx;
     public AudioSource audioSource;
 
-    private bool isShowingPowerup = false;
-
     [Header("Optional Message Text")]
     public TMPro.TMP_Text extraMessageText;
 
     [Header("All available powerups")]
     public List<Powerup> powerups;
 
+    public Powerup pendingPowerup = null;
     private List<Level8DragItem> highlightedItems = new List<Level8DragItem>();
-    private Powerup pendingPowerup = null;
+    private bool isShowingPowerup = false;
 
     void Awake() => Instance = this;
 
+    /// <summary>
+    /// Call this after player answers correctly and chance decides a powerup.
+    /// </summary>
     public void QueueRandomPowerup()
     {
         if (powerups.Count == 0) return;
 
         pendingPowerup = powerups[Random.Range(0, powerups.Count)];
-        ShowPowerupPanel(pendingPowerup);
+        Debug.Log($"Powerup queued: {pendingPowerup.name}");
     }
 
+    /// <summary>
+    /// Call this when the **next card is spawned**.
+    /// </summary>
     public void ApplyPendingPowerup(string correctIDForNewCard)
     {
-        if (pendingPowerup == null)
-            return;
+        if (pendingPowerup == null) return;
 
         ClearHighlights();
 
@@ -67,7 +71,8 @@ public class PowerupManager : MonoBehaviour
                 break;
         }
 
-        pendingPowerup = null;
+        ShowPowerupPanel(pendingPowerup);
+        pendingPowerup = null; // Clear after applying
     }
 
     private void HighlightFiveIncludingCorrect(string correctID)
@@ -169,12 +174,9 @@ public class PowerupManager : MonoBehaviour
 
     private void ShowPowerupPanel(Powerup powerup)
     {
-        if (powerupPanel == null) return;
+        if (powerupPanel == null || isShowingPowerup) return;
 
-        Debug.Log("Powerup panel shown");
-        if (isShowingPowerup) return;
         isShowingPowerup = true;
-
         powerupPanel.SetActive(true);
         audioSource.PlayOneShot(powerUpSfx);
         powerupImage.sprite = powerup.icon;
