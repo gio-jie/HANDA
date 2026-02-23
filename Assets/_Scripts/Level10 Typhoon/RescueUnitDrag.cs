@@ -7,16 +7,17 @@ using System.Collections;
 public class RescueUnitDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("Unit Settings")]
-    public string unitType; // E.g., "Firetruck", "Ambulance"
-    public float cooldownTime = 5f; // Gaano katagal bago magamit ulit
+    public string unitType; 
+    public float cooldownTime = 5f; 
 
     [Header("UI & Visuals")]
-    public Image unitImage; // Ang mismong picture ng truck
-    public Image cooldownOverlay; // Isang gray na image na naka-patong
-    public TMP_Text cooldownText; // Timer text na lilitaw sa ibabaw ng gray overlay
+    public Image unitImage; 
+    public Image cooldownOverlay; 
+    public TMP_Text cooldownText; 
 
     private Vector3 startPos;
     private Transform startParent;
+    private int originalSiblingIndex; 
     private CanvasGroup canvasGroup;
     [HideInInspector] public bool isCoolingDown = false;
 
@@ -25,17 +26,17 @@ public class RescueUnitDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         canvasGroup = GetComponent<CanvasGroup>();
         if (!canvasGroup) canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
-        // Siguraduhing normal ang kulay sa simula
         if (cooldownOverlay) cooldownOverlay.gameObject.SetActive(false);
         if (cooldownText) cooldownText.text = "";
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (isCoolingDown) return; // Bawal i-drag pag naka-cooldown!
+        if (isCoolingDown) return; 
 
-        startPos = transform.position;
+        startPos = transform.position; // MEMORY: Tandaan ang eksaktong coordinates!
         startParent = transform.parent;
+        originalSiblingIndex = transform.GetSiblingIndex(); 
         
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
@@ -50,18 +51,23 @@ public class RescueUnitDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (isCoolingDown) return;
-        
-        canvasGroup.blocksRaycasts = true;
-        transform.SetParent(startParent);
-        transform.position = startPos;
+        if (!isCoolingDown) 
+        {
+            transform.SetParent(startParent);
+            transform.SetSiblingIndex(originalSiblingIndex); 
+            transform.position = startPos; // Ibalik sa eksaktong coordinates
+            canvasGroup.blocksRaycasts = true;
+        }
     }
 
-    // --- TATAWAGIN NG ZONE KAPAG TAMA ANG PAG-DROP ---
-    public void StartCooldown()
+    public void DeployToZone(Transform zoneTransform)
     {
         if (!isCoolingDown)
         {
+            // Ilipat lang ang parent sa Zone, pero WAG nang baguhin ang position.
+            // Hayaan siyang mag-stay kung saan eksaktong nai-drop ng player!
+            transform.SetParent(zoneTransform);
+            
             StartCoroutine(CooldownRoutine());
         }
     }
@@ -69,8 +75,7 @@ public class RescueUnitDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     IEnumerator CooldownRoutine()
     {
         isCoolingDown = true;
-        canvasGroup.blocksRaycasts = false; // Bawal muna i-click
-        unitImage.color = Color.gray; // Gawing gray ang truck
+        canvasGroup.blocksRaycasts = false; 
 
         if (cooldownOverlay) cooldownOverlay.gameObject.SetActive(true);
         if (cooldownText) cooldownText.gameObject.SetActive(true);
@@ -78,15 +83,18 @@ public class RescueUnitDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         float timer = cooldownTime;
         while (timer > 0)
         {
-            if (cooldownText) cooldownText.text = Mathf.CeilToInt(timer).ToString();
+            if (cooldownText) cooldownText.text = Mathf.CeilToInt(timer).ToString() + "s";
             timer -= Time.deltaTime;
             yield return null;
         }
 
-        // Tapos na ang cooldown, ibalik sa normal!
+        // --- TAPOS NA ANG COOLDOWN, UWI NA SA TOOLBELT! ---
         isCoolingDown = false;
         canvasGroup.blocksRaycasts = true;
-        unitImage.color = Color.white;
+        
+        transform.SetParent(startParent);
+        transform.SetSiblingIndex(originalSiblingIndex); 
+        transform.position = startPos; // ITO ANG FIX: Ibalik siya eksakto kung saan siya galing!
         
         if (cooldownOverlay) cooldownOverlay.gameObject.SetActive(false);
         if (cooldownText) cooldownText.text = "";

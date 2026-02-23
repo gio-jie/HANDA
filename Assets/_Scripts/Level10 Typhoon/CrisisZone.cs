@@ -1,29 +1,57 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 
 public class CrisisZone : MonoBehaviour, IDropHandler
 {
     [Header("Zone Visuals")]
-    public GameObject radioAndBubbleUI; // Ang buong group ng Radyo + Thought Bubble
-    public Image thoughtBubbleImage;    // Ang picture sa loob ng bubble (e.g., Sunog)
-    public Image deployedUnitImage;     // Ang lilitaw na truck na naka-park sa zone
-    
-    [Header("Zone State (Para sa Manager)")]
+    public GameObject radioAndBubbleUI; 
+    public Image thoughtBubbleImage;    
+    public TMP_Text emergencyTimerText; // BAGONG DAGDAG: Ang timer sa gilid ng radyo!
+    public GameObject checkmarkIcon; 
+    public GameObject xMarkIcon;     
+
+    [Header("Zone State")]
     public bool hasEmergency = false;
-    public string requiredUnit = "";    // E.g., "Firetruck"
-    public float currentEmergencyTimer = 0f; // Bibilis ang panic meter pag naubos ito!
+    public string requiredUnit = "";    
+    public float currentEmergencyTimer = 0f; 
 
     void Start()
     {
-        // Linisin ang zone sa simula
-        ClearZone();
+        if (checkmarkIcon) checkmarkIcon.SetActive(false);
+        if (xMarkIcon) xMarkIcon.SetActive(false);
+
+        if (hasEmergency) radioAndBubbleUI.SetActive(true);
+        else ClearZone();
+    }
+
+    void Update()
+    {
+        if (hasEmergency && CommandCenterManager.instance != null && CommandCenterManager.instance.isGameActive)
+        {
+            currentEmergencyTimer -= Time.deltaTime;
+            
+            // Ipakita ang oras sa ibabaw/gilid ng Radyo
+            if (emergencyTimerText)
+            {
+                emergencyTimerText.text = Mathf.CeilToInt(currentEmergencyTimer).ToString() + "s";
+                emergencyTimerText.color = (currentEmergencyTimer <= 5f) ? Color.red : Color.yellow;
+            }
+
+            if (currentEmergencyTimer <= 0)
+            {
+                CommandCenterManager.instance.AddPanic("Hindi na-rescue ang " + requiredUnit + "!");
+                StartCoroutine(ShowFeedback(xMarkIcon)); 
+                ClearZone(); 
+            }
+        }
     }
 
     public void OnDrop(PointerEventData eventData)
     {
-        if (!hasEmergency) return; // Wag pansinin kung walang emergency
+        if (!hasEmergency) return; 
 
         if (eventData.pointerDrag != null)
         {
@@ -39,26 +67,18 @@ public class CrisisZone : MonoBehaviour, IDropHandler
     {
         if (unit.unitType == requiredUnit)
         {
-            Debug.Log("TAMA! Dumating na ang " + unit.unitType);
-            
-            // 1. Simulan ang cooldown ng nasa inventory
-            unit.StartCooldown();
-
-            // 2. Itago ang Radio UI at Ipakita ang Truck sa Zone
             radioAndBubbleUI.SetActive(false);
-            deployedUnitImage.sprite = unit.unitImage.sprite; // Kopyahin ang picture ng truck
-            deployedUnitImage.gameObject.SetActive(true);
+            
+            // ILIPAT ANG SASAKYAN SA ZONE NA ITO!
+            unit.DeployToZone(this.transform);
 
-            // 3. Sabihin sa Manager na na-solve na ito!
-            // if (CommandCenterManager.instance != null) CommandCenterManager.instance.EmergencySolved();
-
-            // 4. Linisin ang zone pagkatapos ng parehong cooldown time ng truck
+            StartCoroutine(ShowFeedback(checkmarkIcon));
             StartCoroutine(ClearZoneAfterDeploy(unit.cooldownTime));
         }
         else
         {
-            Debug.Log("MALI ANG IPINADALA!");
-            // if (CommandCenterManager.instance != null) CommandCenterManager.instance.AddPanic("Maling team ang ipinadala!");
+            if (CommandCenterManager.instance != null) CommandCenterManager.instance.AddPanic("Maling team ang ipinadala!");
+            StartCoroutine(ShowFeedback(xMarkIcon));
         }
     }
 
@@ -66,7 +86,7 @@ public class CrisisZone : MonoBehaviour, IDropHandler
     {
         hasEmergency = false;
         yield return new WaitForSeconds(waitTime);
-        ClearZone(); // Tapos na ang rescue, bakante na ulit ang zone!
+        ClearZone(); 
     }
 
     public void TriggerEmergency(Sprite emergencySprite, string requiredRescueTeam, float timeLimit)
@@ -77,7 +97,6 @@ public class CrisisZone : MonoBehaviour, IDropHandler
 
         thoughtBubbleImage.sprite = emergencySprite;
         radioAndBubbleUI.SetActive(true);
-        deployedUnitImage.gameObject.SetActive(false);
     }
 
     public void ClearZone()
@@ -85,6 +104,10 @@ public class CrisisZone : MonoBehaviour, IDropHandler
         hasEmergency = false;
         requiredUnit = "";
         radioAndBubbleUI.SetActive(false);
-        deployedUnitImage.gameObject.SetActive(false);
+    }
+
+    IEnumerator ShowFeedback(GameObject icon)
+    {
+        if (icon) { icon.SetActive(true); yield return new WaitForSeconds(1f); icon.SetActive(false); }
     }
 }
