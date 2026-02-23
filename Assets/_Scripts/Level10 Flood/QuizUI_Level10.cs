@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class QuizUI_Level10 : MonoBehaviour
 {
@@ -32,11 +33,69 @@ public class QuizUI_Level10 : MonoBehaviour
 
     public void ChooseAnswer(int chosenIndex)
     {
-        // (You can add feedback here if you want)
+        bool isCorrect = chosenIndex == currentQuestion.correctAnswerIndex;
 
+        if (!isCorrect)
+        {
+            // Start flashing wrong button, then continue with collection
+            StartCoroutine(FlashThenCollect(chosenIndex));
+        }
+        else
+        {
+            // Correct answer → collect immediately
+            EndQuiz();
+        }
+    }
+
+    private IEnumerator FlashThenCollect(int chosenIndex)
+    {
+        Image buttonImg = (chosenIndex == 0) ? choiceAImage : choiceBImage;
+        if (buttonImg != null)
+        {
+            yield return StartCoroutine(FlashButtonRed(buttonImg));
+        }
+
+        // After flash, finalize
+        EndQuiz();
+    }
+
+    private void EndQuiz()
+    {
         quizPanel.SetActive(false);
-
-        // Always collect hazard after answering
         currentHazard.CollectHazard();
+    }
+
+    private IEnumerator FlashButtonRed(Image img, float singleFlashDuration = 0.25f, int flashCount = 2)
+    {
+        if (img == null) yield break;
+
+        Color original = img.color;
+        Color red = Color.red;
+
+        for (int i = 0; i < flashCount; i++)
+        {
+            float half = singleFlashDuration / 2f;
+            float t = 0f;
+
+            // Fade to red
+            while (t < half)
+            {
+                t += Time.deltaTime;
+                img.color = Color.Lerp(original, red, t / half);
+                yield return null;
+            }
+
+            t = 0f;
+            // Fade back to original
+            while (t < half)
+            {
+                t += Time.deltaTime;
+                img.color = Color.Lerp(red, original, t / half);
+                yield return null;
+            }
+        }
+
+        // Ensure final color is correct
+        img.color = original;
     }
 }
