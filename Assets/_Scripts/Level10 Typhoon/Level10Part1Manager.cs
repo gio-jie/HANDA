@@ -7,11 +7,11 @@ using UnityEngine.SceneManagement;
 [System.Serializable]
 public class RadioScenario
 {
-    public string scenarioName; // Para madali mong ma-identify sa Inspector
-    public Sprite thoughtImage; // Ang lilitaw sa thought bubble ni Jobert
-    public AudioClip audioClip; // Ang boses sa radyo
-    public float audioLength = 3f; // Gaano katagal bago mag-start ang 5-sec timer
-    public string correctItem;  // Ang kailangang i-drag (e.g., "Cellphone")
+    public string scenarioName; 
+    public Sprite thoughtImage; 
+    public AudioClip audioClip; 
+    public float audioLength = 3f; 
+    public string correctItem;  
 }
 
 public class Level10Part1Manager : MonoBehaviour
@@ -25,7 +25,7 @@ public class Level10Part1Manager : MonoBehaviour
     [Header("Health System")]
     public int hearts = 5;
     public Image[] heartIcons; 
-    public Sprite emptyHeartSprite; // --- BAGONG DAGDAG: Ang blank/outline na puso ---
+    public Sprite emptyHeartSprite; 
     public Image fallingHeartPrefab; 
     public float fallSpeed = 200f;
     public float fadeDuration = 1f;
@@ -47,7 +47,9 @@ public class Level10Part1Manager : MonoBehaviour
 
     [Header("Panels")]
     public GameObject losePanel;
-    public GameObject phase2TransitionPanel; // Papunta sa susunod na phase
+    public GameObject phase2TransitionPanel; 
+    // --- BAGONG DAGDAG: Pause Panel Slot ---
+    public GameObject pausePanel; 
 
     void Awake()
     {
@@ -60,10 +62,12 @@ public class Level10Part1Manager : MonoBehaviour
         if (checkMarkIcon) checkMarkIcon.SetActive(false);
         if (fallingHeartPrefab) fallingHeartPrefab.gameObject.SetActive(false);
         if (feedbackText) feedbackText.text = "";
+        
+        // Siguraduhing tago ang Pause Panel sa simula
+        if (pausePanel) pausePanel.SetActive(false);
 
         timerText.text = "LISTEN...";
         
-        // Simulan ang unang tanong
         StartCoroutine(PlayScenario(currentScenarioIndex));
     }
 
@@ -73,14 +77,11 @@ public class Level10Part1Manager : MonoBehaviour
         {
             currentAnswerTime -= Time.deltaTime;
             
-            // Gawing Whole Number (CeilToInt para yung 4.9 ay maging 5, 0.1 ay maging 1)
             int displaySecond = Mathf.CeilToInt(currentAnswerTime);
             
-            // I-update ang text (E.g., "5", "4", "3")
             timerText.text = displaySecond.ToString();
             timerText.color = (displaySecond <= 2) ? Color.red : Color.white;
 
-            // Tumunog ng "toot" kapag bumaba ang numero!
             if (displaySecond < lastTickSecond && displaySecond > 0)
             {
                 lastTickSecond = displaySecond;
@@ -90,12 +91,11 @@ public class Level10Part1Manager : MonoBehaviour
                 }
             }
 
-            // Kapag naubos na ang oras
             if (currentAnswerTime <= 0)
             {
                 isWaitingForAnswer = false;
                 timerText.text = "0";
-                WrongAnswer("TIME'S UP!"); // Automatic na itong magpi-play ng X sound at maglalagas ng puso!
+                WrongAnswer("TIME'S UP!"); 
             }
         }
     }
@@ -121,15 +121,14 @@ public class Level10Part1Manager : MonoBehaviour
 
         yield return new WaitForSeconds(current.audioLength);
 
-        // --- BINAGO NATIN ITO PARA SA TIMER SOUND ---
         currentAnswerTime = answerTimeLimit;
-        lastTickSecond = Mathf.CeilToInt(answerTimeLimit) + 1; // Para tumunog agad paglabas ng "5"
+        lastTickSecond = Mathf.CeilToInt(answerTimeLimit) + 1; 
         isWaitingForAnswer = true;
     }
 
     public void ReceiveItem(string itemDragged)
     {
-        if (!isWaitingForAnswer) return; // Wag pansinin kung hindi pa tapos magsalita
+        if (!isWaitingForAnswer) return; 
 
         isWaitingForAnswer = false;
         RadioScenario current = scenarios[currentScenarioIndex];
@@ -169,11 +168,10 @@ public class Level10Part1Manager : MonoBehaviour
         {
             if (currentScenarioIndex < scenarios.Length)
             {
-                Invoke("StartNextWithDelay", 2f); // Maghintay 2 seconds bago ang next question
+                Invoke("StartNextWithDelay", 2f); 
             }
             else
             {
-                // PASADO SA LAHAT NG 10 QUESTIONS!
                 Debug.Log("PHASE 1 CLEARED!");
                 feedbackText.text = "GOOD JOB! Phase 2 Ready!";
                 Invoke("GoToPhase2", 2f);
@@ -191,16 +189,13 @@ public class Level10Part1Manager : MonoBehaviour
         hearts--;
         if (hearts >= 0 && hearts < heartIcons.Length)
         {
-            // Kunin ang pwesto ng pusong mawawala bago palitan ang drawing
             Vector3 lostHeartPos = heartIcons[hearts].rectTransform.position;
             
-            // --- DITO NATIN BINAGO: Papalitan ng empty heart outline! ---
             if (emptyHeartSprite != null)
             {
                 heartIcons[hearts].sprite = emptyHeartSprite;
             }
 
-            // Simulan ang hulog animation (Yung falling heart prefab na solid red ang mahuhulog)
             StartCoroutine(AnimateFallingHeart(lostHeartPos));
         }
 
@@ -250,6 +245,33 @@ public class Level10Part1Manager : MonoBehaviour
     void GoToPhase2()
     {
         if (phase2TransitionPanel) phase2TransitionPanel.SetActive(true);
-        // SceneManager.LoadScene("Level10_Part2"); 
+        SceneManager.LoadScene("Level10_Part2"); 
+    }
+
+    // ==========================================
+    // --- BAGONG DAGDAG: PAUSE MENU FUNCTIONS ---
+    // ==========================================
+    public void PauseGame() 
+    { 
+        if(pausePanel) pausePanel.SetActive(true); 
+        Time.timeScale = 0; 
+    }
+
+    public void ResumeGame() 
+    { 
+        if(pausePanel) pausePanel.SetActive(false); 
+        Time.timeScale = 1; 
+    }
+
+    public void RetryLevel() 
+    { 
+        Time.timeScale = 1; 
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
+    }
+
+    public void QuitToLevelSelect() 
+    { 
+        Time.timeScale = 1; 
+        SceneManager.LoadScene("TyphoonLevelSelect"); 
     }
 }

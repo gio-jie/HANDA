@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement; // --- BAGONG DAGDAG: Kailangan para sa Retry at Menu ---
 
 [System.Serializable]
 public class EmergencyType
@@ -32,7 +33,9 @@ public class CommandCenterManager : MonoBehaviour
     public TMP_Text statusText;
     public GameObject losePanel;
     
-    // --- BAGONG DAGDAG: Ang tagapamahala ng Certificate! ---
+    // --- BAGONG DAGDAG: Pause Panel Slot ---
+    public GameObject pausePanel; 
+
     public CertificateUIManager certUIManager; 
 
     [Header("Zones & Emergencies")]
@@ -51,6 +54,7 @@ public class CommandCenterManager : MonoBehaviour
     void Start()
     {
         if (losePanel) losePanel.SetActive(false);
+        if (pausePanel) pausePanel.SetActive(false); // Siguraduhing tago sa simula
         spawnTimer = 2f; 
     }
 
@@ -85,7 +89,6 @@ public class CommandCenterManager : MonoBehaviour
 
     void UpdateTimerUI()
     {
-        // BAGONG DAGDAG: Mathf.Max para hindi bumaba sa 0 ang display time!
         float displayTime = Mathf.Max(0, totalGameTime); 
 
         int min = Mathf.FloorToInt(displayTime / 60);
@@ -144,7 +147,6 @@ public class CommandCenterManager : MonoBehaviour
         
         foreach (CrisisZone zone in allZones) zone.ClearZone();
         
-        // --- DITO LALABAS YUNG WIN PANEL AT MALIIT NA CERTIFICATE! ---
         if (certUIManager != null) 
         {
             certUIManager.ShowWinWithSmallCert();
@@ -159,5 +161,32 @@ public class CommandCenterManager : MonoBehaviour
         if (statusText) statusText.text = "GAME OVER: " + reason;
         if (losePanel) losePanel.SetActive(true);
         if (AudioManager.instance) { AudioManager.instance.PlaySFX(AudioManager.instance.loseSound); AudioManager.instance.PauseBGM(); }
+    }
+
+    // ==========================================
+    // --- BAGONG DAGDAG: PAUSE MENU FUNCTIONS ---
+    // ==========================================
+    public void PauseGame() 
+    { 
+        if(pausePanel) pausePanel.SetActive(true); 
+        Time.timeScale = 0; 
+    }
+
+    public void ResumeGame() 
+    { 
+        if(pausePanel) pausePanel.SetActive(false); 
+        Time.timeScale = 1; 
+    }
+
+    public void RetryLevel() 
+    { 
+        Time.timeScale = 1; 
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
+    }
+
+    public void QuitToLevelSelect() 
+    { 
+        Time.timeScale = 1; 
+        SceneManager.LoadScene("TyphoonLevelSelect"); 
     }
 }
