@@ -58,6 +58,16 @@ public class HUDStatsManager : MonoBehaviour
             progress = (float)lvl4.plugsConnected / 3f; 
         }
 
+        // --- LEVEL 6 (Conveyor) ---
+        Level6Manager lvl6 = FindFirstObjectByType<Level6Manager>();
+        if (lvl6 != null) 
+        {
+            if (lvl6.itemsNeeded > 0)
+            {
+                progress = (float)lvl6.currentScore / lvl6.itemsNeeded;
+            }
+        }
+
         // --- UPDATE UI ---
         // Clamp para hindi lumampas sa 0 to 1
         progress = Mathf.Clamp01(progress);

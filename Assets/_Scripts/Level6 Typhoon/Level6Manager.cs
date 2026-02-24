@@ -50,12 +50,18 @@ public class Level6Manager : MonoBehaviour
     public float fallSpeed = 50f;  // Gaano kabilis babagsak?
     public float fadeDuration = 1f; // Gaano katagal bago mawala? (1 second)
     private Vector3 penaltyOriginalPos; // Memorya kung saan siya babalik
+    private Color originalTimerColor; // Tagatanda ng orihinal na kulay mula sa Inspector
     // ----------------------------------------
 
     void Awake()
     {
         instance = this; 
         Time.timeScale = 1;
+
+        if (timerTextUI != null)
+        {
+            originalTimerColor = timerTextUI.color; 
+        }
     }
 
     void Start()
@@ -92,9 +98,16 @@ public class Level6Manager : MonoBehaviour
         if (timerTextUI != null)
         {
             if (timeToShow < 0) timeToShow = 0;
-            float seconds = Mathf.FloorToInt(timeToShow);
-            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}</mspace>", seconds);
-            timerTextUI.color = (timeToShow <= 10) ? Color.red : Color.white;
+
+            // --- BAGONG DAGDAG: Compute for Minutes and Seconds ---
+            int minutes = Mathf.FloorToInt(timeToShow / 60); // Hatiin sa 60 para sa minuto
+            int seconds = Mathf.FloorToInt(timeToShow % 60); // Kunin ang butal para sa segundo
+
+            // I-format para maging MM:SS (Halimbawa: 01:30)
+            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", minutes, seconds);
+            
+            // Mananatiling pula kapag 10 seconds (o pababa) na lang ang natitira
+            timerTextUI.color = (timeToShow <= 10) ? Color.red : originalTimerColor;
         }
     }    
 

@@ -88,23 +88,42 @@ public class SceneController : MonoBehaviour
     }
 
 
-    public void GoToTyphoonLevel8()
+    public void GoToLevel8_Part1()
     {
         ResumeMusic();
-        SceneManager.LoadScene("Typhoon_Level8");
+        SceneManager.LoadScene("Level8_Part1");
     }
 
-    public void GoToTyphoonLevel9()
+    public void GoToLevel8_Part2()
     {
         ResumeMusic();
-        SceneManager.LoadScene("Typhoon_Level9");
+        SceneManager.LoadScene("Level8_Part2");
     }
 
-    public void GoToTyphoonLevel10()
+    public void GoToLevel9_Part1()
     {
         ResumeMusic();
-        SceneManager.LoadScene("Typhoon_Level10");
+        SceneManager.LoadScene("Level9_Part1");
     }
+
+    public void GoToLevel9_Part2()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Level9_Part2");
+    }
+
+    public void GoToLevel10_Part1()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Level10_Part1");
+    }
+
+    public void GoToLevel10_Part2()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Level10_Part2");
+    }
+
 
     //Scenario 2 --- FLOOD ----
 
