@@ -39,9 +39,20 @@ public class PlatformSpawnerLevel6 : MonoBehaviour
         Instance = this;
     }
 
+    void Update()
+    {
+        if (!spawningEnabled) return;
+
+        if (player != null && player.GetComponent<Rigidbody2D>().linearVelocity.y > 0)
+        {
+            SpawnPlatformAboveCamera();
+        }
+    }
+
     public void EnableSpawning()
     {
-        SpawnPlatformAboveCamera();
+        //SpawnPlatformAboveCamera();
+        spawningEnabled = true;
     }
 
     public void SpawnPlatformAboveCamera()

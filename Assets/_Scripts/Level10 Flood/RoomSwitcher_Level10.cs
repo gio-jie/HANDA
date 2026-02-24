@@ -13,8 +13,13 @@ public class RoomSwitcher_Level10 : MonoBehaviour
     public CanvasGroup fadeCanvas;
     public float fadeDuration = 0.25f;
 
+    [Header("Blueprint Button")]
+    public GameObject blueprintButton;
+
     private void Awake()
     {
+        blueprintButton.SetActive(false);
+
         if (fadeCanvas != null)
             fadeCanvas.alpha = 0f;
     }
@@ -25,6 +30,7 @@ public class RoomSwitcher_Level10 : MonoBehaviour
             StartCoroutine(FadeRoomChange(() =>
             {
                 blueprintPanel.SetActive(false);
+                if (blueprintButton != null) blueprintButton.SetActive(true);
 
                 foreach (GameObject room in rooms)
                     room.SetActive(false);
@@ -36,6 +42,7 @@ public class RoomSwitcher_Level10 : MonoBehaviour
         else
         {
             blueprintPanel.SetActive(false);
+            if (blueprintButton != null) blueprintButton.SetActive(true);
             foreach (GameObject room in rooms) room.SetActive(false);
             roomToOpen.SetActive(true);
             TaskListManager_Level10.Instance.ShowTaskList();
@@ -74,6 +81,8 @@ public class RoomSwitcher_Level10 : MonoBehaviour
         }
 
         blueprintPanel.SetActive(true);
+
+        if (blueprintButton != null) blueprintButton.SetActive(false);
 
         TaskListManager_Level10.Instance.HideTaskList();
     }

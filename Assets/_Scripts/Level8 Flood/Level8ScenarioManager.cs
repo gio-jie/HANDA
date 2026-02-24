@@ -119,19 +119,6 @@ public class Level8ScenarioManager : MonoBehaviour
 
         PowerupManager.Instance.ClearHighlights();
 
-        if (remainingScenarios.Count > 0 && correct)
-        {
-            float chance = Random.value;
-
-            if (chance < 0.3f || 
-                StarManagerLevel8.Instance.GetConsecutiveCorrect() % 3 == 0)
-            {
-                StarManagerLevel8.Instance.PauseTimer();
-                PowerupManager.Instance.QueueRandomPowerup();
-                StarManagerLevel8.Instance.ResumeTimer();
-            }
-        }
-
         answeredCount++;
         UpdateProgressUI();
 

@@ -9,8 +9,8 @@ public class StarManagerLevel9 : MonoBehaviour
     public static StarManagerLevel9 Instance;
 
     [Header("Level Settings")]
-    public int levelIndex = 9;
-    public float levelDuration = 90f;
+    public int levelIndex;
+    public float levelDuration;
 
     [Header("Task Texts")]
     public TMP_Text wasteText;
@@ -160,6 +160,8 @@ public class StarManagerLevel9 : MonoBehaviour
         }
 
         starSlider.value = targetValue;
+
+        sliderCoroutine = null;
     }
 
     #endregion
@@ -290,11 +292,44 @@ public class StarManagerLevel9 : MonoBehaviour
 
     private void TriggerLose()
     {
+        if (levelEnded) return;
+        StartCoroutine(TriggerLoseRoutine());
+    }
+
+    private IEnumerator TriggerLoseRoutine()
+    {
         levelEnded = true;
+        timerRunning = false;
         currentStars = 0;
         SaveStars();
 
-        if (losePanel != null) losePanel.SetActive(true);
+        while (sliderCoroutine != null)
+            yield return null;
+
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PauseBGM();
+            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
+        }
+
+        if (losePanel != null)
+        {
+            int remainingSeconds = Mathf.CeilToInt(remainingTime);
+            int minutes = remainingSeconds / 60;
+            int seconds = remainingSeconds % 60;
+
+            int bestSeconds = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+            int bestMin = bestSeconds / 60;
+            int bestSec = bestSeconds % 60;
+
+            losePanel.SetActive(true);
+
+            if (losePanelTimeLeftText != null)
+                losePanelTimeLeftText.text = $"Time Left: {minutes:0}:{seconds:00}";
+
+            if (losePanelBestTimeText != null)
+                losePanelBestTimeText.text = $"Best Record: {bestMin:0}:{bestSec:00}";
+        }
     }
 
     #endregion

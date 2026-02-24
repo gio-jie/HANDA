@@ -97,7 +97,9 @@ public class StarManagerLevel8 : MonoBehaviour
 
         if (consecutiveCorrectCount >= 3)
         {
+            PauseTimer();
             PowerupManager.Instance.QueueRandomPowerup();
+            ResumeTimer();
             consecutiveCorrectCount = 0;
             return;
         }
@@ -105,7 +107,9 @@ public class StarManagerLevel8 : MonoBehaviour
         float chance = Random.value;
         if (chance < 0.3f)
         {
+            PauseTimer();
             PowerupManager.Instance.QueueRandomPowerup();
+            ResumeTimer();
         }
     }
 
@@ -177,18 +181,27 @@ public class StarManagerLevel8 : MonoBehaviour
     private IEnumerator SlideSlider(float target)
     {
         float start = starSlider.value;
+
+        if (target < start)
+        {
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlaySFX(AudioManager.instance.starReducedSound);
+        }
+
         float duration = 0.4f;
         float t = 0f;
 
         while (t < duration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
             float factor = Mathf.Sin((t / duration) * Mathf.PI * 0.5f);
             starSlider.value = Mathf.Lerp(start, target, factor);
             yield return null;
         }
 
         starSlider.value = target;
+
+        sliderCoroutine = null;
     }
 
     public void ShowEndPanel()
@@ -234,8 +247,19 @@ public class StarManagerLevel8 : MonoBehaviour
 
     private void TriggerLose()
     {
+        if (levelEnded) return;
+        StartCoroutine(TriggerLoseCoroutine());
+    }
+
+    private IEnumerator TriggerLoseCoroutine()
+    {
         levelEnded = true;
         currentStars = 0;
+
+        SaveStars();
+
+        while (sliderCoroutine != null)
+            yield return null;
 
         if (losePanel != null)
         {
@@ -249,6 +273,7 @@ public class StarManagerLevel8 : MonoBehaviour
 
             if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
             if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
+
             losePanel.SetActive(true);
 
             if (losePanelTimeLeftText != null)
@@ -257,8 +282,6 @@ public class StarManagerLevel8 : MonoBehaviour
             if (losePanelBestTimeText != null)
                 losePanelBestTimeText.text = $"Best Record: {bestMin:0}:{bestSec:00}";
         }
-
-        SaveStars();
     }
 
     public void SaveStars()

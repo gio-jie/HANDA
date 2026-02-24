@@ -22,7 +22,6 @@ public class QuizManager_Level10 : MonoBehaviour
     {
         if (remainingQuestions.Count == 0)
         {
-            // No more questions → just collect hazard directly
             hazard.CollectHazard();
             return;
         }
@@ -30,7 +29,6 @@ public class QuizManager_Level10 : MonoBehaviour
         int randomIndex = Random.Range(0, remainingQuestions.Count);
         QuizQuestion selected = remainingQuestions[randomIndex];
 
-        // REMOVE immediately so no repeat
         remainingQuestions.RemoveAt(randomIndex);
 
         QuizUI_Level10.Instance.ShowQuestion(selected, hazard);

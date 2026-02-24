@@ -59,6 +59,9 @@ public class StarManagerLevel5 : MonoBehaviour
 
     private bool levelEnded = false;
 
+    private float previousSliderValue = -1f;
+    private bool isSliderAnimating = false;
+
     void Awake()
     {
         Instance = this;
@@ -71,7 +74,6 @@ public class StarManagerLevel5 : MonoBehaviour
 
         requiredTravelTime = baseTravelTime;
 
-        // Setup UI
         UpdateStars(currentStars);
         UpdateTimerText();
 
@@ -166,10 +168,8 @@ public class StarManagerLevel5 : MonoBehaviour
     {
         if (levelEnded) return;
 
-        // 1️⃣ Increase required travel time
         requiredTravelTime += seconds;
 
-        // 2️⃣ Subtract from remaining level timer
         remainingTime -= seconds;
         remainingTime = Mathf.Max(0f, remainingTime);
 
@@ -218,14 +218,45 @@ public class StarManagerLevel5 : MonoBehaviour
 
         if (starSlider != null)
         {
+            float targetValue;
             switch (currentStars)
             {
-                case 3: starSlider.value = 3f; break;
-                case 2: starSlider.value = 1.5f; break;
-                case 1: starSlider.value = 0.5f; break;
-                default: starSlider.value = 0f; break;
+                case 3: targetValue = 3f; break;
+                case 2: targetValue = 1.5f; break;
+                case 1: targetValue = 0.5f; break;
+                default: targetValue = 0f; break;
             }
+
+            if (previousSliderValue != -1f && previousSliderValue != targetValue && AudioManager.instance != null)
+            {
+                AudioManager.instance.PlaySFX(AudioManager.instance.starReducedSound);
+            }
+
+            StopCoroutine("AnimateStarSlider");
+            StartCoroutine(AnimateStarSlider(targetValue));
+
+            previousSliderValue = targetValue;
         }
+    }
+
+    private IEnumerator AnimateStarSlider(float targetValue)
+    {
+        isSliderAnimating = true;
+
+        float startValue = starSlider.value;
+        float duration = 0.4f;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            float factor = Mathf.Sin((t / duration) * Mathf.PI * 0.5f);
+            starSlider.value = Mathf.Lerp(startValue, targetValue, factor);
+            yield return null;
+        }
+
+        starSlider.value = targetValue;
+        isSliderAnimating = false;
     }
 
     #endregion
@@ -275,7 +306,11 @@ public class StarManagerLevel5 : MonoBehaviour
     void TriggerLose()
     {
         if (levelEnded) return;
+        StartCoroutine(TriggerLoseCoroutine());
+    }
 
+    private IEnumerator TriggerLoseCoroutine()
+    {
         levelEnded = true;
         Time.timeScale = 0f;
         currentStars = 0;
@@ -288,6 +323,9 @@ public class StarManagerLevel5 : MonoBehaviour
             AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
         }
 
+        while (isSliderAnimating)
+            yield return null;
+
         if (losePanel != null)
         {
             int remainingSeconds = Mathf.CeilToInt(remainingTime);
@@ -298,8 +336,6 @@ public class StarManagerLevel5 : MonoBehaviour
             int bestMin = bestSeconds / 60;
             int bestSec = bestSeconds % 60;
 
-            if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
-            if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
             losePanel.SetActive(true);
 
             if (losePanelTimeLeftText != null)
@@ -308,11 +344,7 @@ public class StarManagerLevel5 : MonoBehaviour
             if (losePanelBestTimeText != null)
                 losePanelBestTimeText.text = $"Best Record: {bestMin:0}:{bestSec:00}";
         }
-
-        // if (losePanel)
-        //     losePanel.SetActive(true);
     }
-
     #endregion
 
     #region Save

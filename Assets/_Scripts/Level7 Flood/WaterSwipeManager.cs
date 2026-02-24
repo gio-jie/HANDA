@@ -21,6 +21,7 @@ public class WaterSwipeLevelManager : MonoBehaviour
     private int answeredCount = 0;
 
     public WaterCardDatabase database;
+    private bool isSwitchingCard = false;
 
     void Awake() { Instance = this; }
 
@@ -77,10 +78,12 @@ public class WaterSwipeLevelManager : MonoBehaviour
 
     IEnumerator CardSwitch(Vector3 direction)
     {
+        isSwitchingCard = true;
         yield return currentCard.GetComponent<WaterCardUI>().AnimateToBack(direction);
 
         Destroy(currentCard);
         ShowNextCard();
+        isSwitchingCard = false;
     }
 
     void UpdateProgress() => progressText.text = answeredCount + "/" + totalItems;
@@ -93,6 +96,8 @@ public class WaterSwipeLevelManager : MonoBehaviour
 
     public void OnRerollButton()
     {
+        if (isSwitchingCard) return;
+        
         cardQueue.Enqueue(currentData);
 
         StartCoroutine(CardSwitch(Vector3.down));

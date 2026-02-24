@@ -10,7 +10,7 @@ public class StarManagerLevel7 : MonoBehaviour
 
     [Header("Level Info")]
     public int levelIndex;
-    public float levelDuration = 90f; // 1.5 mins
+    public float levelDuration = 90f;
 
     [Header("UI Elements")]
     public Image[] stars;
@@ -39,6 +39,9 @@ public class StarManagerLevel7 : MonoBehaviour
     private bool levelEnded = false;
     private int consecutiveWrongCount = 0;
     private Coroutine sliderCoroutine;
+
+    private float previousSliderValue = -1f;
+    private bool isSliderAnimating = false;
 
     void Awake()
     {
@@ -117,7 +120,40 @@ public class StarManagerLevel7 : MonoBehaviour
         for (int i = 0; i < stars.Length; i++)
             stars[i].color = i < newCount ? activeColor : inactiveColor;
 
-        UpdateSliderSmooth();
+        if (starSlider != null)
+        {
+            float targetValue = GetSliderValue(currentStars);
+
+            if (previousSliderValue != -1f && previousSliderValue != targetValue && AudioManager.instance != null)
+            {
+                AudioManager.instance.PlaySFX(AudioManager.instance.starReducedSound);
+            }
+
+            if (sliderCoroutine != null) StopCoroutine(sliderCoroutine);
+            sliderCoroutine = StartCoroutine(AnimateStarSlider(targetValue));
+
+            previousSliderValue = targetValue;
+        }
+    }
+
+    private IEnumerator AnimateStarSlider(float targetValue)
+    {
+        isSliderAnimating = true;
+
+        float startValue = starSlider.value;
+        float duration = 0.4f;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            float factor = Mathf.Sin((t / duration) * Mathf.PI * 0.5f);
+            starSlider.value = Mathf.Lerp(startValue, targetValue, factor);
+            yield return null;
+        }
+
+        starSlider.value = targetValue;
+        isSliderAnimating = false;
     }
 
     private void UpdateSliderImmediate()
@@ -207,8 +243,25 @@ public class StarManagerLevel7 : MonoBehaviour
 
     private void TriggerLose()
     {
+        if (levelEnded) return;
+        StartCoroutine(TriggerLoseCoroutine());
+    }
+
+    private IEnumerator TriggerLoseCoroutine()
+    {
         levelEnded = true;
         currentStars = 0;
+
+        SaveStars();
+
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PauseBGM();
+            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
+        }
+
+        while (isSliderAnimating)
+            yield return null;
 
         if (losePanel != null)
         {
@@ -220,8 +273,6 @@ public class StarManagerLevel7 : MonoBehaviour
             int bestMin = bestSeconds / 60;
             int bestSec = bestSeconds % 60;
 
-            if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
-            if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
             losePanel.SetActive(true);
 
             if (losePanelTimeLeftText != null)
@@ -230,8 +281,6 @@ public class StarManagerLevel7 : MonoBehaviour
             if (losePanelBestTimeText != null)
                 losePanelBestTimeText.text = $"Best Record: {bestMin:0}:{bestSec:00}";
         }
-
-        SaveStars();
     }
 
     public void SaveStars()

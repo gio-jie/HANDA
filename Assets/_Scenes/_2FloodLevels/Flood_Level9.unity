@@ -6739,7 +6739,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1639627182}
-  - component: {fileID: 1639627183}
   - component: {fileID: 1639627184}
   m_Layer: 0
   m_Name: StarGradingManager
@@ -6763,38 +6762,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1218125448}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1639627183
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1639627181}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 525d17a67f3321542b3178560a2caae3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StarManagerLevel8
-  levelIndex: 8
-  levelDuration: 90
-  stars:
-  - {fileID: 1700986779}
-  - {fileID: 660294473}
-  - {fileID: 1859068839}
-  starSlider: {fileID: 344051611}
-  timerText: {fileID: 542973957}
-  losePanel: {fileID: 7881738525856521522}
-  endPanel: {fileID: 0}
-  winPanel: {fileID: 1772551540567735068}
-  losePanelTimeLeftText: {fileID: 3969762723569901825}
-  losePanelBestTimeText: {fileID: 5654490248897729722}
-  winPanelTimeLeftText: {fileID: 5819586979007739765}
-  winPanelBestTimeText: {fileID: 3254834353917294119}
-  wrongItemPenalty: 5
-  maxConsecutiveWrongs: 3
-  activeColor: {r: 1, g: 1, b: 1, a: 1}
-  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  answerRecords: []
 --- !u!114 &1639627184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6808,7 +6775,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StarManagerLevel9
   levelIndex: 9
-  levelDuration: 90
+  levelDuration: 60
   wasteText: {fileID: 1315182744}
   sanitizerText: {fileID: 1869683470}
   waterText: {fileID: 109017752}

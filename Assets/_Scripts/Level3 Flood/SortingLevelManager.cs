@@ -23,6 +23,7 @@ public class SortingLevelManager : MonoBehaviour
     public TMPro.TextMeshProUGUI progressText;
     private int totalItems;
     private int answeredCount = 0;
+    private bool isSwitchingCard = false;
 
     void Awake()
     {
@@ -126,13 +127,19 @@ public class SortingLevelManager : MonoBehaviour
 
     IEnumerator CardSwitch()
     {
+        isSwitchingCard = true;
+
         yield return currentCard.GetComponent<ItemCardUI>().AnimateToBack();
         Destroy(currentCard);
         ShowNextCard();
+
+        isSwitchingCard = false;
     }
 
     public void SkipCurrentCard(SortingItemData data)
     {
+        if (isSwitchingCard) return;
+
         itemQueue.Enqueue(data);
         StartCoroutine(CardSwitch());
     }

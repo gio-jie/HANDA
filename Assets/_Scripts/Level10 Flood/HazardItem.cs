@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using UnityEngine.UI;
 
 public class HazardItem : MonoBehaviour
 {
@@ -9,15 +10,71 @@ public class HazardItem : MonoBehaviour
     [TextArea] public string description;
 
     private bool isAnimating = false;
-    private Transform originalParent; // store original parent
+    private Transform originalParent;
     private Vector3 originalPosition;
+
+    private EventSystem eventSystem;
+
+    void Awake()
+    {
+        eventSystem = EventSystem.current;
+    }
 
     public void TriggerHazard()
     {
-        if (PowerUpManager_Level10.Instance.SkipNextHazard())
-            return;
+        if (isAnimating) return;
+        StartCoroutine(FlashThenShowQuestion());
+    }
+
+    private IEnumerator FlashThenShowQuestion()
+    {
+        isAnimating = true;
+
+        FreezeGame();
+
+        yield return StartCoroutine(FlashRed());
+
+        UnfreezeGame();
+
+        isAnimating = false;
 
         QuizManager_Level10.Instance.TryShowRandomQuestion(this);
+    }
+
+    private IEnumerator FlashRed(float singleFlashDuration = 0.2f, int flashCount = 2)
+    {
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(AudioManager.instance.warningSound);
+            
+        Image img = GetComponent<Image>();
+        if (img == null) yield break;
+
+        Color original = img.color;
+        Color red = Color.red;
+
+        for (int i = 0; i < flashCount; i++)
+        {
+            float half = singleFlashDuration / 2f;
+            float t = 0f;
+
+            while (t < half)
+            {
+                t += Time.unscaledDeltaTime;
+                img.color = Color.Lerp(original, red, t / half);
+                yield return null;
+            }
+
+            t = 0f;
+
+            while (t < half)
+            {
+                t += Time.unscaledDeltaTime;
+                img.color = Color.Lerp(red, original, t / half);
+                yield return null;
+            }
+        }
+
+        img.color = original;
     }
 
     public void CollectHazard()
@@ -30,19 +87,14 @@ public class HazardItem : MonoBehaviour
     {
         isAnimating = true;
 
-        // Store original parent and position
+        FreezeGame();
+
         originalParent = transform.parent;
         originalPosition = transform.position;
 
-        // Move to main canvas so it appears above everything
         Canvas mainCanvas = UIReferences_Level10.Instance.mainCanvas;
         transform.SetParent(mainCanvas.transform);
         transform.SetAsLastSibling();
-
-        // Disable all other UI interaction
-        CanvasGroup[] groups = FindObjectsOfType<CanvasGroup>();
-        foreach (var g in groups)
-            g.interactable = false;
 
         Vector3 originalScale = transform.localScale;
         Vector3 popScale = originalScale * 1.3f;
@@ -50,23 +102,22 @@ public class HazardItem : MonoBehaviour
         float popDuration = 0.12f;
         float t = 0f;
 
-        // -------- POP --------
         while (t < popDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
             transform.localScale = Vector3.Lerp(originalScale, popScale, t / popDuration);
             yield return null;
         }
 
         t = 0f;
+
         while (t < popDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
             transform.localScale = Vector3.Lerp(popScale, originalScale, t / popDuration);
             yield return null;
         }
 
-        // -------- FLY (ARC STYLE) --------
         Transform trashIcon = UIReferences_Level10.Instance.trashIcon;
 
         Vector3 startPos = transform.position;
@@ -76,9 +127,10 @@ public class HazardItem : MonoBehaviour
         float arcHeight = 100f;
 
         t = 0f;
+
         while (t < flyDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
             float progress = t / flyDuration;
 
             Vector3 currentPos = Vector3.Lerp(startPos, endPos, progress);
@@ -89,38 +141,51 @@ public class HazardItem : MonoBehaviour
             yield return null;
         }
 
-        // Ensure exact landing
         transform.position = endPos;
 
-        // -------- STOP MOMENT --------
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSecondsRealtime(0.15f);
 
-        // -------- SHRINK --------
         float shrinkDuration = 0.2f;
         t = 0f;
+
         while (t < shrinkDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
             transform.localScale = Vector3.Lerp(originalScale, Vector3.zero, t / shrinkDuration);
             yield return null;
         }
 
         transform.localScale = Vector3.zero;
 
-        // -------- FINALIZE --------
-        EndPanelManager_Level10.Instance.AddCollectedItem(hazardName, hazardSprite, description);
-        StarManagerLevel10.Instance.TrashCollected();
+        EndPanelManager_Level10.Instance.AddCollectedItem(
+            hazardName,
+            hazardSprite,
+            description
+        );
 
         gameObject.SetActive(false);
 
-        // Restore parent in case object is reused
         transform.SetParent(originalParent);
         transform.position = originalPosition;
 
-        // Re-enable UI interaction
-        foreach (var g in groups)
-            g.interactable = true;
+        UnfreezeGame();
 
         isAnimating = false;
+    }
+
+    private void FreezeGame()
+    {
+        Time.timeScale = 0f;
+
+        if (eventSystem != null)
+            eventSystem.enabled = false;
+    }
+
+    private void UnfreezeGame()
+    {
+        Time.timeScale = 1f;
+
+        if (eventSystem != null)
+            eventSystem.enabled = true;
     }
 }

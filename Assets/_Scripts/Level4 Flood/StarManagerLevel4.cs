@@ -18,7 +18,7 @@ public class StarManagerLevel4 : MonoBehaviour
     public TMP_Text timerText;
 
     public GameObject losePanel;
-    public GameObject completionPanel; // your pop panel
+    public GameObject completionPanel;
     public GameObject winPanel;
 
     [Header("Lose Panel UI")]
@@ -36,6 +36,9 @@ public class StarManagerLevel4 : MonoBehaviour
     private float timePerStar;
     private int currentStars = 3;
     private bool levelEnded = false;
+
+    private float previousSliderValue = -1f;
+    private bool isSliderAnimating = false;
 
     void Awake()
     {
@@ -81,11 +84,10 @@ public class StarManagerLevel4 : MonoBehaviour
     {
         if (levelEnded) return;
 
-        levelEnded = true;      // stop timer
-        SaveStars();            // lock star result immediately
+        levelEnded = true;
+        SaveStars();
         SaveBestTime();
 
-        // Show animated completion panel
         if (completionPanel != null)
             completionPanel.SetActive(true);
     }
@@ -129,7 +131,11 @@ public class StarManagerLevel4 : MonoBehaviour
     private void TriggerLose()
     {
         if (levelEnded) return;
+        StartCoroutine(TriggerLoseCoroutine());
+    }
 
+    private IEnumerator TriggerLoseCoroutine()
+    {
         levelEnded = true;
         currentStars = 0;
         SaveStars();
@@ -139,6 +145,9 @@ public class StarManagerLevel4 : MonoBehaviour
             AudioManager.instance.PauseBGM();
             AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
         }
+
+        while (isSliderAnimating)
+            yield return null;
 
         if (losePanel != null)
         {
@@ -150,8 +159,6 @@ public class StarManagerLevel4 : MonoBehaviour
             int bestMin = bestSeconds / 60;
             int bestSec = bestSeconds % 60;
 
-            if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
-            if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
             losePanel.SetActive(true);
 
             if (losePanelTimeLeftText != null)
@@ -187,13 +194,44 @@ public class StarManagerLevel4 : MonoBehaviour
     {
         if (!starSlider) return;
 
+        float newValue;
         switch (currentStars)
         {
-            case 3: starSlider.value = 3f; break;
-            case 2: starSlider.value = 1.5f; break;
-            case 1: starSlider.value = 0.5f; break;
-            default: starSlider.value = 0f; break;
+            case 3: newValue = 3f; break;
+            case 2: newValue = 1.5f; break;
+            case 1: newValue = 0.5f; break;
+            default: newValue = 0f; break;
         }
+
+        if (previousSliderValue != -1f && previousSliderValue != newValue)
+        {
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlaySFX(AudioManager.instance.starReducedSound);
+        }
+
+        StopCoroutine("AnimateSlider");
+        StartCoroutine(AnimateSlider(newValue));
+
+        previousSliderValue = newValue;
+    }
+
+    private IEnumerator AnimateSlider(float targetValue)
+    {
+        isSliderAnimating = true;
+
+        float startValue = starSlider.value;
+        float duration = 0.4f;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float factor = Mathf.Sin((t / duration) * Mathf.PI * 0.5f);
+            starSlider.value = Mathf.Lerp(startValue, targetValue, factor);
+            yield return null;
+        }
+
+        starSlider.value = targetValue;
     }
 
     #endregion

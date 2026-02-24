@@ -33,25 +33,30 @@ public class PowerupManager : MonoBehaviour
     public Powerup pendingPowerup = null;
     private List<Level8DragItem> highlightedItems = new List<Level8DragItem>();
     private bool isShowingPowerup = false;
+    private bool isInitialized = false;
 
     void Awake() => Instance = this;
 
-    /// <summary>
-    /// Call this after player answers correctly and chance decides a powerup.
-    /// </summary>
+    void Start()
+    {
+        isInitialized = true;
+    }
+
     public void QueueRandomPowerup()
     {
-        if (powerups.Count == 0) return;
+        if (powerups == null || powerups.Count == 0)
+        {
+            Debug.LogError("NO POWERUPS ASSIGNED IN INSPECTOR!");
+            return;
+        }
 
         pendingPowerup = powerups[Random.Range(0, powerups.Count)];
         Debug.Log($"Powerup queued: {pendingPowerup.name}");
     }
 
-    /// <summary>
-    /// Call this when the **next card is spawned**.
-    /// </summary>
     public void ApplyPendingPowerup(string correctIDForNewCard)
     {
+        if (!isInitialized) return;
         if (pendingPowerup == null) return;
 
         ClearHighlights();
@@ -72,7 +77,7 @@ public class PowerupManager : MonoBehaviour
         }
 
         ShowPowerupPanel(pendingPowerup);
-        pendingPowerup = null; // Clear after applying
+        pendingPowerup = null;
     }
 
     private void HighlightFiveIncludingCorrect(string correctID)
@@ -175,20 +180,28 @@ public class PowerupManager : MonoBehaviour
     private void ShowPowerupPanel(Powerup powerup)
     {
         if (powerupPanel == null || isShowingPowerup) return;
+        StartCoroutine(ShowPowerupPanelDelayed(powerup));
+    }
 
+    private IEnumerator ShowPowerupPanelDelayed(Powerup powerup)
+    {
         isShowingPowerup = true;
+
+        yield return new WaitForEndOfFrame();
+
         powerupPanel.SetActive(true);
-        audioSource.PlayOneShot(powerUpSfx);
+        Time.timeScale = 0;
+
+        if (audioSource != null && powerUpSfx != null)
+            audioSource.PlayOneShot(powerUpSfx);
+
         powerupImage.sprite = powerup.icon;
         powerupNameText.text = powerup.name;
 
-        StartCoroutine(HidePanelAfterDelay(panelShowDuration));
-    }
+        yield return new WaitForSecondsRealtime(panelShowDuration);
 
-    private IEnumerator HidePanelAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
         powerupPanel.SetActive(false);
+        Time.timeScale = 1f;
         isShowingPowerup = false;
     }
 }

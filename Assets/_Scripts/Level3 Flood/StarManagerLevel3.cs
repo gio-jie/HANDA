@@ -32,9 +32,9 @@ public class StarManagerLevel3 : MonoBehaviour
     public Color inactiveColor = Color.gray;
 
     [Header("Penalty Settings (Optional)")]
-    public float wrongItemPenalty = 2f;  // small penalty for 24 items
+    public float wrongItemPenalty;  // small penalty for 24 items
     public bool useConsecutiveWrongs = false;
-    public int maxConsecutiveWrongs = 3;
+    public int maxConsecutiveWrongs;
 
     private float remainingTime;
     private float timePerStar;
@@ -130,6 +130,13 @@ public class StarManagerLevel3 : MonoBehaviour
     private IEnumerator SlideSlider(float targetValue)
     {
         float startValue = starSlider.value;
+
+        if (targetValue < startValue)
+        {
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlaySFX(AudioManager.instance.starReducedSound);
+        }
+        
         float duration = 0.4f;
         float t = 0f;
 

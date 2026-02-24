@@ -50,6 +50,9 @@ public class TrashItem : MonoBehaviour
 
         transform.localScale = originalScale;
 
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
+
         EndPanelManager_Level10.Instance.AddCollectedItem(itemName, itemSprite, description);
         TaskListManager_Level10.Instance.CompleteTask(taskIndex);
         StarManagerLevel10.Instance.TrashCollected();

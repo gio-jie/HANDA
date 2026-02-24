@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class Level8ResultsUI : MonoBehaviour
 {
@@ -44,11 +45,18 @@ public class Level8ResultsUI : MonoBehaviour
     {
         correctAnswerPanel.SetActive(true);
         correctItemImage.sprite = correctSprite;
-        correctItemName.text = "The correct answer is " + itemName;
+        string formattedName = AddSpacesToCamelCase(itemName);
+
+        correctItemName.text = "The correct answer is " + formattedName;
     }
 
     public void CloseCorrectAnswer()
     {
         correctAnswerPanel.SetActive(false);
+    }
+
+    private string AddSpacesToCamelCase(string text)
+    {
+        return Regex.Replace(text, "(\\B[A-Z])", " $1");
     }
 }
