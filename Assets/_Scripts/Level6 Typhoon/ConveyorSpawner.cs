@@ -9,7 +9,7 @@ public class ConveyorSpawner : MonoBehaviour
     public Transform spawnPoint;     
     public Transform parentCanvas;   
     
-    public float spawnInterval = 2f; 
+    public float spawnInterval = 10f; 
 
     void Start()
     {
@@ -26,23 +26,27 @@ public class ConveyorSpawner : MonoBehaviour
         int randomIndex = Random.Range(0, itemPrefabs.Length);
         GameObject selectedItem = itemPrefabs[randomIndex];
 
-        GameObject newItem = Instantiate(selectedItem, parentCanvas);
+        // 1. Instantiate na may 'false' para mapanatili ang local properties ng UI!
+        GameObject newItem = Instantiate(selectedItem, parentCanvas, false);
 
-        // --- DITO ANG ULTIMATE FIX PARA SA WIDTH & HEIGHT! ---
+        // --- BRUTE FORCE FIX PARA SA EXACT WIDTH & HEIGHT ---
         RectTransform newRect = newItem.GetComponent<RectTransform>();
         RectTransform prefabRect = selectedItem.GetComponent<RectTransform>();
         
         if (newRect != null && prefabRect != null)
         {
-            // Kopyahin ang eksaktong Width at Height ng Prefab mo!
-            newRect.sizeDelta = prefabRect.sizeDelta;
+            // Pwersahang ilapat ang eksaktong Width
+            newRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, prefabRect.rect.width);
             
-            // Kopyahin na rin ang Scale para sigurado
+            // Pwersahang ilapat ang eksaktong Height
+            newRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, prefabRect.rect.height);
+            
+            // Kopyahin ang Scale para sure!
             newRect.localScale = prefabRect.localScale;
         }
-        // -----------------------------------------------------
+        // --------------------------------------------------
 
         newItem.transform.position = spawnPoint.position;
-        newItem.transform.SetSiblingIndex(1); 
+        newItem.transform.SetSiblingIndex(10); 
     }
 }

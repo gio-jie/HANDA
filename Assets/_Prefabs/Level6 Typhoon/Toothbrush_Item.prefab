@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4817986816476676502
+--- !u!1 &4811369976282764264
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,10 +8,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 306124760334539562}
-  - component: {fileID: 6423125870150433649}
-  - component: {fileID: 7287337967805131904}
-  - component: {fileID: 6119543359605009948}
+  - component: {fileID: 2299670132869702455}
+  - component: {fileID: 6032244685250232345}
+  - component: {fileID: 8160252592449634548}
+  - component: {fileID: 2273397913596392571}
   m_Layer: 5
   m_Name: Toothbrush_Item
   m_TagString: Hygiene
@@ -19,13 +19,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &306124760334539562
+--- !u!224 &2299670132869702455
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4817986816476676502}
+  m_GameObject: {fileID: 4811369976282764264}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,24 +35,24 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1150, y: 44}
-  m_SizeDelta: {x: 100, y: 159.0609}
+  m_AnchoredPosition: {x: -1747, y: -861.81995}
+  m_SizeDelta: {x: 155.8146, y: 358.88}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &6423125870150433649
+--- !u!222 &6032244685250232345
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4817986816476676502}
+  m_GameObject: {fileID: 4811369976282764264}
   m_CullTransparentMesh: 1
---- !u!114 &7287337967805131904
+--- !u!114 &8160252592449634548
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4817986816476676502}
+  m_GameObject: {fileID: 4811369976282764264}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -68,7 +68,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 52c224b621634b94a8dd3ba7cfda117b, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -76,13 +76,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6119543359605009948
+--- !u!114 &2273397913596392571
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4817986816476676502}
+  m_GameObject: {fileID: 4811369976282764264}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e64ae47d0732b0a46af53f5e6dc90be1, type: 3}
