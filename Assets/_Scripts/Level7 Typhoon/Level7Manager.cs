@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.UI; // --- BAGONG DAGDAG: Kailangan para sa Image ---
 using TMPro;
+using System.Collections; // --- BAGONG DAGDAG: Kailangan para sa IEnumerator (Animation) ---
 using UnityEngine.SceneManagement; 
 
 public class Level7Manager : MonoBehaviour
@@ -11,7 +13,7 @@ public class Level7Manager : MonoBehaviour
     public int maxHealth = 5;       
 
     [HideInInspector] public bool isGameActive = true; 
-    private int currentKills = 0;
+    public int currentKills = 0;
     private int currentHealth;
 
     [Header("Jobert's Visuals")]
@@ -19,8 +21,17 @@ public class Level7Manager : MonoBehaviour
     public Sprite[] jobertPantalSprites; 
     public Sprite jobertHappySprite; 
 
+    // ==========================================
+    // --- BAGONG DAGDAG: HEALTH UI (HEARTS) ---
+    // ==========================================
+    [Header("Health UI (Hearts)")]
+    public Image[] heartIcons; 
+    public Sprite emptyHeartSprite; 
+    public Image fallingHeartPrefab; 
+    public float fallSpeed = 200f;
+    public float fadeDuration = 1f;
+
     [Header("UI Panels")]
-    // Inalis na natin ang Win Panel dito dahil Scene transition ang kapalit
     public GameObject losePanel; 
     public GameObject pausePanel;
     
@@ -41,6 +52,9 @@ public class Level7Manager : MonoBehaviour
 
         if (jobertPantalSprites.Length > 0) jobertRenderer.sprite = jobertPantalSprites[0];
 
+        // Siguraduhing tago ang falling heart sa simula
+        if (fallingHeartPrefab != null) fallingHeartPrefab.gameObject.SetActive(false);
+
         if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
     }
 
@@ -59,10 +73,8 @@ public class Level7Manager : MonoBehaviour
         {
             isGameActive = false; 
 
-            // Palitan si Jobert ng Happy Sprite
             if (jobertHappySprite != null) jobertRenderer.sprite = jobertHappySprite;
 
-            // Imbes na Win Panel, tatawagin natin ang Next Scene pagkalipas ng 1.5 seconds
             Invoke("LoadPhase2", 1.5f);
         }
     }
@@ -72,6 +84,22 @@ public class Level7Manager : MonoBehaviour
         if (!isGameActive) return;
 
         currentHealth--; 
+
+        // --- BAGONG DAGDAG: HEART ANIMATION LOGIC ---
+        // Kapag nabawasan ng buhay, hahanapin nito yung tamang heart index para palitan at ihulog
+        if (currentHealth >= 0 && currentHealth < heartIcons.Length)
+        {
+            Vector3 lostHeartPos = heartIcons[currentHealth].rectTransform.position;
+            
+            if (emptyHeartSprite != null)
+            {
+                heartIcons[currentHealth].sprite = emptyHeartSprite;
+            }
+
+            StartCoroutine(AnimateFallingHeart(lostHeartPos));
+        }
+        // ---------------------------------------------
+
         int damageTaken = maxHealth - currentHealth; 
 
         if (damageTaken < jobertPantalSprites.Length)
@@ -94,12 +122,36 @@ public class Level7Manager : MonoBehaviour
         }
     }
 
+    // --- BAGONG DAGDAG: COROUTINE PARA SA PAGHULOG NG PUSO ---
+    IEnumerator AnimateFallingHeart(Vector3 startPos)
+    {
+        fallingHeartPrefab.gameObject.SetActive(true);
+        fallingHeartPrefab.rectTransform.position = startPos;
+
+        Color c = fallingHeartPrefab.color; 
+        c.a = 1f; 
+        fallingHeartPrefab.color = c;
+        
+        float timer = 0f;
+
+        while (timer < fadeDuration)
+        {
+            timer += Time.deltaTime;
+            fallingHeartPrefab.rectTransform.position += Vector3.down * fallSpeed * Time.deltaTime;
+            c.a = Mathf.Lerp(1f, 0f, timer / fadeDuration);
+            fallingHeartPrefab.color = c;
+            yield return null;
+        }
+
+        fallingHeartPrefab.gameObject.SetActive(false);
+    }
+    // ---------------------------------------------------------
+
     void UpdateScoreDisplay() { if(scoreTextUI != null) scoreTextUI.text = currentKills + " / " + targetKills; }
 
     // --- SCENE TRANSITION ---
     void LoadPhase2()
     {
-        // Ito ang pangalan ng susunod na Scene na gagawin natin
         SceneManager.LoadScene("Level7_Part2"); 
     }
 

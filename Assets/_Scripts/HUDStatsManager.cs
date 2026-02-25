@@ -68,6 +68,17 @@ public class HUDStatsManager : MonoBehaviour
             }
         }
 
+        // --- LEVEL 7 (Mosquito) ---
+        Level7Manager lvl7 = FindFirstObjectByType<Level7Manager>();
+        if (lvl7 != null) 
+        {
+            if (lvl7.targetKills > 0)
+            {
+                // currentKills divided by targetKills para makuha ang percentage!
+                progress = (float)lvl7.currentKills / lvl7.targetKills;
+            }
+        }
+
         // --- UPDATE UI ---
         // Clamp para hindi lumampas sa 0 to 1
         progress = Mathf.Clamp01(progress);
