@@ -50,11 +50,6 @@ public class HUDStatsManager : MonoBehaviour
         Level4Manager lvl4 = FindFirstObjectByType<Level4Manager>();
         if (lvl4 != null) 
         {
-            // Note: Siguraduhin na tama ang logic mo dito. 
-            // Kung gusto mo mapuno ang bar habang nagkokonek, dapat: plugsConnected / 3
-            // Kung gusto mo mabawasan (countdown), gamitin mo yung luma mo: (3 - connected) / 3
-            
-            // Default assumption (Filling up bar):
             progress = (float)lvl4.plugsConnected / 3f; 
         }
 
@@ -68,14 +63,25 @@ public class HUDStatsManager : MonoBehaviour
             }
         }
 
-        // --- LEVEL 7 (Mosquito) ---
+        // --- LEVEL 7 PHASE 1 (Mosquito) ---
         Level7Manager lvl7 = FindFirstObjectByType<Level7Manager>();
         if (lvl7 != null) 
         {
             if (lvl7.targetKills > 0)
             {
-                // currentKills divided by targetKills para makuha ang percentage!
                 progress = (float)lvl7.currentKills / lvl7.targetKills;
+            }
+        }
+
+        // ==========================================
+        // --- BAGONG DAGDAG: LEVEL 7 PART 2 ---
+        // ==========================================
+        Level7Part2Manager lvl7Part2 = FindFirstObjectByType<Level7Part2Manager>();
+        if (lvl7Part2 != null)
+        {
+            if (lvl7Part2.itemsNeeded > 0)
+            {
+                progress = (float)lvl7Part2.currentScore / lvl7Part2.itemsNeeded;
             }
         }
 

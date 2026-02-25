@@ -50,16 +50,36 @@ public class Level7Part2Manager : MonoBehaviour
     public GameObject checkIcon; 
     public GameObject xIcon;
 
+    [Header("Penalty Animation")]
+    public TMP_Text penaltyTextUI; 
+    public float fallSpeed = 50f;  
+    public float fadeDuration = 1f; 
+    private Vector3 penaltyOriginalPos; 
+    private Color originalTimerColor; // Tagatanda ng orihinal na kulay mula sa Inspector
+
     void Awake()
     {
         instance = this; 
         Time.timeScale = 1;
+
+        // --- BAGONG DAGDAG: I-save ang custom color mula sa Inspector ---
+        if (timerTextUI != null)
+        {
+            originalTimerColor = timerTextUI.color; 
+        }
     }
 
     void Start()
     {
         UpdateScoreDisplay();
         isGameActive = true;
+
+        // --- BAGONG DAGDAG: I-setup ang Penalty Text para nakatago sa simula ---
+        if (penaltyTextUI != null)
+        {
+            penaltyOriginalPos = penaltyTextUI.rectTransform.localPosition;
+            penaltyTextUI.gameObject.SetActive(false); 
+        }
     }
 
     void Update()
@@ -85,9 +105,9 @@ public class Level7Part2Manager : MonoBehaviour
             if (timeToShow < 0) timeToShow = 0;
             float seconds = Mathf.FloorToInt(timeToShow);
             timerTextUI.text = string.Format("<mspace=0.6em>{0:00}</mspace>", seconds);
-
-            if (timeToShow <= 10) timerTextUI.color = Color.red;
-            else timerTextUI.color = Color.white;
+            
+            // --- DITO ANG FIX: Gagamitin na niya ang kulay na nai-set mo sa Inspector! ---
+            timerTextUI.color = (timeToShow <= 10) ? Color.red : originalTimerColor;
         }
     }    
 
@@ -123,7 +143,39 @@ public class Level7Part2Manager : MonoBehaviour
         timeLimit -= penaltyTime; // Bawas oras!
         if (timeLimit <= 0) FinalizeGameOver(); 
         UpdateTimerDisplay(timeLimit);
+
+        // --- BAGONG DAGDAG: Tawagin ang animation kapag nagkamali! ---
+        if (penaltyTextUI != null)
+        {
+            StartCoroutine(AnimatePenaltyText());
+        }
     }
+
+    // --- BAGONG DAGDAG: ANG LOGIC NG PENALTY ANIMATION ---
+    IEnumerator AnimatePenaltyText()
+    {
+        penaltyTextUI.gameObject.SetActive(true);
+        penaltyTextUI.text = "-" + penaltyTime;
+        penaltyTextUI.rectTransform.localPosition = penaltyOriginalPos;
+        
+        Color textColor = penaltyTextUI.color;
+        textColor.a = 1f; 
+        penaltyTextUI.color = textColor;
+
+        float timer = 0f;
+
+        while (timer < fadeDuration)
+        {
+            timer += Time.deltaTime;
+            penaltyTextUI.rectTransform.localPosition += Vector3.down * fallSpeed * Time.deltaTime;
+            textColor.a = Mathf.Lerp(1f, 0f, timer / fadeDuration);
+            penaltyTextUI.color = textColor;
+            yield return null; 
+        }
+
+        penaltyTextUI.gameObject.SetActive(false);
+    }
+    // ---------------------------------------------------
 
     IEnumerator ShowFeedback(GameObject icon) { if(icon) { icon.SetActive(true); yield return new WaitForSeconds(1.0f); icon.SetActive(false); } }
 
@@ -167,7 +219,7 @@ public class Level7Part2Manager : MonoBehaviour
     }
 
     // --- BUTTONS ---
-    public void RetryLevel() { Time.timeScale = 1; SceneManager.LoadScene("Level7_Dengue"); } // Balik sa tap-tap lamok pag umulit!
+    public void RetryLevel() { Time.timeScale = 1; SceneManager.LoadScene("Level7_Dengue"); } 
     public void PauseGame() { pausePanel.SetActive(true); Time.timeScale = 0; }
     public void ResumeGame() { pausePanel.SetActive(false); Time.timeScale = 1; }
     public void QuitToLevelSelect() { Time.timeScale = 1; SceneManager.LoadScene("TyphoonLevelSelect"); }
