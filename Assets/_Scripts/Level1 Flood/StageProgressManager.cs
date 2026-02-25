@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class StageProgressManager : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class StageProgressManager : MonoBehaviour
 
     [Header("Stage Settings")]
     public int totalLevels = 10;
+
+    [Header("Certificate")]
+    public GameObject certificateButton;
+    public string certificateSceneName = "Flood_Certificate";
 
     void Awake()
     {
@@ -40,6 +45,11 @@ public class StageProgressManager : MonoBehaviour
 
         if (progressText != null)
             progressText.text = $"Progress: {Mathf.RoundToInt(progress * 100f)}%";
+
+        if (certificateButton != null)
+        {
+            certificateButton.SetActive(progress >= 1f);
+        }
     }
 
     private IEnumerator AnimateSlider(float targetValue, float duration = 0.5f)
@@ -53,5 +63,10 @@ public class StageProgressManager : MonoBehaviour
             yield return null;
         }
         progressSlider.value = targetValue;
+    }
+
+    public void OpenCertificate()
+    {
+        SceneManager.LoadScene(certificateSceneName);
     }
 }
