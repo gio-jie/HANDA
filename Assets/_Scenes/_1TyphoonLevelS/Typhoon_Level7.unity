@@ -309,6 +309,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3189254303608158371, guid: 33a6d33b5397e3c4f900e1be41e0d8a0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 404060988}
+    - target: {fileID: 3189254303608158371, guid: 33a6d33b5397e3c4f900e1be41e0d8a0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CloseOptions
+      objectReference: {fileID: 0}
     - target: {fileID: 3373247065924713508, guid: 33a6d33b5397e3c4f900e1be41e0d8a0, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -576,6 +584,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 921862680}
     m_Modifications:
+    - target: {fileID: 1133153414264400997, guid: 0a37c05530e5ef14db5894ed5b7f6106, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1088035601}
+    - target: {fileID: 1133153414264400997, guid: 0a37c05530e5ef14db5894ed5b7f6106, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 404060987}
+    - target: {fileID: 1133153414264400997, guid: 0a37c05530e5ef14db5894ed5b7f6106, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RetryLevel
+      objectReference: {fileID: 0}
+    - target: {fileID: 1133153414264400997, guid: 0a37c05530e5ef14db5894ed5b7f6106, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Click
+      objectReference: {fileID: 0}
+    - target: {fileID: 1133153414264400997, guid: 0a37c05530e5ef14db5894ed5b7f6106, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Level7Manager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 4139914171353365381, guid: 0a37c05530e5ef14db5894ed5b7f6106, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -2097,6 +2125,7 @@ GameObject:
   m_Component:
   - component: {fileID: 692932820}
   - component: {fileID: 692932819}
+  - component: {fileID: 692932821}
   m_Layer: 0
   m_Name: MosquitoSpawner
   m_TagString: Untagged
@@ -2135,6 +2164,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &692932821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692932818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8624056d23e1714984ce0c8b48436ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MosquitoBuzz
+  flapSpeed: 50
+  flapAmount: 0.15
+  buzzSpeed: 40
+  buzzAngle: 5
 --- !u!1 &775414606
 GameObject:
   m_ObjectHideFlags: 0
@@ -2784,7 +2829,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   targetKills: 50
-  maxHealth: 5
+  maxHealth: 1000000
   isGameActive: 1
   currentKills: 0
   jobertRenderer: {fileID: 1471714229}
@@ -2796,6 +2841,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 07c581a794529f844a089d30b5603cd0, type: 3}
   - {fileID: 21300000, guid: 26eee992b8f16a14ebd2f572ff40dff0, type: 3}
   jobertHappySprite: {fileID: 21300000, guid: 19edd8d7cf7182d4abdf0f9cafa798e4, type: 3}
+  biteSound: {fileID: 8300000, guid: 4dc5e9f6de937464084cc90af2d4de0e, type: 3}
+  biteVolume: 0.5
   heartIcons:
   - {fileID: 1896765869}
   - {fileID: 653898679}
@@ -3788,7 +3835,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 20
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!1 &1794249766
 GameObject:

@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.UI; // --- BAGONG DAGDAG: Kailangan para sa Image ---
+using UnityEngine.UI; 
 using TMPro;
-using System.Collections; // --- BAGONG DAGDAG: Kailangan para sa IEnumerator (Animation) ---
+using System.Collections; 
 using UnityEngine.SceneManagement; 
 
 public class Level7Manager : MonoBehaviour
@@ -22,8 +22,14 @@ public class Level7Manager : MonoBehaviour
     public Sprite jobertHappySprite; 
 
     // ==========================================
-    // --- BAGONG DAGDAG: HEALTH UI (HEARTS) ---
+    // --- BAGONG DAGDAG: VOLUME SLIDER ---
     // ==========================================
+    [Header("Audio (SFX)")]
+    public AudioClip biteSound; 
+    [Range(0f, 1f)] // Gagawin nitong slider ang volume sa Inspector!
+    public float biteVolume = 0.5f; // Default ay kalahati (50%)
+    // ==========================================
+
     [Header("Health UI (Hearts)")]
     public Image[] heartIcons; 
     public Sprite emptyHeartSprite; 
@@ -52,7 +58,6 @@ public class Level7Manager : MonoBehaviour
 
         if (jobertPantalSprites.Length > 0) jobertRenderer.sprite = jobertPantalSprites[0];
 
-        // Siguraduhing tago ang falling heart sa simula
         if (fallingHeartPrefab != null) fallingHeartPrefab.gameObject.SetActive(false);
 
         if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
@@ -85,8 +90,18 @@ public class Level7Manager : MonoBehaviour
 
         currentHealth--; 
 
-        // --- BAGONG DAGDAG: HEART ANIMATION LOGIC ---
-        // Kapag nabawasan ng buhay, hahanapin nito yung tamang heart index para palitan at ihulog
+        // --- DITO NATIN INAPPLY YUNG VOLUME ---
+        if (biteSound != null)
+        {
+            // Babasahin na niya yung biteVolume na sinet mo sa Inspector!
+            AudioSource.PlayClipAtPoint(biteSound, Camera.main.transform.position, biteVolume);
+        }
+        else if (AudioManager.instance != null) 
+        {
+            AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
+        }
+        // ----------------------------------------
+
         if (currentHealth >= 0 && currentHealth < heartIcons.Length)
         {
             Vector3 lostHeartPos = heartIcons[currentHealth].rectTransform.position;
@@ -98,7 +113,6 @@ public class Level7Manager : MonoBehaviour
 
             StartCoroutine(AnimateFallingHeart(lostHeartPos));
         }
-        // ---------------------------------------------
 
         int damageTaken = maxHealth - currentHealth; 
 
@@ -107,9 +121,6 @@ public class Level7Manager : MonoBehaviour
             jobertRenderer.sprite = jobertPantalSprites[damageTaken];
         }
 
-        if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
-
-        // GAME OVER: Naubos ang buhay ni Jobert
         if (currentHealth <= 0)
         {
             isGameActive = false;
@@ -122,7 +133,6 @@ public class Level7Manager : MonoBehaviour
         }
     }
 
-    // --- BAGONG DAGDAG: COROUTINE PARA SA PAGHULOG NG PUSO ---
     IEnumerator AnimateFallingHeart(Vector3 startPos)
     {
         fallingHeartPrefab.gameObject.SetActive(true);
@@ -145,17 +155,14 @@ public class Level7Manager : MonoBehaviour
 
         fallingHeartPrefab.gameObject.SetActive(false);
     }
-    // ---------------------------------------------------------
 
     void UpdateScoreDisplay() { if(scoreTextUI != null) scoreTextUI.text = currentKills + " / " + targetKills; }
 
-    // --- SCENE TRANSITION ---
     void LoadPhase2()
     {
         SceneManager.LoadScene("Level7_Part2"); 
     }
 
-    // --- BUTTON CONTROLS ---
     public void RetryLevel()
     {
         Time.timeScale = 1; 
