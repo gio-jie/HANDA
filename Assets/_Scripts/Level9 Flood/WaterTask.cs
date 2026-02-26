@@ -7,7 +7,7 @@ public class WaterTask : MonoBehaviour
     public Image fillImage;
     [Header("SFX")]
     public AudioClip fillSFX;       // looping fill sound
-    [Range(0f, 5f)] public float sfxVolume; // higher volume
+    [Range(0f, 10f)] public float sfxVolume; // higher volume
 
     private AudioSource audioSource;
 

@@ -17,11 +17,6 @@ public class GameManagerLevel2 : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); 
-        }
-        else
-        {
-            Destroy(gameObject);
         }
     }
 

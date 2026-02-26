@@ -31,14 +31,10 @@ public class CookTask : MonoBehaviour
     private bool taskCompleted = false;
     private bool cookAnimating = false;
 
-    // Cache original scales
     private Dictionary<Transform, Vector3> originalScales = new Dictionary<Transform, Vector3>();
-    // Track running flash coroutines per button
     private Dictionary<Button, Coroutine> flashCoroutines = new Dictionary<Button, Coroutine>();
-    // Track running pop coroutines per transform to prevent stacking
     private Dictionary<Transform, Coroutine> popCoroutines = new Dictionary<Transform, Coroutine>();
 
-    // Prevent multiple wrong clicks
     private bool isFlashing = false;
 
     void Awake()
@@ -48,7 +44,6 @@ public class CookTask : MonoBehaviour
             audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
 
-        // Cache original scales
         foreach (Button btn in ingredientButtons)
             originalScales[btn.transform] = btn.transform.localScale;
         foreach (Image img in patternSlots)
@@ -155,21 +150,18 @@ public class CookTask : MonoBehaviour
 
         playerInput.Add(index);
 
-        // Start pop safely
         if (popCoroutines.ContainsKey(ingredientButtons[index].transform))
             StopCoroutine(popCoroutines[ingredientButtons[index].transform]);
         popCoroutines[ingredientButtons[index].transform] = StartCoroutine(SafePop(ingredientButtons[index].transform));
 
         int slotIndex = playerInput.Count - 1;
 
-        // Wrong input
         if (playerInput[slotIndex] != correctPattern[slotIndex])
         {
             StartCoroutine(HandleWrongClick(ingredientButtons[index]));
             return;
         }
 
-        // Correct input
         if (slotIndex < checkMarks.Count)
             checkMarks[slotIndex].gameObject.SetActive(true);
 
@@ -269,7 +261,7 @@ public class CookTask : MonoBehaviour
         taskCompleted = true;
 
         if (cookClickSFX != null)
-            audioSource.PlayOneShot(cookClickSFX, sfxVolume);
+            audioSource.PlayOneShot(cookClickSFX, 2f);
 
         cookButton.gameObject.SetActive(false);
         SetCheckMarks(true);

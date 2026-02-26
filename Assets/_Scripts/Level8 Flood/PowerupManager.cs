@@ -33,14 +33,20 @@ public class PowerupManager : MonoBehaviour
     public Powerup pendingPowerup = null;
     private List<Level8DragItem> highlightedItems = new List<Level8DragItem>();
     private bool isShowingPowerup = false;
-    private bool isInitialized = false;
 
     void Awake() => Instance = this;
 
-    void Start()
-    {
-        isInitialized = true;
-    }
+    // public void QueueRandomPowerup()
+    // {
+    //     if (powerups == null || powerups.Count == 0)
+    //     {
+    //         Debug.LogError("NO POWERUPS ASSIGNED IN INSPECTOR!");
+    //         return;
+    //     }
+
+    //     pendingPowerup = powerups[Random.Range(0, powerups.Count)];
+    //     Debug.Log($"Powerup queued: {pendingPowerup.name}");
+    // }
 
     public void QueueRandomPowerup()
     {
@@ -50,13 +56,25 @@ public class PowerupManager : MonoBehaviour
             return;
         }
 
-        pendingPowerup = powerups[Random.Range(0, powerups.Count)];
+        var validPowerups = powerups
+            .Where(p => p != null && 
+                        !string.IsNullOrEmpty(p.name) && 
+                        p.icon != null)
+            .ToList();
+
+        if (validPowerups.Count == 0)
+        {
+            Debug.LogError("NO VALID POWERUPS FOUND!");
+            return;
+        }
+
+        pendingPowerup = validPowerups[Random.Range(0, validPowerups.Count)];
+
         Debug.Log($"Powerup queued: {pendingPowerup.name}");
     }
 
     public void ApplyPendingPowerup(string correctIDForNewCard)
     {
-        if (!isInitialized) return;
         if (pendingPowerup == null) return;
 
         ClearHighlights();
@@ -187,8 +205,22 @@ public class PowerupManager : MonoBehaviour
     {
         isShowingPowerup = true;
 
-        yield return new WaitForEndOfFrame();
+        yield return null;
 
+        if (powerup == null || string.IsNullOrEmpty(powerup.name) || powerup.icon == null)
+        {
+            Debug.LogError("Invalid powerup passed to panel! Skipping display.");
+            isShowingPowerup = false;
+            yield break;
+        }
+
+        //yield return new WaitForEndOfFrame();
+
+        if (powerup.icon == null)
+        {
+            Debug.LogError("Powerup icon is NULL for: " + powerup.name);
+        }
+        
         powerupPanel.SetActive(true);
         Time.timeScale = 0;
 

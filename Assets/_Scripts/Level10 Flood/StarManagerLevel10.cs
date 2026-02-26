@@ -61,7 +61,7 @@ public class StarManagerLevel10 : MonoBehaviour
         remainingTime = levelDuration;
         timePerStar = levelDuration / 3f;
 
-        InventoryManager.Instance.ClearRuntimeInventory();
+        //InventoryManager.Instance.ClearRuntimeInventory();
         InventoryUI.Instance.RefreshUI(InventoryManager.Instance.runtimeItems);
 
         UpdateStars(3);
