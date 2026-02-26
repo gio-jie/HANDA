@@ -112,7 +112,7 @@ public class OptionsManager : MonoBehaviour
         // Sample Vibrate (Para malaman ng player kung gumagana)
         if (isVibrationOn)
         {
-             // Handheld.Vibrate(); // (Gagana lang ito sa totoong phone)
+             Handheld.Vibrate(); // (Gagana lang ito sa totoong phone)
              Debug.Log("Bzzzt! Vibrate Check");
         }
     }

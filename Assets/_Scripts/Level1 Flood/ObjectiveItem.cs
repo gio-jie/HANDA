@@ -1,28 +1,29 @@
 using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
+using TMPro;
+using System.Collections;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(BoxCollider2D))]
-public class ObjectiveItem : MonoBehaviour
+public class ObjectiveItem : MonoBehaviour, IPointerClickHandler
 {
     public string itemID;
     public bool isRequiredItem = true;
 
     public Transform bagTarget;
+    public Canvas canvas;
+    public GameObject flyingItemPrefab;
 
     bool collected = false;
     bool isAnimating = false;
     Vector3 baseScale;
-
-    public Canvas canvas;
-    public GameObject flyingItemPrefab;
 
     void Start()
     {
         baseScale = transform.localScale;
     }
 
-    void OnMouseDown()
+    public void OnPointerClick(PointerEventData eventData)
     {
         if (GameManager.Instance != null && GameManager.Instance.isPaused)
             return;
@@ -48,12 +49,10 @@ public class ObjectiveItem : MonoBehaviour
     IEnumerator CollectRequired()
     {
         collected = true;
-
         yield return StartCoroutine(PopEffect());
         AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
 
         StarManager.Instance.RegisterCorrectItem();
-
         ObjectiveManager.Instance.CollectItem(itemID);
         InventoryManager.Instance.CollectItem(itemID);
 
@@ -72,7 +71,6 @@ public class ObjectiveItem : MonoBehaviour
         if (collected || isAnimating) return;
 
         StarManager.Instance.RegisterWrongItem();
-
         collected = true;
         StartCoroutine(FlyToBagUI());
     }
@@ -83,8 +81,8 @@ public class ObjectiveItem : MonoBehaviour
 
         float duration = 0.1f;
         Vector3 bigger = baseScale * 1.2f;
+        float t = 0f;
 
-        float t = 0;
         while (t < duration)
         {
             t += Time.deltaTime;
@@ -92,7 +90,7 @@ public class ObjectiveItem : MonoBehaviour
             yield return null;
         }
 
-        t = 0;
+        t = 0f;
         while (t < duration)
         {
             t += Time.deltaTime;

@@ -28,14 +28,6 @@ public class GameManager : MonoBehaviour
         Resume();
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            TogglePause();
-        }
-    }
-
     public void TogglePause()
     {
         if (isPaused)

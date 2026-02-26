@@ -1,11 +1,11 @@
 using UnityEngine;
-using System.IO;
 using System.Collections;
 using TMPro;
 
 public class CertificateManager : MonoBehaviour
 {
-    public Texture2D certificateTexture;
+    [Header("Certificate")]
+    public Texture2D certificateTexture;           // Drag your PNG certificate here
     public string certificateFileName = "Certificate-FloodStage.png";
 
     [Header("Popup UI")]
@@ -13,11 +13,7 @@ public class CertificateManager : MonoBehaviour
     public TMP_Text popupText;
     public float popupDuration = 2f;
 
-    private string GetFilePath()
-    {
-        return Path.Combine(Application.persistentDataPath, certificateFileName);
-    }
-
+    // ----------------- SAVE TO GALLERY -----------------
     public void SaveCertificate()
     {
         if (certificateTexture == null)
@@ -26,13 +22,27 @@ public class CertificateManager : MonoBehaviour
             return;
         }
 
-        byte[] pngData = certificateTexture.EncodeToPNG();
-        string filePath = GetFilePath();
-        File.WriteAllBytes(filePath, pngData);
-
-        ShowPopup("Certificate saved!");
+        NativeGallery.SaveImageToGallery(
+            certificateTexture,
+            "DisasterPreparednessCertificates",
+            certificateFileName,
+            (bool success, string path) =>
+            {
+                if (success)
+                {
+                    Debug.Log("Certificate saved to gallery at: " + path);
+                    ShowPopup("Certificate saved to gallery!");
+                }
+                else
+                {
+                    Debug.LogError("Failed to save certificate!");
+                    ShowPopup("Failed to save certificate!");
+                }
+            }
+        );
     }
 
+    // ----------------- SHARE CERTIFICATE -----------------
     public void ShareCertificate()
     {
         if (certificateTexture == null)
@@ -41,9 +51,10 @@ public class CertificateManager : MonoBehaviour
             return;
         }
 
-        string tempPath = Path.Combine(Application.temporaryCachePath, certificateFileName);
+        // Save temporarily to cache for sharing
+        string tempPath = System.IO.Path.Combine(Application.temporaryCachePath, certificateFileName);
         byte[] pngData = certificateTexture.EncodeToPNG();
-        File.WriteAllBytes(tempPath, pngData);
+        System.IO.File.WriteAllBytes(tempPath, pngData);
 
         new NativeShare()
             .AddFile(tempPath)
@@ -54,6 +65,7 @@ public class CertificateManager : MonoBehaviour
         ShowPopup("Certificate shared!");
     }
 
+    // ----------------- POPUP -----------------
     private void ShowPopup(string message)
     {
         if (popupPanel == null || popupText == null)
