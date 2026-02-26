@@ -5,16 +5,20 @@ using TMPro;
 
 public class Patient1Wound : MonoBehaviour, IDropHandler
 {
+    [Header("Patient Visuals")]
+    public Image patientMainImage; 
+    public Sprite curedPatientSprite; 
+
     [Header("Wound UI Layers")]
     public Image dirtOverlay;         
     public Image betadineOverlay;     
     public GameObject bandageApplied; 
 
     [Header("UI Feedback")]
-    public TMP_Text statusText; // DITO NATIN ILALAGAY YUNG BINALIK MONG TEXT
+    public TMP_Text statusText; 
 
     [Header("Rubbing Settings")]
-    public float rubSpeed = 0.5f;     
+    public float rubSpeed = 0.5f;    
     public float rubRadius = 150f;    
 
     private int currentStep = 0; // 0=Alcohol, 1=Betadine, 2=Bandage
@@ -22,7 +26,6 @@ public class Patient1Wound : MonoBehaviour, IDropHandler
 
     void Start()
     {
-        // Pagka-start ng laro, i-update agad ang text sa Step 0
         UpdateStatusText();
     }
 
@@ -51,7 +54,7 @@ public class Patient1Wound : MonoBehaviour, IDropHandler
                             currentStep = 1; 
                             
                             if(Level8Part2Manager.instance != null) Level8Part2Manager.instance.CorrectStep();
-                            UpdateStatusText(); // PALITAN ANG TEXT!
+                            UpdateStatusText(); 
                             Debug.Log("Malinis na! Next: Betadine");
                         }
                     }
@@ -68,7 +71,7 @@ public class Patient1Wound : MonoBehaviour, IDropHandler
                             currentStep = 2; 
                             
                             if(Level8Part2Manager.instance != null) Level8Part2Manager.instance.CorrectStep();
-                            UpdateStatusText(); // PALITAN ANG TEXT!
+                            UpdateStatusText(); 
                             Debug.Log("May gamot na! Next: Bandage");
                         }
                     }
@@ -87,30 +90,58 @@ public class Patient1Wound : MonoBehaviour, IDropHandler
             // KUNG TAMA ANG BANDAGE SA HULI
             if (currentStep == 2 && droppedItem == "Bandage")
             {
-                bandageApplied.SetActive(true); 
+                if (patientMainImage != null && curedPatientSprite != null)
+                {
+                    patientMainImage.sprite = curedPatientSprite;
+                }
+
+                if (dirtOverlay != null) dirtOverlay.gameObject.SetActive(false);
+                if (betadineOverlay != null) betadineOverlay.gameObject.SetActive(false);
+                if (bandageApplied != null) bandageApplied.SetActive(false); 
                 
                 if(Level8Part2Manager.instance != null) Level8Part2Manager.instance.CorrectStep();
                 
                 currentStep = 3; 
-                UpdateStatusText(); // PALITAN ANG TEXT TO "CURED!"
+                UpdateStatusText(); 
                 Debug.Log("PATIENT 1 CURED! TRANSITION NEXT!");
                 Invoke("CallNext", 1.5f);
             }
-            // KUNG MALI ANG ITEM
-            else if ((currentStep == 0 && droppedItem != "Alcohol") ||
-                     (currentStep == 1 && droppedItem != "Betadine") ||
-                     (currentStep == 2 && droppedItem != "Bandage"))
+            // --- BINAGO: KUNG MALI ANG ITEM ---
+            else
             {
-                Debug.Log("MALI! Hindi pa 'yan ang kailangan!");
-                if(Level8Part2Manager.instance != null) Level8Part2Manager.instance.WrongItem();
+                bool isWrong = false;
+
+                // Step 0: Mali kung hindi Alcohol ang idinrop
+                if (currentStep == 0 && droppedItem != "Alcohol") 
+                {
+                    isWrong = true;
+                }
+                // Step 1: Mali kung hindi Betadine. 
+                // PERO hindi penalty kung Alcohol ang binitawan (kasi kakatapos lang magkuskos!)
+                else if (currentStep == 1 && droppedItem != "Betadine" && droppedItem != "Alcohol") 
+                {
+                    isWrong = true;
+                }
+                // Step 2: Mali kung hindi Bandage. 
+                // PERO hindi penalty kung Betadine ang binitawan (kasi kakatapos lang magkuskos!)
+                else if (currentStep == 2 && droppedItem != "Bandage" && droppedItem != "Betadine")
+                {
+                    isWrong = true;
+                }
+
+                // Kung napatunayan talagang mali ang dinrag
+                if (isWrong)
+                {
+                    Debug.Log("MALI! Hindi pa 'yan ang kailangan!");
+                    if(Level8Part2Manager.instance != null) Level8Part2Manager.instance.WrongItem();
+                }
             }
         }
     }
 
-    // --- BAGONG FUNCTION: Taga-palit ng Text ---
     void UpdateStatusText()
     {
-        if (statusText == null) return; // Iwas error kung walang text na nakakabit
+        if (statusText == null) return; 
 
         if (currentStep == 0)
         {
@@ -133,9 +164,9 @@ public class Patient1Wound : MonoBehaviour, IDropHandler
             statusText.color = Color.green;
         }
     }
+    
     void CallNext() 
     { 
         if(Level8Part2Manager.instance != null) Level8Part2Manager.instance.NextPatient(); 
     }
-    
 }

@@ -6,9 +6,17 @@ using System.Collections;
 
 public class Patient2Fever : MonoBehaviour, IDropHandler
 {
+    // ==========================================
+    // --- BAGONG DAGDAG: PATIENT VISUALS ---
+    // ==========================================
+    [Header("Patient Visuals")]
+    public Image patientMainImage; // Ang mismong object ng pasyente
+    public Sprite curedPatientSprite; // Yung picture niya na masaya at may cooling pad na
+    // ==========================================
+
     [Header("UI Layers")]
     public TMP_Text statusText;
-    public GameObject coolingPadApplied; 
+    public GameObject coolingPadApplied; // (Pwede na itong hindi gamitin kung kasama na sa cured sprite)
     public TMP_Text thermometerText; 
 
     private int currentStep = 0; 
@@ -49,10 +57,18 @@ public class Patient2Fever : MonoBehaviour, IDropHandler
                 CompleteStep();
                 Destroy(droppedItem.gameObject); 
             }
-            // STEP 4: COOLING PAD
+            // --- BINAGO: STEP 4: COOLING PAD ---
             else if (currentStep == 3 && itemType == "CoolingPad")
             {
-                coolingPadApplied.SetActive(true); 
+                // 1. PALITAN ANG MISMONG PICTURE NG PASYENTE
+                if (patientMainImage != null && curedPatientSprite != null)
+                {
+                    patientMainImage.sprite = curedPatientSprite;
+                }
+
+                // 2. ITAGO YUNG LUMANG OVERLAY (kung malinis na siya sa bagong drawing)
+                if (coolingPadApplied != null) coolingPadApplied.SetActive(false); 
+                
                 Invoke("CallNext", 1.5f);
                 CompleteStep();
                 Destroy(droppedItem.gameObject);
@@ -125,9 +141,9 @@ public class Patient2Fever : MonoBehaviour, IDropHandler
             statusText.color = Color.green;
         }
     }
+    
     void CallNext() 
     { 
         if(Level8Part2Manager.instance != null) Level8Part2Manager.instance.NextPatient(); 
     }
-    
 }
