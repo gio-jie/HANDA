@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement; 
-using System.Collections; // Kailangan para sa mga animations natin
+using System.Collections; 
 
 public class Level8Part1Manager : MonoBehaviour
 {
@@ -16,15 +16,23 @@ public class Level8Part1Manager : MonoBehaviour
     
     [Header("UI Elements")]
     public Image powerBarFill;
-    public TMP_Text missionText;
+    public TMP_Text score;
 
     [Header("Blackout & Transition Effect")]
     public Image darknessOverlay; 
     public float maxDarkness = 0.95f; 
-    // --- BAGONG DAGDAG ---
-    public TMP_Text goodJobText; // Dito natin ilalagay ang "Good Job!"
-    public float fadeDuration = 1.5f; // Bilis ng pagdilim
-    // ---------------------
+    public TMP_Text goodJobText; 
+    public float fadeDuration = 1.5f; 
+
+    // ==========================================
+    // --- BAGONG DAGDAG: PENALTY VISUALS ---
+    // ==========================================
+    [Header("Penalty Visuals (- Electricity)")]
+    public Image penaltyIconImage; // Dito ide-drag yung ginawa mong Image kanina
+    public float penaltyShowDuration = 0.5f; // Gaano katagal nakalitaw bago mag-fade
+    public float penaltyFadeDuration = 1.0f; // Gaano katagal ang fading
+    private Coroutine currentPenaltyRoutine; // Para hindi magpatong-patong ang animation
+    // ==========================================
 
     [Header("UI Panels")]
     public GameObject losePanel;
@@ -32,7 +40,7 @@ public class Level8Part1Manager : MonoBehaviour
 
     [Header("Game Data")]
     public int totalFamiliesToServe = 3;
-    private int familiesServed = 0;
+    public int familiesServed = 0;
     [HideInInspector] public bool isGameActive = false;
 
     void Awake()
@@ -47,8 +55,10 @@ public class Level8Part1Manager : MonoBehaviour
         isGameActive = true;
         UpdateUI();
 
-        // Itago muna ang Good Job text sa simula
         if (goodJobText != null) goodJobText.gameObject.SetActive(false);
+        
+        // Siguraduhing nakatago ang penalty icon sa simula
+        if (penaltyIconImage != null) penaltyIconImage.gameObject.SetActive(false);
     }
 
     void Update()
@@ -66,7 +76,6 @@ public class Level8Part1Manager : MonoBehaviour
             else powerBarFill.color = Color.green;
         }
 
-        // Dilim effect habang paubos ang kuryente
         if (darknessOverlay != null)
         {
             Color overlayColor = darknessOverlay.color;
@@ -88,6 +97,47 @@ public class Level8Part1Manager : MonoBehaviour
         currentPower += powerPerTap;
         if (currentPower > maxPower) currentPower = maxPower; 
     }
+
+    // ==========================================
+    // --- BAGONG DAGDAG: PENALTY TRIGGER ---
+    // ==========================================
+    // Ito ang tatawagin ng DropZone kapag nagkamali
+    public void TriggerPenaltyFeedback()
+    {
+        if (penaltyIconImage == null) return;
+
+        // Kung may tumatakbo pang animation, itigil muna para mag-reset
+        if (currentPenaltyRoutine != null) StopCoroutine(currentPenaltyRoutine);
+        
+        currentPenaltyRoutine = StartCoroutine(AnimatePenaltyRoutine());
+    }
+
+    // Ang animation ng paglabas at pag-fade
+    IEnumerator AnimatePenaltyRoutine()
+    {
+        penaltyIconImage.gameObject.SetActive(true); // Palitawin
+
+        // I-reset ang kulay sa solid (hindi transparent)
+        Color c = penaltyIconImage.color;
+        c.a = 1f;
+        penaltyIconImage.color = c;
+
+        // Maghintay saglit para makita ng player (e.g., 0.5 seconds)
+        yield return new WaitForSeconds(penaltyShowDuration);
+
+        // Unti-unting i-fade out
+        float timer = 0f;
+        while (timer < penaltyFadeDuration)
+        {
+            timer += Time.deltaTime;
+            c.a = Mathf.Lerp(1f, 0f, timer / penaltyFadeDuration); // Maging transparent
+            penaltyIconImage.color = c;
+            yield return null;
+        }
+
+        penaltyIconImage.gameObject.SetActive(false); // Itago ulit pag tapos na
+    }
+    // ==========================================
 
     void GameOverBlackout()
     {
@@ -120,25 +170,20 @@ public class Level8Part1Manager : MonoBehaviour
         if (familiesServed >= totalFamiliesToServe)
         {
             isGameActive = false;
-            // --- TAWAGIN ANG BAGONG ANIMATION ---
             StartCoroutine(WinTransitionRoutine());
         }
     }
 
-    // --- BAGONG ANIMATION ROUTINE PABALIK SA DILIM ---
     IEnumerator WinTransitionRoutine()
     {
-        // 1. Ipakita ang Good Job!
         if (goodJobText != null)
         {
             goodJobText.gameObject.SetActive(true);
             goodJobText.text = "Good Job!";
         }
 
-        // 2. Maghintay ng 1 second para mabasa
         yield return new WaitForSeconds(1f);
 
-        // 3. Unti-unting diliman ang screen (Fade to Black)
         if (darknessOverlay != null)
         {
             float timer = 0f;
@@ -148,22 +193,20 @@ public class Level8Part1Manager : MonoBehaviour
             while (timer < fadeDuration)
             {
                 timer += Time.deltaTime;
-                c.a = Mathf.Lerp(startAlpha, 1f, timer / fadeDuration); // Mula current alpha papuntang 1 (Solid Black)
+                c.a = Mathf.Lerp(startAlpha, 1f, timer / fadeDuration);
                 darknessOverlay.color = c;
                 yield return null;
             }
         }
 
-        // 4. Saka natin ilo-load ang Phase 2!
         SceneManager.LoadScene("Level8_Part2");
     }
 
     void UpdateUI()
     {
-        if (missionText != null) missionText.text = "Families Served: " + familiesServed + " / " + totalFamiliesToServe;
+        if (score != null) score.text = "" + familiesServed + " / " + totalFamiliesToServe;
     }
 
-    // (Pause at Menu Commands - Walang nagbago dito)
     public void PauseGame() { if (pausePanel != null) pausePanel.SetActive(true); Time.timeScale = 0; }
     public void ResumeGame() { if (pausePanel != null) pausePanel.SetActive(false); Time.timeScale = 1; }
     public void RetryLevel() { Time.timeScale = 1; SceneManager.LoadScene(SceneManager.GetActiveScene().name); }

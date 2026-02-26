@@ -13,14 +13,17 @@ public class EvacueeDropZone : MonoBehaviour, IDropHandler
     public Sprite soapSprite;
     public Sprite sanitizerSprite;
     public Sprite towelSprite;
-
+    public Sprite betadineSprite;
+    public Sprite cottonSprite;
+    public Sprite medicineSprite;
+    
     [Header("Thought Bubble UI")]
     public GameObject thoughtBubble; 
     public Image[] requestIcons;     // Ang 3 slots ng picture
     public GameObject[] checkmarks;  // Ang 3 checkmarks
     public TMP_Text thankYouText;    // Ang magpapakita ng "Thank you!"
 
-    private List<string> possibleItems = new List<string> { "Water", "Biscuit", "Soap", "Sanitizer", "Towel" };
+    private List<string> possibleItems = new List<string> { "Water", "Biscuit", "Soap", "Sanitizer", "Towel", "Betadine", "Cotton", "Medicine" };
     private List<string> currentRequests = new List<string>();
     private List<bool> requestStatus = new List<bool>();
 
@@ -31,7 +34,6 @@ public class EvacueeDropZone : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        // Kung tapos na ang laro, wag na tumanggap ng items
         if (Level8Part1Manager.instance != null && !Level8Part1Manager.instance.isGameActive) return;
 
         if (eventData.pointerDrag != null)
@@ -48,6 +50,7 @@ public class EvacueeDropZone : MonoBehaviour, IDropHandler
     {
         bool matched = false;
 
+        // --- DITO YUNG NAWALA KANINA! Binalik ko na para mag-match ulit ---
         for (int i = 0; i < currentRequests.Count; i++)
         {
             if (currentRequests[i] == type && requestStatus[i] == false)
@@ -59,6 +62,7 @@ public class EvacueeDropZone : MonoBehaviour, IDropHandler
                 break; 
             }
         }
+        // ------------------------------------------------------------------
 
         if (matched)
         {
@@ -70,6 +74,8 @@ public class EvacueeDropZone : MonoBehaviour, IDropHandler
             if (Level8Part1Manager.instance != null)
             {
                 Level8Part1Manager.instance.currentPower -= 10f;
+                // TAWAGIN ANG BAGONG VISUAL FEEDBACK
+                Level8Part1Manager.instance.TriggerPenaltyFeedback();
             }
         }
     }
@@ -90,41 +96,29 @@ public class EvacueeDropZone : MonoBehaviour, IDropHandler
 
     IEnumerator CompleteRequestRoutine()
     {
-        // 1. Magdagdag ng score sa Manager
         if (Level8Part1Manager.instance != null) Level8Part1Manager.instance.AddScore();
 
-        // 2. Itago ang mga pictures at checkmarks
         foreach (Image icon in requestIcons) icon.gameObject.SetActive(false);
         foreach (GameObject check in checkmarks) check.SetActive(false);
         
-        // 3. Ilabas ang Thank You!
         if(thankYouText != null) 
         {
             thankYouText.gameObject.SetActive(true);
             thankYouText.text = "Thank you!";
         }
 
-        // 4. Maghintay ng 1.5 seconds 
         yield return new WaitForSeconds(1.5f); 
 
-        // --- DITO ANG FIX NATIN ---
-        // Bago mag-generate ng bago, itanong muna kung ACTIVE pa ang laro
         if (Level8Part1Manager.instance != null && Level8Part1Manager.instance.isGameActive)
         {
-            GenerateNewRequest(); // Tuloy ang ligaya
+            GenerateNewRequest(); 
         }
         else
         {
-            // KUNG TAPOS NA ANG LARO (Win or Lose):
             Debug.Log("Game Over or Win! Stopping requests.");
-            
-            // Itago na nang tuluyan ang buong bubble at text
             if(thoughtBubble != null) thoughtBubble.SetActive(false);
             if(thankYouText != null) thankYouText.gameObject.SetActive(false);
-            
-            // Dito pwede nating tawagin ang transition papuntang Phase 2 sa susunod!
         }
-        // --------------------------
     }
 
     void GenerateNewRequest()
@@ -136,7 +130,6 @@ public class EvacueeDropZone : MonoBehaviour, IDropHandler
         foreach (Image icon in requestIcons) icon.gameObject.SetActive(false);
         foreach (GameObject check in checkmarks) check.SetActive(false);
         
-        // Siguraduhing nakalitaw ang bubble
         if(thoughtBubble != null) thoughtBubble.SetActive(true);
 
         int itemsToRequest = Random.Range(1, 4); 
@@ -164,6 +157,9 @@ public class EvacueeDropZone : MonoBehaviour, IDropHandler
             case "Soap": return soapSprite;
             case "Sanitizer": return sanitizerSprite;
             case "Towel": return towelSprite;
+            case "Betadine": return betadineSprite;
+            case "Cotton": return cottonSprite;
+            case "Medicine": return medicineSprite;
             default: return null;
         }
     }

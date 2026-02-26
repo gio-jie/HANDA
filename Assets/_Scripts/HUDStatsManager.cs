@@ -73,15 +73,25 @@ public class HUDStatsManager : MonoBehaviour
             }
         }
 
-        // ==========================================
-        // --- BAGONG DAGDAG: LEVEL 7 PART 2 ---
-        // ==========================================
+        // --- LEVEL 7 PART 2 (Go Bag) ---
         Level7Part2Manager lvl7Part2 = FindFirstObjectByType<Level7Part2Manager>();
         if (lvl7Part2 != null)
         {
             if (lvl7Part2.itemsNeeded > 0)
             {
                 progress = (float)lvl7Part2.currentScore / lvl7Part2.itemsNeeded;
+            }
+        }
+
+        // ==========================================
+        // --- BAGONG DAGDAG: LEVEL 8 PART 1 ---
+        // ==========================================
+        Level8Part1Manager lvl8Part1 = FindFirstObjectByType<Level8Part1Manager>();
+        if (lvl8Part1 != null)
+        {
+            if (lvl8Part1.totalFamiliesToServe > 0)
+            {
+                progress = (float)lvl8Part1.familiesServed / lvl8Part1.totalFamiliesToServe;
             }
         }
 
