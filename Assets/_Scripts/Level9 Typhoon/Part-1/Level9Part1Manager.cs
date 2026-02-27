@@ -12,11 +12,15 @@ public class Level9Part1Manager : MonoBehaviour
     public float timeLimit = 60f; // 1 minute para hanapin ang hazards sa dilim
     public float penaltyTime = 5f;
     public int totalHazards = 4; // Live Wire, Ahas, Puno, Salamin
-    private int resolvedHazards = 0;
+    public int resolvedHazards = 0;
 
     [Header("UI Feedback")]
     public TMP_Text timerTextUI;
     public TMP_Text scoreTextUI;
+    
+    // --- BAGONG DAGDAG: TAGATANDA NG KULAY ---
+    private Color originalTimerColor; 
+    // -----------------------------------------
 
     [Header("Penalty Animation")]
     public TMP_Text penaltyTextUI;
@@ -39,6 +43,12 @@ public class Level9Part1Manager : MonoBehaviour
     {
         instance = this;
         Time.timeScale = 1;
+
+        // --- BAGONG DAGDAG: I-SAVE ANG KULAY MULA SA INSPECTOR ---
+        if (timerTextUI != null)
+        {
+            originalTimerColor = timerTextUI.color; 
+        }
     }
 
     void Start()
@@ -74,14 +84,21 @@ public class Level9Part1Manager : MonoBehaviour
         }
     }
 
+    // --- BINAGO: GINAWANG MINUTES AND SECONDS + CUSTOM COLOR ---
     void UpdateTimerDisplay(float time)
     {
         if (timerTextUI != null)
         {
             if (time < 0) time = 0;
-            float sec = Mathf.Max(0, Mathf.FloorToInt(time));
-            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}</mspace>", sec);
-            timerTextUI.color = (time <= 10) ? Color.red : Color.white;
+
+            int minutes = Mathf.FloorToInt(time / 60); 
+            int seconds = Mathf.FloorToInt(time % 60); 
+
+            // Format: MM:SS
+            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", minutes, seconds);
+            
+            // Babalik sa custom color mo imbis na laging white!
+            timerTextUI.color = (time <= 10) ? Color.red : originalTimerColor;
         }
     }
 
@@ -89,7 +106,7 @@ public class Level9Part1Manager : MonoBehaviour
     {
         if (scoreTextUI != null)
         {
-            scoreTextUI.text = "Hazards Cleared: " + resolvedHazards + " / " + totalHazards;
+            scoreTextUI.text = "" + resolvedHazards + " / " + totalHazards;
         }
     }
 
@@ -123,6 +140,9 @@ public class Level9Part1Manager : MonoBehaviour
         if (penaltyTextUI != null) StartCoroutine(AnimatePenaltyText());
 
         if (timeLimit <= 0) FinalizeGameOver();
+        
+        // --- BAGONG DAGDAG: I-update agad ang display pagkabawas ---
+        UpdateTimerDisplay(timeLimit);
     }
 
     IEnumerator AnimatePenaltyText()
@@ -180,7 +200,10 @@ public class Level9Part1Manager : MonoBehaviour
     {
         timeLimit = 0;
         isGameActive = false;
-        if (timerTextUI != null) timerTextUI.text = "00";
+        
+        // --- BINAGO: GINAWANG 00:00 ---
+        if (timerTextUI != null) timerTextUI.text = "00:00";
+        
         if (losePanel != null) losePanel.SetActive(true);
 
         if (AudioManager.instance != null)

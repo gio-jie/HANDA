@@ -1,19 +1,19 @@
 fileFormatVersion: 2
-guid: 1f6905b2274b5ee43944e3d7889b3303
+guid: 4918cdf325abeb14d8832f87f6f76209
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5126509546817415612
-    second: Boots_Attached_0
+      213: 4192251403414459807
+    second: paso_0
   - first:
-      213: 6469466771659822976
-    second: Boots_Attached_1
+      213: 8966928227691785069
+    second: paso_1
   - first:
-      213: -7583499666398821502
-    second: Boots_Attached_2
+      213: 565460268301344172
+    second: paso_2
   - first:
-      213: -475304796699213316
-    second: Boots_Attached_3
+      213: 5488168244627726904
+    second: paso_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -60,7 +60,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 700
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -122,13 +122,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Boots_Attached_0
+      name: paso_0
       rect:
         serializedVersion: 2
-        x: 55
-        y: 0
-        width: 641
-        height: 907
+        x: 112
+        y: 903
+        width: 164
+        height: 143
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,64 +137,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cb963bb7545052740800000000000000
-      internalID: 5126509546817415612
+      spriteID: f95d6ad907edd2a30800000000000000
+      internalID: 4192251403414459807
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Boots_Attached_1
-      rect:
-        serializedVersion: 2
-        x: 675
-        y: 703
-        width: 38
-        height: 39
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0871afa80c928c950800000000000000
-      internalID: 6469466771659822976
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Boots_Attached_2
-      rect:
-        serializedVersion: 2
-        x: 34
-        y: 630
-        width: 27
-        height: 27
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 28341068b3ff1c690800000000000000
-      internalID: -7583499666398821502
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Boots_Attached_3
+      name: paso_1
       rect:
         serializedVersion: 2
         x: 657
-        y: 490
-        width: 49
-        height: 50
+        y: 1045
+        width: 164
+        height: 143
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -203,8 +159,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cf144b04ec06769f0800000000000000
-      internalID: -475304796699213316
+      spriteID: d6bedf9d6bde07c70800000000000000
+      internalID: 8966928227691785069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: paso_2
+      rect:
+        serializedVersion: 2
+        x: 1164
+        y: 890
+        width: 164
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cadd2ba3e1be8d700800000000000000
+      internalID: 565460268301344172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: paso_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1790
+        height: 813
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8326d90e0f3e92c40800000000000000
+      internalID: 5488168244627726904
       vertices: []
       indices: 
       edges: []
@@ -223,10 +223,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Boots_Attached_0: 5126509546817415612
-      Boots_Attached_1: 6469466771659822976
-      Boots_Attached_2: -7583499666398821502
-      Boots_Attached_3: -475304796699213316
+      paso_0: 4192251403414459807
+      paso_1: 8966928227691785069
+      paso_2: 565460268301344172
+      paso_3: 5488168244627726904
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

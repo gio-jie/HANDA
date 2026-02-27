@@ -1,29 +1,31 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Collections; // Kailangan para sa timer ng X mark
+using System.Collections; 
+using System.Collections.Generic; // DAGDAG: Kailangan ito para makagamit tayo ng "List"
 
 public class HazardTarget : MonoBehaviour, IDropHandler
 {
     [Header("Hazard Settings")]
     public string hazardName; 
-    public string requiredTool; 
+    
+    // --- ITO ANG BINAGO ---
+    // Ginawa nating List para pwede kang mag-add ng dalawa o higit pang tools sa Inspector
+    public List<string> acceptedTools = new List<string>(); 
 
     [Header("Feedback Icons")]
-    public GameObject checkmarkIcon; // Ang lilitaw pag tama at maiiwan
-    public GameObject xMarkIcon;     // Ang lilitaw saglit pag mali
+    public GameObject checkmarkIcon; 
+    public GameObject xMarkIcon;     
 
-    private bool isResolved = false; // Taga-tanda kung naayos na ba ito
+    private bool isResolved = false; 
 
     void Start()
     {
-        // Siguraduhing nakatago ang mga icons sa simula ng laro
         if (checkmarkIcon != null) checkmarkIcon.SetActive(false);
         if (xMarkIcon != null) xMarkIcon.SetActive(false);
     }
 
     public void OnDrop(PointerEventData eventData)
     {
-        // Kung na-solve na ang hazard na ito, wag na pansinin ang susunod na drop
         if (isResolved) return; 
 
         if (eventData.pointerDrag != null)
@@ -38,14 +40,15 @@ public class HazardTarget : MonoBehaviour, IDropHandler
 
     void CheckTool(string toolUsed)
     {
-        if (toolUsed == requiredTool)
+        // --- ITO ANG BINAGO ---
+        // Iche-check niya ngayon kung yung ginamit na tool ay nasa loob ng listahan mo
+        if (acceptedTools.Contains(toolUsed))
         {
             Debug.Log("TAMA! Ligtas na ang: " + hazardName);
             isResolved = true; 
             
             if (checkmarkIcon != null) checkmarkIcon.SetActive(true);
 
-            // --- TAWAGIN ANG MANAGER PARA SA SCORE ---
             if (Level9Part1Manager.instance != null) Level9Part1Manager.instance.AddScore();
         }
         else
@@ -54,18 +57,16 @@ public class HazardTarget : MonoBehaviour, IDropHandler
             
             StartCoroutine(ShowWrongFeedback());
 
-            // --- TAWAGIN ANG MANAGER PARA SA PENALTY ---
             if (Level9Part1Manager.instance != null) Level9Part1Manager.instance.WrongItem();
         }
     }
 
-    // --- ANIMATION PARA SA X MARK (1 Second) ---
     IEnumerator ShowWrongFeedback()
     {
         if (xMarkIcon != null)
         {
             xMarkIcon.SetActive(true);
-            yield return new WaitForSeconds(1f); // Maghintay ng 1 second
+            yield return new WaitForSeconds(1f); 
             xMarkIcon.SetActive(false);
         }
     }

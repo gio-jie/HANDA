@@ -9,8 +9,8 @@ public class Level9Part2Manager : MonoBehaviour
 
     [Header("Player Status")]
     public bool isWearingBoots = false;
-    public Image jobertImage; // Ang mismong UI Image ni Jobert sa Canvas
-    public Sprite jobertWithBootsSprite; // Ang bagong drawing niya na naka-bota na
+    public Image jobertImage; 
+    public Sprite jobertWithBootsSprite; 
 
     [Header("Infection Meter (Parusa)")]
     public float currentInfection = 0f;      
@@ -28,6 +28,10 @@ public class Level9Part2Manager : MonoBehaviour
     [Header("UI Feedback")]
     public TMP_Text statusText;
     public TMP_Text timerTextUI;
+    public TMP_Text scoreTextUI; 
+
+    // --- BAGONG DAGDAG: TAGATANDA NG KULAY PARA SA TIMER ---
+    private Color originalTimerColor;
 
     [Header("Star System")]
     public float goldStarThreshold = 30f; 
@@ -49,7 +53,17 @@ public class Level9Part2Manager : MonoBehaviour
     {
         instance = this;
         Time.timeScale = 1;
-        // Tinanggal na natin dito yung bootsOnPlayerImage na nagpa-error!
+
+        // --- BAGONG DAGDAG: I-SAVE ANG KULAY MULA SA INSPECTOR ---
+        if (timerTextUI != null)
+        {
+            originalTimerColor = timerTextUI.color; 
+        }
+    }
+
+    void Start()
+    {
+        UpdateScoreDisplay();
     }
 
     void Update()
@@ -85,13 +99,29 @@ public class Level9Part2Manager : MonoBehaviour
         }
     }
 
+    // --- BINAGO: GINAWANG MINUTES AND SECONDS + CUSTOM COLOR ---
     void UpdateTimerDisplay(float time)
     {
         if (timerTextUI != null)
         {
             if (time < 0) time = 0;
-            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}</mspace>", Mathf.FloorToInt(time));
-            timerTextUI.color = (time <= 10) ? Color.red : Color.white;
+
+            int minutes = Mathf.FloorToInt(time / 60); 
+            int seconds = Mathf.FloorToInt(time % 60); 
+
+            // Format: MM:SS
+            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", minutes, seconds);
+            
+            // Babalik sa custom color mo imbis na laging white!
+            timerTextUI.color = (time <= 10) ? Color.red : originalTimerColor;
+        }
+    }
+
+    void UpdateScoreDisplay()
+    {
+        if (scoreTextUI != null)
+        {
+            scoreTextUI.text = clearedHazards + " / " + totalHazards;
         }
     }
 
@@ -99,11 +129,10 @@ public class Level9Part2Manager : MonoBehaviour
     {
         isWearingBoots = true;
         
-        // --- DITO MAGPAPALIT NG DRAWING ---
         if (jobertImage != null && jobertWithBootsSprite != null)
         {
             jobertImage.sprite = jobertWithBootsSprite;
-            jobertImage.SetNativeSize(); // I-a-adjust ang size base sa bagong drawing
+            jobertImage.SetNativeSize(); 
         }
 
         if (statusText != null) statusText.text = "Ligtas na! Pwede nang maglinis.";
@@ -113,6 +142,8 @@ public class Level9Part2Manager : MonoBehaviour
     public void HazardCleaned()
     {
         clearedHazards++;
+        UpdateScoreDisplay(); 
+
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
 
         if (clearedHazards >= totalHazards)
@@ -139,6 +170,10 @@ public class Level9Part2Manager : MonoBehaviour
     {
         timeLimit = 0;
         isGameActive = false;
+
+        // --- BINAGO: GINAWANG 00:00 PAG GAME OVER ---
+        if (timerTextUI != null) timerTextUI.text = "00:00";
+
         if (statusText != null) statusText.text = "GAME OVER: " + reason;
         if (losePanel != null) losePanel.SetActive(true);
         if (AudioManager.instance != null) { AudioManager.instance.PlaySFX(AudioManager.instance.loseSound); AudioManager.instance.PauseBGM(); }

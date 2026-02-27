@@ -1,19 +1,22 @@
 fileFormatVersion: 2
-guid: 1f6905b2274b5ee43944e3d7889b3303
+guid: 63121760cbb06f9409ea7bc2367e0fd9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5126509546817415612
-    second: Boots_Attached_0
+      213: -5971745814065712087
+    second: Mud_0
   - first:
-      213: 6469466771659822976
-    second: Boots_Attached_1
+      213: 1244438141495904938
+    second: Mud_1
   - first:
-      213: -7583499666398821502
-    second: Boots_Attached_2
+      213: -4709452086426201663
+    second: Mud_2
   - first:
-      213: -475304796699213316
-    second: Boots_Attached_3
+      213: 5220360462433509078
+    second: Mud_3
+  - first:
+      213: -8887445551168736820
+    second: Mud_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -60,7 +63,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 700
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -122,13 +125,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Boots_Attached_0
+      name: Mud_0
       rect:
         serializedVersion: 2
-        x: 55
-        y: 0
-        width: 641
-        height: 907
+        x: 0
+        y: 172
+        width: 2336
+        height: 1085
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,19 +140,85 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cb963bb7545052740800000000000000
-      internalID: 5126509546817415612
+      spriteID: 924ffaf52d8102da0800000000000000
+      internalID: -5971745814065712087
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Boots_Attached_1
+      name: Mud_1
       rect:
         serializedVersion: 2
-        x: 675
-        y: 703
-        width: 38
+        x: 1350
+        y: 143
+        width: 222
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaa8fc875e1254110800000000000000
+      internalID: 1244438141495904938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mud_2
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 63
+        width: 385
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c118d5774aa4aeb0800000000000000
+      internalID: -4709452086426201663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mud_3
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 59
+        width: 948
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ded7d29e22727840800000000000000
+      internalID: 5220360462433509078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mud_4
+      rect:
+        serializedVersion: 2
+        x: 730
+        y: 0
+        width: 385
         height: 39
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -159,52 +228,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0871afa80c928c950800000000000000
-      internalID: 6469466771659822976
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Boots_Attached_2
-      rect:
-        serializedVersion: 2
-        x: 34
-        y: 630
-        width: 27
-        height: 27
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 28341068b3ff1c690800000000000000
-      internalID: -7583499666398821502
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Boots_Attached_3
-      rect:
-        serializedVersion: 2
-        x: 657
-        y: 490
-        width: 49
-        height: 50
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cf144b04ec06769f0800000000000000
-      internalID: -475304796699213316
+      spriteID: cc136f1eb5379a480800000000000000
+      internalID: -8887445551168736820
       vertices: []
       indices: 
       edges: []
@@ -223,10 +248,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Boots_Attached_0: 5126509546817415612
-      Boots_Attached_1: 6469466771659822976
-      Boots_Attached_2: -7583499666398821502
-      Boots_Attached_3: -475304796699213316
+      Mud_0: -5971745814065712087
+      Mud_1: 1244438141495904938
+      Mud_2: -4709452086426201663
+      Mud_3: 5220360462433509078
+      Mud_4: -8887445551168736820
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

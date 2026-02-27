@@ -8,7 +8,6 @@ public class HUDStatsManager : MonoBehaviour
     public Image statsFillImage; 
     public TextMeshProUGUI statsText; 
 
-    // Gagamit tayo ng Update() para real-time ang pag-fill ng bar habang naglalaro
     void Update()
     {
         UpdateSurvivalStats();
@@ -31,9 +30,7 @@ public class HUDStatsManager : MonoBehaviour
         if (lvl2 != null) 
         {
             if (lvl2.totalTasks > 0)
-            {
                 progress = (float)lvl2.tasksDone / lvl2.totalTasks; 
-            }
         }
 
         // --- LEVEL 3 (Cleaning) ---
@@ -41,9 +38,7 @@ public class HUDStatsManager : MonoBehaviour
         if (lvl3 != null) 
         {
             if (lvl3.itemsNeeded > 0)
-            {
                 progress = (float)lvl3.currentScore / lvl3.itemsNeeded;
-            }
         }
 
         // --- LEVEL 4 (Plugs) ---
@@ -58,9 +53,7 @@ public class HUDStatsManager : MonoBehaviour
         if (lvl6 != null) 
         {
             if (lvl6.itemsNeeded > 0)
-            {
                 progress = (float)lvl6.currentScore / lvl6.itemsNeeded;
-            }
         }
 
         // --- LEVEL 7 PHASE 1 (Mosquito) ---
@@ -68,9 +61,7 @@ public class HUDStatsManager : MonoBehaviour
         if (lvl7 != null) 
         {
             if (lvl7.targetKills > 0)
-            {
                 progress = (float)lvl7.currentKills / lvl7.targetKills;
-            }
         }
 
         // --- LEVEL 7 PART 2 (Go Bag) ---
@@ -78,32 +69,44 @@ public class HUDStatsManager : MonoBehaviour
         if (lvl7Part2 != null)
         {
             if (lvl7Part2.itemsNeeded > 0)
-            {
                 progress = (float)lvl7Part2.currentScore / lvl7Part2.itemsNeeded;
-            }
         }
 
-        // ==========================================
-        // --- BAGONG DAGDAG: LEVEL 8 PART 1 ---
-        // ==========================================
+        // --- LEVEL 8 PART 1 ---
         Level8Part1Manager lvl8Part1 = FindFirstObjectByType<Level8Part1Manager>();
         if (lvl8Part1 != null)
         {
             if (lvl8Part1.totalFamiliesToServe > 0)
-            {
                 progress = (float)lvl8Part1.familiesServed / lvl8Part1.totalFamiliesToServe;
+        }
+
+        // --- LEVEL 9 PART 1 ---
+        Level9Part1Manager lvl9Part1 = FindFirstObjectByType<Level9Part1Manager>();
+        if (lvl9Part1 != null)
+        {
+            if (lvl9Part1.totalHazards > 0)
+                progress = (float)lvl9Part1.resolvedHazards / lvl9Part1.totalHazards;
+        }
+
+        // ==========================================
+        // --- BAGONG DAGDAG: LEVEL 9 PART 2 ---
+        // ==========================================
+        Level9Part2Manager lvl9Part2 = FindFirstObjectByType<Level9Part2Manager>();
+        if (lvl9Part2 != null)
+        {
+            if (lvl9Part2.totalHazards > 0)
+            {
+                progress = (float)lvl9Part2.clearedHazards / lvl9Part2.totalHazards;
             }
         }
 
         // --- UPDATE UI ---
-        // Clamp para hindi lumampas sa 0 to 1
         progress = Mathf.Clamp01(progress);
 
         if (statsFillImage != null) statsFillImage.fillAmount = progress;
         
         if (statsText != null) 
         {
-            // Format: "50%"
             statsText.text = Mathf.RoundToInt(progress * 100) + "%";
         }
     }
