@@ -6,10 +6,17 @@ using System.Collections;
 
 public class Patient3Sprain : MonoBehaviour, IDropHandler
 {
+    // ==========================================
+    // --- BAGONG DAGDAG: PATIENT VISUALS ---
+    // ==========================================
+    [Header("Patient Visuals")]
+    public Image patientMainImage; // Ang mismong object ng pasyente
+    public Sprite patientWithBandageSprite; // Image pagkalagay ng Elastic Bandage
+    public Sprite patientCuredSprite; // Image pagkalagay ng Towel (Sling) at masaya na
+    // ==========================================
+
     [Header("UI Layers")]
     public TMP_Text statusText;
-    public GameObject elasticBandageApplied; // Lilitaw pag nilagay ang Elastic Bandage
-    public GameObject armSlingApplied;       // Lilitaw pag nilagay ang Towel
 
     private int currentStep = 0; // 0=IcePack, 1=ElasticBandage, 2=Towel
 
@@ -35,14 +42,24 @@ public class Patient3Sprain : MonoBehaviour, IDropHandler
             // STEP 2: ELASTIC BANDAGE
             else if (currentStep == 1 && itemType == "ElasticBandage")
             {
-                elasticBandageApplied.SetActive(true); // Palitawin ang balot sa braso
+                // PALITAN ANG SPRITE: May Bandage na!
+                if (patientMainImage != null && patientWithBandageSprite != null)
+                {
+                    patientMainImage.sprite = patientWithBandageSprite;
+                }
+
                 CompleteStep();
                 Destroy(droppedItem.gameObject); 
             }
             // STEP 3: TOWEL (Arm Sling)
             else if (currentStep == 2 && itemType == "Towel")
             {
-                armSlingApplied.SetActive(true); // Palitawin ang naka-sling na braso
+                // PALITAN ANG SPRITE: Cured at Naka-Sling!
+                if (patientMainImage != null && patientCuredSprite != null)
+                {
+                    patientMainImage.sprite = patientCuredSprite;
+                }
+
                 CompleteStep();
                 Destroy(droppedItem.gameObject);
                 
