@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement; // --- BAGONG DAGDAG: Kailangan para sa Retry at Menu ---
+using UnityEngine.SceneManagement; 
 
 [System.Serializable]
 public class EmergencyType
@@ -32,8 +32,6 @@ public class CommandCenterManager : MonoBehaviour
     public TMP_Text timerText;
     public TMP_Text statusText;
     public GameObject losePanel;
-    
-    // --- BAGONG DAGDAG: Pause Panel Slot ---
     public GameObject pausePanel; 
 
     public CertificateUIManager certUIManager; 
@@ -41,6 +39,11 @@ public class CommandCenterManager : MonoBehaviour
     [Header("Zones & Emergencies")]
     public CrisisZone[] allZones; 
     public EmergencyType[] emergencyTypes; 
+
+    // --- BAGONG DAGDAG: TUNOG NG PAGLABAS NG EMERGENCY ---
+    [Header("Audio SFX")]
+    public AudioClip alertSpawnSound; 
+    // ------------------------------------------------------
 
     [HideInInspector] public bool isGameActive = true;
     private float spawnTimer = 0f;
@@ -54,7 +57,7 @@ public class CommandCenterManager : MonoBehaviour
     void Start()
     {
         if (losePanel) losePanel.SetActive(false);
-        if (pausePanel) pausePanel.SetActive(false); // Siguraduhing tago sa simula
+        if (pausePanel) pausePanel.SetActive(false); 
         spawnTimer = 2f; 
     }
 
@@ -127,7 +130,12 @@ public class CommandCenterManager : MonoBehaviour
             chosenZone.TriggerEmergency(chosenEmergency.thoughtBubbleSprite, chosenEmergency.requiredRescueUnit, chosenEmergency.timeToSolve);
         }
         
-        if (AudioManager.instance) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound); 
+        // --- DITO NATIN BINAGO! HINDI NA CORRECT SOUND ANG TUTUNOG ---
+        if (alertSpawnSound != null)
+        {
+            AudioSource.PlayClipAtPoint(alertSpawnSound, Camera.main.transform.position, 1f);
+        }
+        // -------------------------------------------------------------
     }
 
     public void AddPanic(string reason)
@@ -163,9 +171,6 @@ public class CommandCenterManager : MonoBehaviour
         if (AudioManager.instance) { AudioManager.instance.PlaySFX(AudioManager.instance.loseSound); AudioManager.instance.PauseBGM(); }
     }
 
-    // ==========================================
-    // --- BAGONG DAGDAG: PAUSE MENU FUNCTIONS ---
-    // ==========================================
     public void PauseGame() 
     { 
         if(pausePanel) pausePanel.SetActive(true); 

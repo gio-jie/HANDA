@@ -22,6 +22,12 @@ public class Level10Part1Manager : MonoBehaviour
     public RadioScenario[] scenarios;
     private int currentScenarioIndex = 0;
 
+    // --- BAGONG DAGDAG: TUNOG NG RADYO BAGO MAGSALITA ---
+    [Header("Radio Effect Audio")]
+    public AudioClip radioStaticSound; 
+    public float staticDuration = 1.2f; // Gaano katagal tutunog ang static bago ang boses
+    // ----------------------------------------------------
+
     [Header("Health System")]
     public int hearts = 5;
     public Image[] heartIcons; 
@@ -48,7 +54,6 @@ public class Level10Part1Manager : MonoBehaviour
     [Header("Panels")]
     public GameObject losePanel;
     public GameObject phase2TransitionPanel; 
-    // --- BAGONG DAGDAG: Pause Panel Slot ---
     public GameObject pausePanel; 
 
     void Awake()
@@ -63,7 +68,6 @@ public class Level10Part1Manager : MonoBehaviour
         if (fallingHeartPrefab) fallingHeartPrefab.gameObject.SetActive(false);
         if (feedbackText) feedbackText.text = "";
         
-        // Siguraduhing tago ang Pause Panel sa simula
         if (pausePanel) pausePanel.SetActive(false);
 
         timerText.text = "LISTEN...";
@@ -103,6 +107,20 @@ public class Level10Part1Manager : MonoBehaviour
     IEnumerator PlayScenario(int index)
     {
         isWaitingForAnswer = false;
+        
+        // --- BINAGO: I-PLAY MUNA ANG RADIO STATIC ---
+        timerText.text = "INCOMING..."; 
+        timerText.color = Color.cyan;
+
+        if (radioStaticSound != null && AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySFX(radioStaticSound);
+        }
+
+        // Maghihintay muna matapos yung static bago ilabas ang bubble at audio
+        yield return new WaitForSeconds(staticDuration);
+        // --------------------------------------------
+
         timerText.text = "LISTEN...";
         timerText.color = Color.yellow;
 
@@ -248,9 +266,6 @@ public class Level10Part1Manager : MonoBehaviour
         SceneManager.LoadScene("Level10_Part2"); 
     }
 
-    // ==========================================
-    // --- BAGONG DAGDAG: PAUSE MENU FUNCTIONS ---
-    // ==========================================
     public void PauseGame() 
     { 
         if(pausePanel) pausePanel.SetActive(true); 

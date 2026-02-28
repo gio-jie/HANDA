@@ -9,7 +9,7 @@ public class CrisisZone : MonoBehaviour, IDropHandler
     [Header("Zone Visuals")]
     public GameObject radioAndBubbleUI; 
     public Image thoughtBubbleImage;    
-    public TMP_Text emergencyTimerText; // BAGONG DAGDAG: Ang timer sa gilid ng radyo!
+    public TMP_Text emergencyTimerText; 
     public GameObject checkmarkIcon; 
     public GameObject xMarkIcon;     
 
@@ -72,11 +72,27 @@ public class CrisisZone : MonoBehaviour, IDropHandler
             // ILIPAT ANG SASAKYAN SA ZONE NA ITO!
             unit.DeployToZone(this.transform);
 
+            // ==========================================
+            // --- BAGONG DAGDAG: TUMUNOG PAG TAMA! ---
+            // ==========================================
+            if (AudioManager.instance != null) 
+            {
+                AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
+            }
+
             StartCoroutine(ShowFeedback(checkmarkIcon));
             StartCoroutine(ClearZoneAfterDeploy(unit.cooldownTime));
         }
         else
         {
+            // ==========================================
+            // --- BAGONG DAGDAG: TUMUNOG PAG MALI! ---
+            // ==========================================
+            if (AudioManager.instance != null) 
+            {
+                AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
+            }
+            
             if (CommandCenterManager.instance != null) CommandCenterManager.instance.AddPanic("Maling team ang ipinadala!");
             StartCoroutine(ShowFeedback(xMarkIcon));
         }
