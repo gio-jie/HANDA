@@ -54,7 +54,7 @@ public class CleaningTarget : MonoBehaviour, IDropHandler
             // CHECK 1: Naka-bota ba?
             if (requiresBoots && Level9Part2Manager.instance != null && !Level9Part2Manager.instance.isWearingBoots)
             {
-                Level9Part2Manager.instance.AddInfection("DELIKADO! Magsuot muna ng bota bago maglinis!");
+                Level9Part2Manager.instance.AddInfection("It's dangerous! Wear protective boots before cleaning.");
                 StartCoroutine(ShowWrongFeedback());
                 return; 
             }
@@ -62,18 +62,18 @@ public class CleaningTarget : MonoBehaviour, IDropHandler
             // CHECK 2: Final Disinfect ba?
             if (isFinalDisinfect && Level9Part2Manager.instance != null && Level9Part2Manager.instance.clearedHazards < 2)
             {
-                Level9Part2Manager.instance.AddInfection("MALI! Alisin muna ang putik at tubig bago mag-disinfect!");
+                Level9Part2Manager.instance.AddInfection("WRONG! Remove the mud and water first before disinfecting!");
                 StartCoroutine(ShowWrongFeedback());
                 return;
             }
 
             // SUCCESS!
-            Debug.Log("Nalinis ang: " + targetName);
+            Debug.Log("Cleaned: " + targetName);
             isCleaned = true;
             
             if (Level9Part2Manager.instance != null)
             {
-                Level9Part2Manager.instance.statusText.text = "Nalinis ang " + targetName + "!";
+                Level9Part2Manager.instance.statusText.text = "Successfully cleaned " + targetName + "!";
                 Level9Part2Manager.instance.HazardCleaned(); 
             }
 
@@ -84,7 +84,7 @@ public class CleaningTarget : MonoBehaviour, IDropHandler
             // MALI ANG GAMIT
             if (Level9Part2Manager.instance != null)
             {
-                Level9Part2Manager.instance.AddInfection("MALI! Hindi " + toolUsed + " ang panlinis sa " + targetName + "!");
+                Level9Part2Manager.instance.AddInfection("WRONG! " + toolUsed + " is not the correct cleaning tool for " + targetName + "!");
             }
             StartCoroutine(ShowWrongFeedback());
         }

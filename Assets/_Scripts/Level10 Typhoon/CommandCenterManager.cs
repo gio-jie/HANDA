@@ -30,9 +30,15 @@ public class CommandCenterManager : MonoBehaviour
 
     [Header("UI References")]
     public TMP_Text timerText;
-    public TMP_Text statusText;
     public GameObject losePanel;
     public GameObject pausePanel; 
+
+    // ==========================================
+    // --- BAGONG DAGDAG: TIME'S UP POPUP ---
+    // ==========================================
+    [Header("Win Transition Visuals")]
+    public GameObject timesUpPopup; // Dito ide-drag yung buong popup (Jobert + Text)
+    // ==========================================
 
     public CertificateUIManager certUIManager; 
 
@@ -40,10 +46,8 @@ public class CommandCenterManager : MonoBehaviour
     public CrisisZone[] allZones; 
     public EmergencyType[] emergencyTypes; 
 
-    // --- BAGONG DAGDAG: TUNOG NG PAGLABAS NG EMERGENCY ---
     [Header("Audio SFX")]
     public AudioClip alertSpawnSound; 
-    // ------------------------------------------------------
 
     [HideInInspector] public bool isGameActive = true;
     private float spawnTimer = 0f;
@@ -58,6 +62,10 @@ public class CommandCenterManager : MonoBehaviour
     {
         if (losePanel) losePanel.SetActive(false);
         if (pausePanel) pausePanel.SetActive(false); 
+        
+        // Siguraduhing tago ang popup sa simula
+        if (timesUpPopup) timesUpPopup.SetActive(false);
+
         spawnTimer = 2f; 
     }
 
@@ -130,43 +138,71 @@ public class CommandCenterManager : MonoBehaviour
             chosenZone.TriggerEmergency(chosenEmergency.thoughtBubbleSprite, chosenEmergency.requiredRescueUnit, chosenEmergency.timeToSolve);
         }
         
-        // --- DITO NATIN BINAGO! HINDI NA CORRECT SOUND ANG TUTUNOG ---
         if (alertSpawnSound != null)
         {
             AudioSource.PlayClipAtPoint(alertSpawnSound, Camera.main.transform.position, 1f);
         }
-        // -------------------------------------------------------------
     }
 
     public void AddPanic(string reason)
     {
         if (!isGameActive) return;
         currentPanic += panicPenalty;
-        if (statusText) statusText.text = "WARNING: " + reason;
         if (AudioManager.instance) AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
         if (PlayerPrefs.GetInt("VibrationOn", 1) == 1) Handheld.Vibrate();
     }
 
     void WinGame()
     {
-        isGameActive = false;
+        if (!isGameActive) return; 
+        
+        isGameActive = false; 
         totalGameTime = 0;
-        if (statusText) statusText.text = "LIGTAS ANG BARANGAY!";
         
         foreach (CrisisZone zone in allZones) zone.ClearZone();
-        
+
+        if (AudioManager.instance) AudioManager.instance.PauseBGM();
+
+        StartCoroutine(WinTransitionRoutine());
+    }
+
+    // ==========================================
+    // --- BINAGO: IPAPAKITA NA ANG POPUP ---
+    // ==========================================
+    IEnumerator WinTransitionRoutine()
+    {
+        // 1. Ipakita ang text at image ni Jobert
+        if (timesUpPopup) 
+        {
+            timesUpPopup.SetActive(true);
+        }
+
+        // 2. Maghintay ng 3 seconds (konting dagdag para ma-enjoy yung visual)
+        yield return new WaitForSeconds(3.0f);
+
+        // 3. Itago muna ang Popup bago ilabas ang Certificate
+        if (timesUpPopup) 
+        {
+            timesUpPopup.SetActive(false);
+        }
+
+        // 4. Saka palitawin ang Certificate at patunugin ang Win Sound!
         if (certUIManager != null) 
         {
             certUIManager.ShowWinWithSmallCert();
         }
 
-        if (AudioManager.instance) { AudioManager.instance.PlaySFX(AudioManager.instance.winSound); AudioManager.instance.PauseBGM(); }
+        if (AudioManager.instance) 
+        { 
+            AudioManager.instance.PlaySFX(AudioManager.instance.winSound); 
+        }
     }
+    // ==========================================
 
     void LoseGame(string reason)
     {
+        if (!isGameActive) return;
         isGameActive = false;
-        if (statusText) statusText.text = "GAME OVER: " + reason;
         if (losePanel) losePanel.SetActive(true);
         if (AudioManager.instance) { AudioManager.instance.PlaySFX(AudioManager.instance.loseSound); AudioManager.instance.PauseBGM(); }
     }

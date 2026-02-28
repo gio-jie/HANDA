@@ -15,6 +15,9 @@ public class CrisisZone : MonoBehaviour, IDropHandler
 
     [Header("Zone State")]
     public bool hasEmergency = false;
+    // --- BAGONG DAGDAG: PRENO PARA SA TIMER ---
+    public bool isResolved = false; 
+    // ------------------------------------------
     public string requiredUnit = "";    
     public float currentEmergencyTimer = 0f; 
 
@@ -29,13 +32,14 @@ public class CrisisZone : MonoBehaviour, IDropHandler
 
     void Update()
     {
-        if (hasEmergency && CommandCenterManager.instance != null && CommandCenterManager.instance.isGameActive)
+        // --- BINAGO: GAGALAW LANG ANG TIMER KUNG HINDI PA RESOLVED ---
+        if (hasEmergency && !isResolved && CommandCenterManager.instance != null && CommandCenterManager.instance.isGameActive)
         {
             currentEmergencyTimer -= Time.deltaTime;
             
-            // Ipakita ang oras sa ibabaw/gilid ng Radyo
             if (emergencyTimerText)
             {
+                emergencyTimerText.gameObject.SetActive(true); // Siguraduhing nakikita
                 emergencyTimerText.text = Mathf.CeilToInt(currentEmergencyTimer).ToString() + "s";
                 emergencyTimerText.color = (currentEmergencyTimer <= 5f) ? Color.red : Color.yellow;
             }
@@ -67,14 +71,15 @@ public class CrisisZone : MonoBehaviour, IDropHandler
     {
         if (unit.unitType == requiredUnit)
         {
+            // --- BAGONG DAGDAG: ITIGIL AT ITAGO ANG TIMER! ---
+            isResolved = true; 
+            if (emergencyTimerText) emergencyTimerText.gameObject.SetActive(false);
+            // -------------------------------------------------
+
             radioAndBubbleUI.SetActive(false);
             
-            // ILIPAT ANG SASAKYAN SA ZONE NA ITO!
             unit.DeployToZone(this.transform);
 
-            // ==========================================
-            // --- BAGONG DAGDAG: TUMUNOG PAG TAMA! ---
-            // ==========================================
             if (AudioManager.instance != null) 
             {
                 AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
@@ -85,9 +90,6 @@ public class CrisisZone : MonoBehaviour, IDropHandler
         }
         else
         {
-            // ==========================================
-            // --- BAGONG DAGDAG: TUMUNOG PAG MALI! ---
-            // ==========================================
             if (AudioManager.instance != null) 
             {
                 AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
@@ -100,7 +102,7 @@ public class CrisisZone : MonoBehaviour, IDropHandler
 
     IEnumerator ClearZoneAfterDeploy(float waitTime)
     {
-        hasEmergency = false;
+        // Hindi muna natin tatanggalin ang hasEmergency hanggat di tapos mag-deploy
         yield return new WaitForSeconds(waitTime);
         ClearZone(); 
     }
@@ -108,8 +110,11 @@ public class CrisisZone : MonoBehaviour, IDropHandler
     public void TriggerEmergency(Sprite emergencySprite, string requiredRescueTeam, float timeLimit)
     {
         hasEmergency = true;
+        isResolved = false; // I-reset ang preno
         requiredUnit = requiredRescueTeam;
         currentEmergencyTimer = timeLimit;
+
+        if (emergencyTimerText) emergencyTimerText.gameObject.SetActive(true);
 
         thoughtBubbleImage.sprite = emergencySprite;
         radioAndBubbleUI.SetActive(true);
@@ -118,8 +123,10 @@ public class CrisisZone : MonoBehaviour, IDropHandler
     public void ClearZone()
     {
         hasEmergency = false;
+        isResolved = false;
         requiredUnit = "";
         radioAndBubbleUI.SetActive(false);
+        if (emergencyTimerText) emergencyTimerText.gameObject.SetActive(false); // Itago ang timer
     }
 
     IEnumerator ShowFeedback(GameObject icon)

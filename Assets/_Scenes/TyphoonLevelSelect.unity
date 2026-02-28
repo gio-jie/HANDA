@@ -1704,16 +1704,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 374349095}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18b22b2cc43eea46a4d8cd4c5bed386, type: 3}
+  m_Script: {fileID: 11500000, guid: 5bfcc2bbd455e6640a3fe0d359390814, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectButton
-  levelNumber: 1
-  lockIcon: {fileID: 228173335}
+  m_EditorClassIdentifier: Assembly-CSharp::StarDisplay
+  levelIndex: 1
   stars:
-  - {fileID: 1576308246}
-  - {fileID: 628282377}
-  - {fileID: 1632311100}
-  myButton: {fileID: 374349097}
+  - {fileID: 1576308248}
+  - {fileID: 628282379}
+  - {fileID: 1632311102}
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  levelButton: {fileID: 374349097}
+  lockIcon: {fileID: 228173335}
 --- !u!1 &376307431
 GameObject:
   m_ObjectHideFlags: 0
@@ -2086,7 +2088,7 @@ GameObject:
   - component: {fileID: 527981772}
   - component: {fileID: 527981771}
   - component: {fileID: 527981770}
-  - component: {fileID: 527981769}
+  - component: {fileID: 527981774}
   m_Layer: 5
   m_Name: Level_8
   m_TagString: Untagged
@@ -2116,25 +2118,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &527981769
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 527981767}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18b22b2cc43eea46a4d8cd4c5bed386, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectButton
-  levelNumber: 8
-  lockIcon: {fileID: 377066911}
-  stars:
-  - {fileID: 584692582}
-  - {fileID: 432008870}
-  - {fileID: 1069953016}
-  myButton: {fileID: 527981771}
 --- !u!114 &527981770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2253,6 +2236,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 527981767}
   m_CullTransparentMesh: 1
+--- !u!114 &527981774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527981767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfcc2bbd455e6640a3fe0d359390814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarDisplay
+  levelIndex: 0
+  stars: []
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  levelButton: {fileID: 0}
+  lockIcon: {fileID: 0}
 --- !u!1 &584477171
 GameObject:
   m_ObjectHideFlags: 0
@@ -5943,7 +5944,7 @@ GameObject:
   - component: {fileID: 1308551787}
   - component: {fileID: 1308551786}
   - component: {fileID: 1308551785}
-  - component: {fileID: 1308551784}
+  - component: {fileID: 1308551789}
   m_Layer: 5
   m_Name: Level_9
   m_TagString: Untagged
@@ -5973,25 +5974,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1308551784
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1308551782}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18b22b2cc43eea46a4d8cd4c5bed386, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectButton
-  levelNumber: 9
-  lockIcon: {fileID: 894595503}
-  stars:
-  - {fileID: 1090572269}
-  - {fileID: 659754766}
-  - {fileID: 1522306530}
-  myButton: {fileID: 1308551786}
 --- !u!114 &1308551785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6110,6 +6092,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308551782}
   m_CullTransparentMesh: 1
+--- !u!114 &1308551789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1308551782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfcc2bbd455e6640a3fe0d359390814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarDisplay
+  levelIndex: 0
+  stars: []
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  levelButton: {fileID: 0}
+  lockIcon: {fileID: 0}
 --- !u!1 &1329397970
 GameObject:
   m_ObjectHideFlags: 0
@@ -6409,7 +6409,7 @@ GameObject:
   - component: {fileID: 1383560982}
   - component: {fileID: 1383560981}
   - component: {fileID: 1383560980}
-  - component: {fileID: 1383560979}
+  - component: {fileID: 1383560984}
   m_Layer: 5
   m_Name: Level_2
   m_TagString: Untagged
@@ -6439,25 +6439,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1383560979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383560977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18b22b2cc43eea46a4d8cd4c5bed386, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectButton
-  levelNumber: 2
-  lockIcon: {fileID: 115888830}
-  stars:
-  - {fileID: 1519658075}
-  - {fileID: 981647349}
-  - {fileID: 930316910}
-  myButton: {fileID: 1383560981}
 --- !u!114 &1383560980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6576,6 +6557,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1383560977}
   m_CullTransparentMesh: 1
+--- !u!114 &1383560984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383560977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfcc2bbd455e6640a3fe0d359390814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarDisplay
+  levelIndex: 0
+  stars: []
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  levelButton: {fileID: 0}
+  lockIcon: {fileID: 0}
 --- !u!1 &1459782173
 GameObject:
   m_ObjectHideFlags: 0
@@ -7031,7 +7030,7 @@ GameObject:
   - component: {fileID: 1607795370}
   - component: {fileID: 1607795369}
   - component: {fileID: 1607795368}
-  - component: {fileID: 1607795367}
+  - component: {fileID: 1607795372}
   m_Layer: 5
   m_Name: Level_3
   m_TagString: Untagged
@@ -7061,25 +7060,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1607795367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1607795365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18b22b2cc43eea46a4d8cd4c5bed386, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectButton
-  levelNumber: 3
-  lockIcon: {fileID: 121722802}
-  stars:
-  - {fileID: 1180557421}
-  - {fileID: 891848513}
-  - {fileID: 1924292180}
-  myButton: {fileID: 1607795369}
 --- !u!114 &1607795368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7198,6 +7178,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1607795365}
   m_CullTransparentMesh: 1
+--- !u!114 &1607795372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607795365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfcc2bbd455e6640a3fe0d359390814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarDisplay
+  levelIndex: 0
+  stars: []
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  levelButton: {fileID: 0}
+  lockIcon: {fileID: 0}
 --- !u!1 &1632311100
 GameObject:
   m_ObjectHideFlags: 0
@@ -7365,7 +7363,7 @@ GameObject:
   - component: {fileID: 1639494151}
   - component: {fileID: 1639494150}
   - component: {fileID: 1639494149}
-  - component: {fileID: 1639494148}
+  - component: {fileID: 1639494153}
   m_Layer: 5
   m_Name: Level_7
   m_TagString: Untagged
@@ -7395,25 +7393,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1639494148
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1639494146}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18b22b2cc43eea46a4d8cd4c5bed386, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectButton
-  levelNumber: 7
-  lockIcon: {fileID: 967107222}
-  stars:
-  - {fileID: 2000908585}
-  - {fileID: 726920104}
-  - {fileID: 1901878641}
-  myButton: {fileID: 1639494150}
 --- !u!114 &1639494149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7532,6 +7511,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1639494146}
   m_CullTransparentMesh: 1
+--- !u!114 &1639494153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639494146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfcc2bbd455e6640a3fe0d359390814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarDisplay
+  levelIndex: 0
+  stars: []
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  levelButton: {fileID: 0}
+  lockIcon: {fileID: 0}
 --- !u!1 &1647835646
 GameObject:
   m_ObjectHideFlags: 0
@@ -7725,7 +7722,7 @@ GameObject:
   - component: {fileID: 1704772826}
   - component: {fileID: 1704772825}
   - component: {fileID: 1704772824}
-  - component: {fileID: 1704772823}
+  - component: {fileID: 1704772828}
   m_Layer: 5
   m_Name: Level_5
   m_TagString: Untagged
@@ -7755,25 +7752,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1704772823
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1704772821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18b22b2cc43eea46a4d8cd4c5bed386, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectButton
-  levelNumber: 5
-  lockIcon: {fileID: 1605300159}
-  stars:
-  - {fileID: 1459782173}
-  - {fileID: 376307431}
-  - {fileID: 149680988}
-  myButton: {fileID: 1704772825}
 --- !u!114 &1704772824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7892,6 +7870,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704772821}
   m_CullTransparentMesh: 1
+--- !u!114 &1704772828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1704772821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfcc2bbd455e6640a3fe0d359390814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarDisplay
+  levelIndex: 0
+  stars: []
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  levelButton: {fileID: 0}
+  lockIcon: {fileID: 0}
 --- !u!1001 &1739699082
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8791,7 +8787,7 @@ GameObject:
   - component: {fileID: 1947510104}
   - component: {fileID: 1947510103}
   - component: {fileID: 1947510102}
-  - component: {fileID: 1947510101}
+  - component: {fileID: 1947510106}
   m_Layer: 5
   m_Name: Level_6
   m_TagString: Untagged
@@ -8821,25 +8817,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1947510101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1947510099}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18b22b2cc43eea46a4d8cd4c5bed386, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectButton
-  levelNumber: 6
-  lockIcon: {fileID: 761730889}
-  stars:
-  - {fileID: 787952170}
-  - {fileID: 1368648689}
-  - {fileID: 1329397970}
-  myButton: {fileID: 1947510103}
 --- !u!114 &1947510102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8958,6 +8935,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1947510099}
   m_CullTransparentMesh: 1
+--- !u!114 &1947510106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947510099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfcc2bbd455e6640a3fe0d359390814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarDisplay
+  levelIndex: 0
+  stars: []
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  levelButton: {fileID: 0}
+  lockIcon: {fileID: 0}
 --- !u!1 &1990380180
 GameObject:
   m_ObjectHideFlags: 0
@@ -9182,7 +9177,7 @@ GameObject:
   - component: {fileID: 2040201431}
   - component: {fileID: 2040201430}
   - component: {fileID: 2040201429}
-  - component: {fileID: 2040201428}
+  - component: {fileID: 2040201433}
   m_Layer: 5
   m_Name: Level_4
   m_TagString: Untagged
@@ -9212,25 +9207,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2040201428
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2040201426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18b22b2cc43eea46a4d8cd4c5bed386, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectButton
-  levelNumber: 4
-  lockIcon: {fileID: 424395465}
-  stars:
-  - {fileID: 1250004159}
-  - {fileID: 21291548}
-  - {fileID: 700392323}
-  myButton: {fileID: 2040201430}
 --- !u!114 &2040201429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9349,6 +9325,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2040201426}
   m_CullTransparentMesh: 1
+--- !u!114 &2040201433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2040201426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfcc2bbd455e6640a3fe0d359390814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarDisplay
+  levelIndex: 0
+  stars: []
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  levelButton: {fileID: 0}
+  lockIcon: {fileID: 0}
 --- !u!1 &2073439334
 GameObject:
   m_ObjectHideFlags: 0
@@ -9362,7 +9356,7 @@ GameObject:
   - component: {fileID: 2073439339}
   - component: {fileID: 2073439338}
   - component: {fileID: 2073439337}
-  - component: {fileID: 2073439336}
+  - component: {fileID: 2073439341}
   m_Layer: 5
   m_Name: Level_10
   m_TagString: Untagged
@@ -9392,25 +9386,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2073439336
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2073439334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18b22b2cc43eea46a4d8cd4c5bed386, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelSelectButton
-  levelNumber: 10
-  lockIcon: {fileID: 89070496}
-  stars:
-  - {fileID: 725416834}
-  - {fileID: 1848348060}
-  - {fileID: 591517775}
-  myButton: {fileID: 2073439338}
 --- !u!114 &2073439337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9529,6 +9504,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073439334}
   m_CullTransparentMesh: 1
+--- !u!114 &2073439341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073439334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfcc2bbd455e6640a3fe0d359390814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarDisplay
+  levelIndex: 0
+  stars: []
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  levelButton: {fileID: 0}
+  lockIcon: {fileID: 0}
 --- !u!114 &2133005911 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1777628432822668347, guid: d28e40984864e9b489c9aadeff2a2f9f, type: 3}

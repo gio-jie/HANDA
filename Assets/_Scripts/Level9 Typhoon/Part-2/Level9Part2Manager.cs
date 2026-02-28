@@ -7,6 +7,15 @@ public class Level9Part2Manager : MonoBehaviour
 {
     public static Level9Part2Manager instance;
 
+    // ==========================================
+    // --- BAGONG DAGDAG: MALINIS NA BAHAY TRANSITION ---
+    // ==========================================
+    [Header("Clean House Transition")]
+    public Image backgroundImage; // Ang mismong Background natin
+    public Sprite cleanBackgroundSprite; // Ang malinis na version ng bahay
+    public AudioClip cleanSoundEffect; // Tunog na "Ting!" o kislap
+    // ==========================================
+
     [Header("Player Status")]
     public bool isWearingBoots = false;
     public Image jobertImage; 
@@ -30,7 +39,6 @@ public class Level9Part2Manager : MonoBehaviour
     public TMP_Text timerTextUI;
     public TMP_Text scoreTextUI; 
 
-    // --- BAGONG DAGDAG: TAGATANDA NG KULAY PARA SA TIMER ---
     private Color originalTimerColor;
 
     [Header("Star System")]
@@ -54,7 +62,6 @@ public class Level9Part2Manager : MonoBehaviour
         instance = this;
         Time.timeScale = 1;
 
-        // --- BAGONG DAGDAG: I-SAVE ANG KULAY MULA SA INSPECTOR ---
         if (timerTextUI != null)
         {
             originalTimerColor = timerTextUI.color; 
@@ -70,15 +77,13 @@ public class Level9Part2Manager : MonoBehaviour
     {
         if (!isGameActive) return;
 
-        // --- PURE COUNTDOWN TIMER LOGIC ---
         if (timeLimit > 0)
         {
             timeLimit -= Time.deltaTime;
             UpdateTimerDisplay(timeLimit);
-            if (timeLimit <= 0) FinalizeGameOver("Naubusan ng oras!");
+            if (timeLimit <= 0) FinalizeGameOver("The time is over.");
         }
 
-        // --- INFECTION BAR ANIMATION LOGIC ---
         if (displayedInfection < currentInfection)
         {
             displayedInfection = Mathf.MoveTowards(displayedInfection, currentInfection, barFillSpeed * Time.deltaTime);
@@ -95,11 +100,10 @@ public class Level9Part2Manager : MonoBehaviour
 
         if (displayedInfection >= maxInfection) 
         {
-            FinalizeGameOver("Na-infect ng sakit si Jobert!");
+            FinalizeGameOver("Jobert has been infected!");
         }
     }
 
-    // --- BINAGO: GINAWANG MINUTES AND SECONDS + CUSTOM COLOR ---
     void UpdateTimerDisplay(float time)
     {
         if (timerTextUI != null)
@@ -109,10 +113,7 @@ public class Level9Part2Manager : MonoBehaviour
             int minutes = Mathf.FloorToInt(time / 60); 
             int seconds = Mathf.FloorToInt(time % 60); 
 
-            // Format: MM:SS
             timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", minutes, seconds);
-            
-            // Babalik sa custom color mo imbis na laging white!
             timerTextUI.color = (time <= 10) ? Color.red : originalTimerColor;
         }
     }
@@ -135,7 +136,7 @@ public class Level9Part2Manager : MonoBehaviour
             jobertImage.SetNativeSize(); 
         }
 
-        if (statusText != null) statusText.text = "Ligtas na! Pwede nang maglinis.";
+        if (statusText != null) statusText.text = "It's safe now! We can begin cleaning.";
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
     }
 
@@ -149,8 +150,23 @@ public class Level9Part2Manager : MonoBehaviour
         if (clearedHazards >= totalHazards)
         {
             isGameActive = false;
-            if (statusText != null) statusText.text = "Ligtas at malinis na ang bahay!";
-            Invoke("ShowWinScreen", 1.5f);
+            
+            // --- BINAGO: PALITAN ANG TEXT PARA MAG-MATCH SA MALINIS NA BAHAY ---
+            if (statusText != null) statusText.text = "Malinis at ligtas na ang bahay!";
+            
+            // --- BAGONG DAGDAG: PALITAN ANG BACKGROUND AT TUMUNOG ---
+            if (backgroundImage != null && cleanBackgroundSprite != null)
+            {
+                backgroundImage.sprite = cleanBackgroundSprite;
+            }
+
+            if (cleanSoundEffect != null)
+            {
+                AudioSource.PlayClipAtPoint(cleanSoundEffect, Camera.main.transform.position, 1f);
+            }
+            // ---------------------------------------------------------
+
+            Invoke("ShowWinScreen", 3.0f); 
         }
     }
 
@@ -171,7 +187,6 @@ public class Level9Part2Manager : MonoBehaviour
         timeLimit = 0;
         isGameActive = false;
 
-        // --- BINAGO: GINAWANG 00:00 PAG GAME OVER ---
         if (timerTextUI != null) timerTextUI.text = "00:00";
 
         if (statusText != null) statusText.text = "GAME OVER: " + reason;

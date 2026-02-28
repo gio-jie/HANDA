@@ -149,6 +149,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c19a77664ee3a3342b2248ecc4702a9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level9Part2Manager
+  backgroundImage: {fileID: 917235700}
+  cleanBackgroundSprite: {fileID: 21300000, guid: 4dda2cddc23909a4cb4bfe026a03f6ca, type: 3}
+  cleanSoundEffect: {fileID: 8300000, guid: 83c32723d56430c4ca485fcc9cd2ec17, type: 3}
   isWearingBoots: 0
   jobertImage: {fileID: 93780002}
   jobertWithBootsSprite: {fileID: 21300000, guid: 1f6905b2274b5ee43944e3d7889b3303, type: 3}
@@ -629,10 +632,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 2400, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -3656,10 +3659,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: "Let\u2019s clean the house!"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 49d7d37ee700c23499c2a9a2e1600c1a, type: 2}
+  m_sharedMaterial: {fileID: -4122517700062909030, guid: 49d7d37ee700c23499c2a9a2e1600c1a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3751,7 +3754,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2, y: 224}
+  m_AnchoredPosition: {x: -0.39709, y: 246}
   m_SizeDelta: {x: 1004.8, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1759365519
