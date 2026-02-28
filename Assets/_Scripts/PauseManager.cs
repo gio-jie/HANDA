@@ -87,4 +87,11 @@ public class PauseManager : MonoBehaviour
         if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
         SceneManager.LoadScene("TyphoonLevelSelect"); 
     }
+
+    public void ExitStage2()
+    {
+        Time.timeScale = 1;
+        if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
+        SceneManager.LoadScene("FloodLevelSelect");
+    }
 }

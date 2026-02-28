@@ -13,4 +13,18 @@ public class ScenarioLoader : MonoBehaviour
         // Load Scene (Siguraduhing tama ang spelling ng scene mo!)
         SceneManager.LoadScene("TyphoonLevelSelect");
     }
+
+    public void LoadFloodScenario()
+    {
+        //change 0-1 here to not flash the dialogue
+        int floodSeen = PlayerPrefs.GetInt("FloodIntroSeen", 1);
+
+        if (floodSeen == 0)
+        {
+            PlayerPrefs.SetInt("FloodIntroSeen", 0);
+            PlayerPrefs.Save();
+        }
+
+        SceneManager.LoadScene("FloodLevelSelect");
+    }
 }

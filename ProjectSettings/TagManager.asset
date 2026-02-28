@@ -10,12 +10,12 @@ TagManager:
   - Toy
   - Bin_Food
   - Bin_Toy
-  - Item_Kulambo
-  - Item_Takip
-  - Item_Basura
-  - Hygiene
-  - Medical
-  - Reject
+  - Banana
+  - Glass
+  - Water
+  - Platform
+  - PowerUp
+  - Floodwater
   layers:
   - Default
   - TransparentFX
@@ -52,6 +52,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Interactables
+    uniqueID: 2981008011
     locked: 0
   m_RenderingLayers:
   - Default

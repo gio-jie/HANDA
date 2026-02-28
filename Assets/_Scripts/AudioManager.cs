@@ -15,7 +15,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip loseSound;
     public AudioClip warningSound;
     public AudioClip correctSound;
-    public AudioClip wrongSound;   
+    public AudioClip wrongSound;  
+    public AudioClip starReducedSound;
 
     void Awake()
     {
