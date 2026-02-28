@@ -25,6 +25,11 @@ public class PlayerBounce : MonoBehaviour
     public AudioClip powerUpSfx;
     public AudioSource audioSource;
 
+    [Header("Animation")]
+    public Animator animator;
+    public string jumpAnimationName;
+    private bool hasPlayedLandAnim = false;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -64,10 +69,17 @@ public class PlayerBounce : MonoBehaviour
 
             PlatformSpawnerLevel6.Instance.EnableSpawning();
 
+            // if (!hasPlayedLandAnim)
+            // {
+            //     animator.Play(jumpAnimationName, 0, 0f);
+            //     hasPlayedLandAnim = true;
+            // }
+
             if (!firstBounceDone)
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, firstBounceForce);
                 firstBounceDone = true;
+                animator.Play(jumpAnimationName, 0, 0f);
             }
             else
             {
@@ -156,6 +168,8 @@ public class PlayerBounce : MonoBehaviour
                 finalBounce *= powerUpBounceMultiplier;
 
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, finalBounce);
+
+            animator.Play(jumpAnimationName, 0, 0f);
         }
     }
 

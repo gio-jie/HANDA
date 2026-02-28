@@ -782,7 +782,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollowLevel6
   player: {fileID: 1508546301}
   smoothSpeed: 5
-  offset: {x: 0, y: 0, z: 0}
+  offset: {x: 0, y: 1.5, z: 0}
 --- !u!1 &264524476
 GameObject:
   m_ObjectHideFlags: 0
@@ -1097,9 +1097,9 @@ MonoBehaviour:
   - {fileID: 281409158}
   - {fileID: 1801985241}
   - {fileID: 538917856}
-  spawnChance: 0.748
+  spawnChance: 0.5
   spawnOffsetYAboveCamera: 6
-  spawnInterval: 1
+  spawnInterval: 1.5
   moveSpeed: 5
 --- !u!1 &328675793
 GameObject:
@@ -1773,7 +1773,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.867302, y: 0.42065108}
+  m_Size: {x: 3.867302, y: 0.3431719}
   m_EdgeRadius: 0
 --- !u!212 &458067273
 SpriteRenderer:
@@ -1842,7 +1842,7 @@ Transform:
   m_GameObject: {fileID: 458067268}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.01, y: 6.05, z: 0}
+  m_LocalPosition: {x: 0, y: 5.61, z: 0}
   m_LocalScale: {x: 1.0714, y: 1.597136, z: 1.0714}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2092,7 +2092,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.867302, y: 0.42065108}
+  m_Size: {x: 3.867302, y: 0.30950004}
   m_EdgeRadius: 0
 --- !u!212 &616170365
 SpriteRenderer:
@@ -2161,7 +2161,7 @@ Transform:
   m_GameObject: {fileID: 616170362}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.01, y: 3.14, z: 0}
+  m_LocalPosition: {x: 0, y: 3.14, z: 0}
   m_LocalScale: {x: 1.0714, y: 1.597136, z: 1.0714}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2694,7 +2694,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.867302, y: 0.42065108}
+  m_Size: {x: 3.867302, y: 0.33677372}
   m_EdgeRadius: 0
 --- !u!212 &744151138
 SpriteRenderer:
@@ -3194,7 +3194,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -1.5690918}
+  m_Offset: {x: 0, y: -2.1602848}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -3204,7 +3204,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 24.02, y: 7.5956154}
+  m_Size: {x: 24.02, y: 6.4132295}
   m_EdgeRadius: 0
 --- !u!114 &839659650
 MonoBehaviour:
@@ -3220,7 +3220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FloodRising
   player: {fileID: 1508546301}
   triggerDistance: 10
-  riseSpeed: 3
+  riseSpeed: 5
   waterHeight: 10
   waterSound: {fileID: 8300000, guid: 80f54163e75aa634b8835aae07050a2d, type: 3}
   audioSource: {fileID: 839659647}
@@ -4924,17 +4924,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.23098803, y: 4.169123}
+  m_Offset: {x: 0.40867138, y: 13.930369}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
-    oldSize: {x: 5.1499996, y: 8.594727}
+    oldSize: {x: 27.35, y: 41.490963}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.7649658, y: 8.427325}
+  m_Size: {x: 5.3553133, y: 20.810667}
   m_EdgeRadius: 0
 --- !u!95 &1508546299
 Animator:
@@ -4946,7 +4946,7 @@ Animator:
   m_GameObject: {fileID: 1508546295}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 1db276c1171315d40b68fb269c2e2316, type: 2}
+  m_Controller: {fileID: 9100000, guid: 4dbba2b5da4fa054f8e240121198db48, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5005,7 +5005,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 3035387507752503554, guid: 31f97d1e6d1b75044b125369572c7870, type: 3}
+  m_Sprite: {fileID: 4972873780046644642, guid: ab438b43967646848b0397315530a40e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -5025,8 +5025,8 @@ Transform:
   m_GameObject: {fileID: 1508546295}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.19, z: 0}
-  m_LocalScale: {x: 0.33783147, y: 0.33783147, z: 0.33783147}
+  m_LocalPosition: {x: 0, y: -3.73, z: 0}
+  m_LocalScale: {x: 0.14519359, y: 0.14519359, z: 0.14519359}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -5164,6 +5164,8 @@ MonoBehaviour:
   jumpClip: {fileID: 8300000, guid: 923b088001f6e0447a6b91d04003417a, type: 3}
   powerUpSfx: {fileID: 8300000, guid: c3befd74305b03644b7a3a79d5a162cc, type: 3}
   audioSource: {fileID: 1508546303}
+  animator: {fileID: 1508546299}
+  jumpAnimationName: JobertJumpAnim
 --- !u!1 &1610866464
 GameObject:
   m_ObjectHideFlags: 0
@@ -6800,7 +6802,7 @@ MonoBehaviour:
   player: {fileID: 1508546301}
   extraSpawnHeightDuringPowerUp: 5
   cookiePrefab: {fileID: 7519415816672303020, guid: f2edb78086af83347ac3a3cd1a6c8cdd, type: 3}
-  cookieSpawnChance: 0.206
+  cookieSpawnChance: 0.15
 --- !u!1 &2046206675
 GameObject:
   m_ObjectHideFlags: 0
@@ -7216,7 +7218,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.867302, y: 0.42065108}
+  m_Size: {x: 3.867302, y: 0.32075107}
   m_EdgeRadius: 0
 --- !u!212 &2131162447
 SpriteRenderer:
@@ -11363,7 +11365,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.867302, y: 0.42065108}
+  m_Size: {x: 3.867302, y: 0.2846194}
   m_EdgeRadius: 0
 --- !u!224 &4841668688954979946
 RectTransform:
