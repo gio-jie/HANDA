@@ -17,8 +17,16 @@ public class StarDisplay : MonoBehaviour
     {
         int savedStars = PlayerPrefs.GetInt("Level_" + levelIndex, 0);
 
-        for (int i = 0; i < stars.Length; i++)
-            stars[i].color = i < savedStars ? activeColor : inactiveColor;
+        if (stars != null)
+        {
+            for (int i = 0; i < stars.Length; i++)
+            {
+                if (stars[i] != null) 
+                {
+                    stars[i].color = i < savedStars ? activeColor : inactiveColor;
+                }
+            }
+        }
 
         bool isUnlocked = false;
 
@@ -29,12 +37,20 @@ public class StarDisplay : MonoBehaviour
         else
         {
             int prevLevelStars = PlayerPrefs.GetInt("Level_" + (levelIndex - 1), 0);
-            isUnlocked = prevLevelStars > 0;
+            
+            int manualUnlock = PlayerPrefs.GetInt("Level" + levelIndex + "_Unlocked", 0);
+            
+            isUnlocked = (prevLevelStars > 0) || (manualUnlock == 1);
         }
 
-        levelButton.interactable = isUnlocked;
+        if (levelButton != null)
+        {
+            levelButton.interactable = isUnlocked;
+        }
 
         if (lockIcon != null)
+        {
             lockIcon.SetActive(!isUnlocked);
+        }
     }
 }
