@@ -25,9 +25,9 @@ public class ConveyorDropZone : MonoBehaviour, IDropHandler
 
                     // --- BAGONG DAGDAG (ANG FIX NATIN) ---
                     // Itago ang panel bago tuluyang wasakin ang item!
-                    if (ItemInfoPanel.instance != null)
+                    if (ItemInfoPanel_Level_6.instance != null)
                     {
-                        ItemInfoPanel.instance.HidePanel();
+                        ItemInfoPanel_Level_6.instance.HidePanel();
                     }
                     // -------------------------------------
                     

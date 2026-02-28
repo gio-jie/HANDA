@@ -1,9 +1,9 @@
 using UnityEngine;
 using TMPro;
 
-public class ItemInfoPanel : MonoBehaviour
+public class ItemInfoPanel_Level_6 : MonoBehaviour
 {
-    public static ItemInfoPanel instance;
+    public static ItemInfoPanel_Level_6 instance;
 
     public GameObject panelHolder; // Yung mismong UI Panel object
     public TMP_Text nameText;

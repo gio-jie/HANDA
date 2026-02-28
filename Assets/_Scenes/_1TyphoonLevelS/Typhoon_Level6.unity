@@ -3066,7 +3066,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 864888586}
-  - component: {fileID: 864888585}
+  - component: {fileID: 864888587}
   m_Layer: 0
   m_Name: PanelManager
   m_TagString: Untagged
@@ -3074,22 +3074,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &864888585
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 864888584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0deedd77c74bb78438fc10d80c547977, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemInfoPanel
-  panelHolder: {fileID: 1845522262}
-  nameText: {fileID: 551790687}
-  weightText: {fileID: 2047636853}
-  expiryText: {fileID: 1248924266}
 --- !u!4 &864888586
 Transform:
   m_ObjectHideFlags: 0
@@ -3105,6 +3089,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &864888587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 864888584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c4320469c77a654182a2a48c296fe79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemInfoPanel_Level_6
+  panelHolder: {fileID: 1845522262}
+  nameText: {fileID: 551790687}
+  weightText: {fileID: 2047636853}
+  expiryText: {fileID: 1248924266}
 --- !u!1 &865588681
 GameObject:
   m_ObjectHideFlags: 0

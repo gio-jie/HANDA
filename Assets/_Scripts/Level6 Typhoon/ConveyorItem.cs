@@ -44,9 +44,9 @@ public class ConveyorItem : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
                 }
                 
                 // Itago ang panel baka naiwang bukas
-                if (ItemInfoPanel.instance != null)
+                if (ItemInfoPanel_Level_6.instance != null)
                 {
-                    ItemInfoPanel.instance.HidePanel();
+                    ItemInfoPanel_Level_6.instance.HidePanel();
                 }
 
                 Destroy(gameObject); // Wasakin ang item
@@ -58,8 +58,8 @@ public class ConveyorItem : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
     public void OnPointerDown(PointerEventData eventData)
     {
         isBeingHeld = true;
-        if (ItemInfoPanel.instance != null)
-            ItemInfoPanel.instance.ShowPanel(itemName, weight, expirationDate);
+        if (ItemInfoPanel_Level_6.instance != null)
+            ItemInfoPanel_Level_6.instance.ShowPanel(itemName, weight, expirationDate);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -78,8 +78,8 @@ public class ConveyorItem : MonoBehaviour, IPointerDownHandler, IBeginDragHandle
         isBeingHeld = false;
         canvasGroup.blocksRaycasts = true;
 
-        if (ItemInfoPanel.instance != null)
-            ItemInfoPanel.instance.HidePanel(); 
+        if (ItemInfoPanel_Level_6.instance != null)
+            ItemInfoPanel_Level_6.instance.HidePanel(); 
 
         ResetPosition(); 
     }
