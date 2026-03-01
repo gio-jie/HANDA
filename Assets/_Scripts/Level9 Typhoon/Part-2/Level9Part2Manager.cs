@@ -2,18 +2,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class Level9Part2Manager : MonoBehaviour
 {
     public static Level9Part2Manager instance;
 
     // ==========================================
-    // --- BAGONG DAGDAG: MALINIS NA BAHAY TRANSITION ---
+    // --- MALINIS NA BAHAY TRANSITION ---
     // ==========================================
     [Header("Clean House Transition")]
-    public Image backgroundImage; // Ang mismong Background natin
-    public Sprite cleanBackgroundSprite; // Ang malinis na version ng bahay
-    public AudioClip cleanSoundEffect; // Tunog na "Ting!" o kislap
+    public Image backgroundImage; 
+    public Sprite cleanBackgroundSprite; 
+    public AudioClip cleanSoundEffect; 
     // ==========================================
 
     [Header("Player Status")]
@@ -29,31 +30,16 @@ public class Level9Part2Manager : MonoBehaviour
     public float infectionPenalty = 25f;
     public float barFillSpeed = 30f;         
 
-    [Header("Game Timer (Countdown Lang)")]
-    public float timeLimit = 60f; 
+    [Header("Game Data")]
     public int totalHazards = 3; 
     [HideInInspector] public int clearedHazards = 0;
 
     [Header("UI Feedback")]
     public TMP_Text statusText;
-    public TMP_Text timerTextUI;
     public TMP_Text scoreTextUI; 
 
-    private Color originalTimerColor;
-
-    [Header("Star System")]
-    public float goldStarThreshold = 30f; 
-    public float silverStarThreshold = 15f; 
-
     [Header("UI Panels")]
-    public GameObject winPanel;
-    public GameObject losePanel;
     public GameObject pausePanel;
-
-    [Header("Win Panel Elements")]
-    public Image star1; public Image star2; public Image star3;
-    public TMP_Text timeFinishedText;
-    public Color earnedColor = Color.yellow;
 
     [HideInInspector] public bool isGameActive = true;
 
@@ -61,29 +47,26 @@ public class Level9Part2Manager : MonoBehaviour
     {
         instance = this;
         Time.timeScale = 1;
-
-        if (timerTextUI != null)
-        {
-            originalTimerColor = timerTextUI.color; 
-        }
     }
 
     void Start()
     {
         UpdateScoreDisplay();
+        isGameActive = true;
     }
 
     void Update()
     {
         if (!isGameActive) return;
 
-        if (timeLimit > 0)
+        // --- CHECK TIMER SA STAR MANAGER ---
+        if (StarManager.Instance != null && StarManager.Instance.GetRemainingSeconds() <= 0)
         {
-            timeLimit -= Time.deltaTime;
-            UpdateTimerDisplay(timeLimit);
-            if (timeLimit <= 0) FinalizeGameOver("The time is over.");
+            FinalizeGameOver("Naubusan ng oras!");
+            return;
         }
 
+        // --- INFECTION BAR ANIMATION ---
         if (displayedInfection < currentInfection)
         {
             displayedInfection = Mathf.MoveTowards(displayedInfection, currentInfection, barFillSpeed * Time.deltaTime);
@@ -101,20 +84,6 @@ public class Level9Part2Manager : MonoBehaviour
         if (displayedInfection >= maxInfection) 
         {
             FinalizeGameOver("Jobert has been infected!");
-        }
-    }
-
-    void UpdateTimerDisplay(float time)
-    {
-        if (timerTextUI != null)
-        {
-            if (time < 0) time = 0;
-
-            int minutes = Mathf.FloorToInt(time / 60); 
-            int seconds = Mathf.FloorToInt(time % 60); 
-
-            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", minutes, seconds);
-            timerTextUI.color = (time <= 10) ? Color.red : originalTimerColor;
         }
     }
 
@@ -142,19 +111,26 @@ public class Level9Part2Manager : MonoBehaviour
 
     public void HazardCleaned()
     {
+        if (!isGameActive) return;
+
         clearedHazards++;
         UpdateScoreDisplay(); 
 
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
 
+        // --- IPASA SA STAR MANAGER ANG PAGKA-TAMA ---
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.RegisterCorrectItem();
+        }
+
         if (clearedHazards >= totalHazards)
         {
             isGameActive = false;
             
-            // --- BINAGO: PALITAN ANG TEXT PARA MAG-MATCH SA MALINIS NA BAHAY ---
             if (statusText != null) statusText.text = "Malinis at ligtas na ang bahay!";
             
-            // --- BAGONG DAGDAG: PALITAN ANG BACKGROUND AT TUMUNOG ---
+            // PALITAN ANG BACKGROUND AT TUMUNOG
             if (backgroundImage != null && cleanBackgroundSprite != null)
             {
                 backgroundImage.sprite = cleanBackgroundSprite;
@@ -164,9 +140,18 @@ public class Level9Part2Manager : MonoBehaviour
             {
                 AudioSource.PlayClipAtPoint(cleanSoundEffect, Camera.main.transform.position, 1f);
             }
-            // ---------------------------------------------------------
 
-            Invoke("ShowWinScreen", 3.0f); 
+            // 3 SECONDS DELAY BAGO LUMABAS ANG WIN PANEL
+            StartCoroutine(LevelCompleteDelay());
+        }
+    }
+
+    IEnumerator LevelCompleteDelay()
+    {
+        yield return new WaitForSeconds(3.0f);
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.EndLevel(true); 
         }
     }
 
@@ -180,37 +165,36 @@ public class Level9Part2Manager : MonoBehaviour
         
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
         if (PlayerPrefs.GetInt("VibrationOn", 1) == 1) Handheld.Vibrate();
+
+        // --- TAWAGIN ANG STAR MANAGER PARA SA TIME PENALTY ---
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.RegisterWrongItem();
+            
+            if (StarManager.Instance.GetRemainingSeconds() <= 0 || StarManager.Instance.GetCurrentStars() == 0)
+            {
+                FinalizeGameOver("Naubusan ng oras dahil sa penalty!");
+            }
+        }
     }
 
     void FinalizeGameOver(string reason)
     {
-        timeLimit = 0;
+        if (!isGameActive) return;
+
         isGameActive = false;
 
-        if (timerTextUI != null) timerTextUI.text = "00:00";
-
         if (statusText != null) statusText.text = "GAME OVER: " + reason;
-        if (losePanel != null) losePanel.SetActive(true);
-        if (AudioManager.instance != null) { AudioManager.instance.PlaySFX(AudioManager.instance.loseSound); AudioManager.instance.PauseBGM(); }
+        
+        // --- IPASA ANG LOSE PANEL SA STAR MANAGER ---
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.EndLevel(false);
+        }
     }
 
-    void ShowWinScreen()
-    {
-        if (winPanel != null) winPanel.SetActive(true);
-        if (AudioManager.instance != null) { AudioManager.instance.PlaySFX(AudioManager.instance.winSound); AudioManager.instance.PauseBGM(); }
-
-        float scoreTime = timeLimit;
-        if (star1) star1.color = earnedColor;
-        if (scoreTime >= silverStarThreshold && star2) star2.color = earnedColor;
-        if (scoreTime >= goldStarThreshold && star3) star3.color = earnedColor;
-
-        float min = Mathf.FloorToInt(scoreTime / 60); float sec = Mathf.FloorToInt(scoreTime % 60);
-        if (timeFinishedText != null) timeFinishedText.text = string.Format("Time Left: {0:00}:{1:00}", min, sec);
-
-        PlayerPrefs.SetInt("Level10_Unlocked", 1);
-        PlayerPrefs.Save();
-    }
-
+    // PAALALA: Parehas ito sa Level 7, kung gusto mong bumalik sa Phase 1 pag natalo, 
+    // palitan mo ang SceneManager.GetActiveScene().name ng "Level9_Part1"
     public void RetryLevel() { Time.timeScale = 1; SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
     public void PauseGame() { if (pausePanel != null) pausePanel.SetActive(true); Time.timeScale = 0; }
     public void ResumeGame() { if (pausePanel != null) pausePanel.SetActive(false); Time.timeScale = 1; }

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class StarDisplay : MonoBehaviour
 {
+    public string stagePrefix = "";
     public int levelIndex;
     public Image[] stars;
 
@@ -15,7 +16,7 @@ public class StarDisplay : MonoBehaviour
 
     void Start()
     {
-        int savedStars = PlayerPrefs.GetInt("Level_" + levelIndex, 0);
+        int savedStars = PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex, 0);
 
         if (stars != null)
         {
@@ -36,11 +37,8 @@ public class StarDisplay : MonoBehaviour
         }
         else
         {
-            int prevLevelStars = PlayerPrefs.GetInt("Level_" + (levelIndex - 1), 0);
-            
-            int manualUnlock = PlayerPrefs.GetInt("Level" + levelIndex + "_Unlocked", 0);
-            
-            isUnlocked = (prevLevelStars > 0) || (manualUnlock == 1);
+            int prevLevelStars = PlayerPrefs.GetInt(stagePrefix + "Level_" + (levelIndex - 1), 0);
+            isUnlocked = (prevLevelStars > 0);
         }
 
         if (levelButton != null)

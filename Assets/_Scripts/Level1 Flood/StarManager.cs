@@ -8,7 +8,8 @@ public class StarManager : MonoBehaviour
 {
     public static StarManager Instance;
 
-    [Header("Level")]
+    [Header("Level Configuration")]
+    public string stagePrefix = "";
     public int levelIndex = 1;
     public float levelDuration;
 
@@ -50,13 +51,14 @@ public class StarManager : MonoBehaviour
         remainingTime = levelDuration;
         timePerStar = levelDuration / 3f;
 
+        // Safety checks for Inventory
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.ClearRuntimeInventory();
-        }
-        if (InventoryUI.Instance != null && InventoryManager.Instance != null)
-        {
-            InventoryUI.Instance.RefreshUI(InventoryManager.Instance.runtimeItems);
+            if (InventoryUI.Instance != null)
+            {
+                InventoryUI.Instance.RefreshUI(InventoryManager.Instance.runtimeItems);
+            }
         }
 
         UpdateStars(3);
@@ -86,7 +88,7 @@ public class StarManager : MonoBehaviour
 
     public void RefreshStars()
     {
-        int savedStars = PlayerPrefs.GetInt("Level_" + levelIndex, 0);
+        int savedStars = PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex, 0);
     }
 
     public void RegisterCorrectItem()
@@ -227,7 +229,7 @@ public class StarManager : MonoBehaviour
             int minutes = remainingSeconds / 60;
             int seconds = remainingSeconds % 60;
 
-            int bestSeconds = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+            int bestSeconds = PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex + "_BestTime", 0);
             int bestMin = bestSeconds / 60;
             int bestSec = bestSeconds % 60;
 
@@ -251,7 +253,7 @@ public class StarManager : MonoBehaviour
             int minutes = remainingSeconds / 60;
             int seconds = remainingSeconds % 60;
 
-            int bestSeconds = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+            int bestSeconds = PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex + "_BestTime", 0);
             int bestMin = bestSeconds / 60;
             int bestSec = bestSeconds % 60;
 
@@ -265,10 +267,9 @@ public class StarManager : MonoBehaviour
             if (winPanelBestTimeText != null)
                 winPanelBestTimeText.text = $"Best Record: {bestMin:0}:{bestSec:00}";
 
-            //StageProgressManager.Instance.UpdateProgress();
             if (InventoryManager.Instance != null)
             {
-            InventoryManager.Instance.SaveInventorySet();
+                InventoryManager.Instance.SaveInventorySet();
             }
             SaveStars();
         }
@@ -276,9 +277,9 @@ public class StarManager : MonoBehaviour
 
     public void SaveStars()
     {
-        int previous = PlayerPrefs.GetInt("Level_" + levelIndex, 0);
+        int previous = PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex, 0);
         if (currentStars > previous)
-            PlayerPrefs.SetInt("Level_" + levelIndex, currentStars);
+            PlayerPrefs.SetInt(stagePrefix + "Level_" + levelIndex, currentStars);
 
         PlayerPrefs.Save();
         RefreshStars();
@@ -288,11 +289,11 @@ public class StarManager : MonoBehaviour
     private void SaveBestTime()
     {
         int remainingSeconds = Mathf.CeilToInt(remainingTime);
-        int previousBest = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+        int previousBest = PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex + "_BestTime", 0);
 
         if (remainingSeconds > previousBest)
         {
-            PlayerPrefs.SetInt("Level_" + levelIndex + "_BestTime", remainingSeconds);
+            PlayerPrefs.SetInt(stagePrefix + "Level_" + levelIndex + "_BestTime", remainingSeconds);
             PlayerPrefs.Save();
             RefreshStars();
         }
@@ -320,6 +321,6 @@ public class StarManager : MonoBehaviour
 
     public int GetCurrentStars() => currentStars;
     public int GetRemainingSeconds() => Mathf.CeilToInt(remainingTime);
-    public int GetSavedStars() => PlayerPrefs.GetInt("Level_" + levelIndex, 0);
-    public int GetBestTime() => PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+    public int GetSavedStars() => PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex, 0);
+    public int GetBestTime() => PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex + "_BestTime", 0);
 }

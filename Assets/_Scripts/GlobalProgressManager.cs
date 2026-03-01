@@ -4,13 +4,15 @@ using TMPro;
 
 public class GlobalProgressManager : MonoBehaviour
 {
+    // --- BAGONG DAGDAG: Para mahiwalay ang Stage 1 at Stage 2 ---
+    public string stagePrefix = ""; 
+
     [Header("UI Elements")]
     public Slider progressBar;
     public TextMeshProUGUI progressText;
 
     [Header("Settings")]
-    public int totalLevelsInGame = 25; // 5 Scenarios x 5 Levels each = 25
-    // Kung 10 levels bawat scenario, gawin mong 50 ito.
+    public int totalLevelsInGame = 10; // Napansin ko sa console mo 0/10 siya, kaya ginawa kong 10 ang default.
 
     void OnEnable()
     {
@@ -21,12 +23,15 @@ public class GlobalProgressManager : MonoBehaviour
     {
         int levelsCompleted = 0;
 
-        // I-check natin ang Levels 1 hanggang 25
         for (int i = 1; i <= totalLevelsInGame; i++)
         {
-            // Check kung may Star na nakuha sa level na 'to
-            // (Kahit 1 star lang, considered "Done" na para sa progress)
-            if (PlayerPrefs.GetInt("Level" + i + "_Stars", 0) > 0)
+            // --- BINAGO: Binabasa na ngayon ang bagong StarManager save format! ---
+            int savedStars = PlayerPrefs.GetInt(stagePrefix + "Level_" + i, 0);
+
+            // Backup logic in case may lumang save data ka pa rin
+            int oldSavedStars = PlayerPrefs.GetInt("Level" + i + "_Stars", 0);
+
+            if (savedStars > 0 || oldSavedStars > 0)
             {
                 levelsCompleted++;
             }

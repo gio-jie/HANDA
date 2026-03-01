@@ -2,47 +2,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class Level3Manager : MonoBehaviour
 {
+    public static Level3Manager instance;
+
     [Header("Game Settings")]
     public int itemsNeeded = 5; // Total na kalat
     public int currentScore = 0;
-    public float timeLimit = 60f;
     
-    [Header("Star System")]
-    public float goldStarThreshold = 40f; 
-    public float silverStarThreshold = 20f; 
-
     [Header("Game State")]
-    private bool isGameActive = true;
-    private float finalTimeRecorded = 0f;
+    public bool isGameActive = true;
 
     [Header("UI Panels")]
-    public GameObject winPanel;
-    public GameObject losePanel;
     public GameObject pausePanel;
-
-    [Header("Win Panel Elements")]
-    public Image star1;
-    public Image star2;
-    public Image star3;
-    public TMP_Text timeFinishedText; 
-    public TMP_Text bestScoreText;
-    
-    [Header("Lose Panel Elements")]
-    public Image loseStar1;
-    public Image loseStar2;
-    public Image loseStar3;
-    public TMP_Text loseTimeText;
-    public TMP_Text loseBestScoreText;
-
-    public Color earnedColor = Color.yellow;
-    public Color missingColor = Color.gray;
 
     [Header("In-Game UI")]
     public TMP_Text scoreText;
-    public TMP_Text timerText;
     public GameObject checkIcon; // Visual feedback pag naligpit
 
     [Header("Toggle Buttons")]
@@ -55,6 +32,7 @@ public class Level3Manager : MonoBehaviour
 
     void Awake()
     {
+        instance = this;
         Time.timeScale = 1;
     }
 
@@ -69,53 +47,14 @@ public class Level3Manager : MonoBehaviour
 
     void Update()
     {
-        if (isGameActive)
+        if (isGameActive && StarManager.Instance != null)
         {
-            if (timeLimit > 0)
+            // Kung naubos ang oras sa StarManager, I-GAME OVER!
+            if (StarManager.Instance.GetRemainingSeconds() <= 0)
             {
-                timeLimit -= Time.deltaTime;
-                UpdateTimerDisplay(timeLimit);
-            }
-            else
-            {
-                FinalizeGameOver();
+                isGameActive = false;
             }
         }
-    }
-
-    void UpdateTimerDisplay(float timeToShow)
-    {
-        if (timerText != null)
-        {
-            // Siguraduhing hindi mag-negative ang display
-            if (timeToShow < 0) timeToShow = 0;
-
-            float seconds = Mathf.FloorToInt(timeToShow);
-
-            // Format: 00 (Seconds na lang, wala nang "00:" sa unahan)
-            timerText.text = string.Format("<mspace=0.6em>{0:00}</mspace>", seconds);
-
-            if (timeToShow <= 10) 
-            {
-                timerText.color = Color.red;
-            }
-            else 
-            {
-                Color customGreen;
-                if (ColorUtility.TryParseHtmlString("#37B900", out customGreen))
-                {
-                    timerText.color = customGreen;
-                }
-            }
-        }
-    }   
-
-    void FinalizeGameOver()
-    {
-        timeLimit = 0;
-        isGameActive = false;
-        if(timerText != null) timerText.text = "00:00";
-        GameOver();
     }
 
     // --- LEVEL 3 SPECIFIC LOGIC (Cleanup) ---
@@ -138,13 +77,27 @@ public class Level3Manager : MonoBehaviour
             Invoke("HideCheck", 1f);
         }
 
+        // --- IPASA SA STAR MANAGER ANG PAGKA-TAMA ---
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.RegisterCorrectItem();
+        }
+
         if (currentScore >= itemsNeeded)
         {
             // WIN!
             isGameActive = false;
-            finalTimeRecorded = timeLimit;
-            UpdateTimerDisplay(finalTimeRecorded);
-            Invoke("ShowWinScreen", 1.0f);
+            StartCoroutine(LevelCompleteDelay());
+        }
+    }
+
+    // --- BAGONG DAGDAG: DELAY COROUTINE PARA HINDI MABIGLA ---
+    IEnumerator LevelCompleteDelay()
+    {
+        yield return new WaitForSeconds(1.0f);
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.EndLevel(true); 
         }
     }
 
@@ -154,87 +107,6 @@ public class Level3Manager : MonoBehaviour
     }
 
     void HideCheck() { if(checkIcon != null) checkIcon.SetActive(false); }
-
-    // --- WIN/LOSE LOGIC ---
-
-    void ShowWinScreen()
-    {
-        winPanel.SetActive(true);
-        
-        if (AudioManager.instance != null) 
-        {
-            AudioManager.instance.PlaySFX(AudioManager.instance.winSound);
-            AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
-        }
-
-        float scoreTime = finalTimeRecorded; 
-
-        // Star Logic
-        if(star1) star1.color = earnedColor;
-        if(star2) star2.color = (scoreTime >= silverStarThreshold) ? earnedColor : missingColor;
-        if(star3) star3.color = (scoreTime >= goldStarThreshold) ? earnedColor : missingColor;
-
-        // Time Text
-        int seconds = Mathf.FloorToInt(scoreTime);
-        int milliseconds = Mathf.FloorToInt((scoreTime * 100) % 100);
-        if(timeFinishedText != null) timeFinishedText.text = string.Format("Time Left: {0:00}.{1:00}s", seconds, milliseconds);
-
-        // High Score (Level 3 Specific Key)
-        float currentBest = PlayerPrefs.GetFloat("Level3_BestTime", 0);
-
-        if (scoreTime > currentBest)
-        {
-            currentBest = scoreTime;
-            PlayerPrefs.SetFloat("Level3_BestTime", currentBest);
-            PlayerPrefs.Save();
-            if(bestScoreText != null) { bestScoreText.text = "NEW BEST RECORD!"; bestScoreText.color = Color.yellow; }
-        }
-        else
-        {
-            int bestSec = Mathf.FloorToInt(currentBest);
-            int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
-            if(bestScoreText != null) { bestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs); bestScoreText.color = Color.white; }
-        }
-
-        // --- SAVE SYSTEM FOR LEVEL 3 ---
-        
-        int starsEarned = 1; 
-        if (scoreTime >= silverStarThreshold) starsEarned = 2;
-        if (scoreTime >= goldStarThreshold) starsEarned = 3;
-
-        int currentSavedStars = PlayerPrefs.GetInt("Level3_Stars", 0);
-        if (starsEarned > currentSavedStars)
-        {
-            PlayerPrefs.SetInt("Level3_Stars", starsEarned);
-        }
-
-        PlayerPrefs.SetInt("Level4_Unlocked", 1);
-        
-        PlayerPrefs.Save();
-    }
-
-    void GameOver()
-    {
-        isGameActive = false;
-        if(losePanel != null) losePanel.SetActive(true);
-        
-        if (AudioManager.instance != null) 
-        {
-            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
-            AudioManager.instance.PauseBGM(); // Ngayon safe na ito!
-        }
-
-        // Lose Panel UI Update
-        if(loseTimeText != null) loseTimeText.text = "Time Left: 00:00";
-        if(loseStar1) loseStar1.color = missingColor;
-        if(loseStar2) loseStar2.color = missingColor;
-        if(loseStar3) loseStar3.color = missingColor;
-
-        float currentBest = PlayerPrefs.GetFloat("Level3_BestTime", 0);
-        int bestSec = Mathf.FloorToInt(currentBest);
-        int bestMs = Mathf.FloorToInt((currentBest * 100) % 100);
-        if(loseBestScoreText != null) loseBestScoreText.text = string.Format("Best Record: {0:00}.{1:00}s", bestSec, bestMs);
-    }
 
     // --- BUTTONS & TOGGLES ---
     public void RetryLevel() { if (AudioManager.instance != null) AudioManager.instance.ResumeBGM(); SceneManager.LoadScene(SceneManager.GetActiveScene().name); }

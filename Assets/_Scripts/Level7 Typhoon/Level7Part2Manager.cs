@@ -10,43 +10,16 @@ public class Level7Part2Manager : MonoBehaviour
 
     [Header("Game Settings")]
     public int itemsNeeded = 3; // Kulambo, Takip ng Drum, Basura
-    public float timeLimit = 45f; 
-    public float penaltyTime = 5f; 
-
-    [Header("Star System")]
-    public float goldStarThreshold = 25f; 
-    public float silverStarThreshold = 10f; 
 
     [Header("Data (Do not edit)")]
     public int currentScore = 0;
-    private bool isGameActive = true; 
-    private float finalTimeRecorded = 0f; 
+    public bool isGameActive = true; 
 
     [Header("UI Panels")]
-    public GameObject winPanel;
-    public GameObject losePanel; 
     public GameObject pausePanel;
     
-    [Header("Win Panel Elements")]
-    public Image star1;
-    public Image star2;
-    public Image star3;
-    public TMP_Text timeFinishedText; 
-    public TMP_Text bestScoreText;    
-    
-    [Header("Lose Panel Elements")]
-    public Image loseStar1;
-    public Image loseStar2;
-    public Image loseStar3;
-    public TMP_Text loseTimeText;
-    public TMP_Text loseBestScoreText;
-
-    public Color earnedColor = Color.yellow;
-    public Color missingColor = Color.gray;
-
     [Header("In-Game UI")]
     public TMP_Text scoreTextUI; 
-    public TMP_Text timerTextUI; 
     public GameObject checkIcon; 
     public GameObject xIcon;
 
@@ -55,18 +28,11 @@ public class Level7Part2Manager : MonoBehaviour
     public float fallSpeed = 50f;  
     public float fadeDuration = 1f; 
     private Vector3 penaltyOriginalPos; 
-    private Color originalTimerColor; // Tagatanda ng orihinal na kulay mula sa Inspector
 
     void Awake()
     {
         instance = this; 
         Time.timeScale = 1;
-
-        // --- BAGONG DAGDAG: I-save ang custom color mula sa Inspector ---
-        if (timerTextUI != null)
-        {
-            originalTimerColor = timerTextUI.color; 
-        }
     }
 
     void Start()
@@ -74,7 +40,6 @@ public class Level7Part2Manager : MonoBehaviour
         UpdateScoreDisplay();
         isGameActive = true;
 
-        // --- BAGONG DAGDAG: I-setup ang Penalty Text para nakatago sa simula ---
         if (penaltyTextUI != null)
         {
             penaltyOriginalPos = penaltyTextUI.rectTransform.localPosition;
@@ -84,32 +49,15 @@ public class Level7Part2Manager : MonoBehaviour
 
     void Update()
     {
-        if (isGameActive)
+        if (isGameActive && StarManager.Instance != null)
         {
-            if (timeLimit > 0)
+            // Kung naubos ang oras sa StarManager, I-GAME OVER!
+            if (StarManager.Instance.GetRemainingSeconds() <= 0)
             {
-                timeLimit -= Time.deltaTime;
-                UpdateTimerDisplay(timeLimit); 
-            }
-            else
-            {
-                FinalizeGameOver();
+                isGameActive = false;
             }
         }
     }
-
-    void UpdateTimerDisplay(float timeToShow)
-    {
-        if (timerTextUI != null)
-        {
-            if (timeToShow < 0) timeToShow = 0;
-            float seconds = Mathf.FloorToInt(timeToShow);
-            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}</mspace>", seconds);
-            
-            // --- DITO ANG FIX: Gagamitin na niya ang kulay na nai-set mo sa Inspector! ---
-            timerTextUI.color = (timeToShow <= 10) ? Color.red : originalTimerColor;
-        }
-    }    
 
     // --- GAMEPLAY LOGIC ---
 
@@ -123,12 +71,26 @@ public class Level7Part2Manager : MonoBehaviour
 
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
 
+        // --- IPASA SA STAR MANAGER ANG PAGKA-TAMA ---
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.RegisterCorrectItem();
+        }
+
         if (currentScore >= itemsNeeded)
         {
             isGameActive = false; 
-            finalTimeRecorded = timeLimit; 
-            UpdateTimerDisplay(finalTimeRecorded);
-            Invoke("ShowWinScreen", 1.5f);
+            StartCoroutine(LevelCompleteDelay());
+        }
+    }
+
+    // --- BAGONG DAGDAG: DELAY COROUTINE ---
+    IEnumerator LevelCompleteDelay()
+    {
+        yield return new WaitForSeconds(1.0f);
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.EndLevel(true); 
         }
     }
 
@@ -140,22 +102,32 @@ public class Level7Part2Manager : MonoBehaviour
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
         if (PlayerPrefs.GetInt("VibrationOn", 1) == 1) Handheld.Vibrate(); 
         
-        timeLimit -= penaltyTime; // Bawas oras!
-        if (timeLimit <= 0) FinalizeGameOver(); 
-        UpdateTimerDisplay(timeLimit);
-
-        // --- BAGONG DAGDAG: Tawagin ang animation kapag nagkamali! ---
+        // Tawagin ang animation kapag nagkamali
         if (penaltyTextUI != null)
         {
             StartCoroutine(AnimatePenaltyText());
         }
+
+        // --- TAWAGIN ANG STAR MANAGER PARA SA PENALTY ---
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.RegisterWrongItem();
+            
+            if (StarManager.Instance.GetRemainingSeconds() <= 0 || StarManager.Instance.GetCurrentStars() == 0)
+            {
+                isGameActive = false;
+            }
+        }
     }
 
-    // --- BAGONG DAGDAG: ANG LOGIC NG PENALTY ANIMATION ---
+    // --- ANG LOGIC NG PENALTY ANIMATION ---
     IEnumerator AnimatePenaltyText()
     {
         penaltyTextUI.gameObject.SetActive(true);
-        penaltyTextUI.text = "-" + penaltyTime;
+        // Basahin ang penalty time mula sa Inspector ng StarManager!
+        float penaltyAmount = (StarManager.Instance != null) ? StarManager.Instance.wrongItemPenalty : 5f;
+        penaltyTextUI.text = "-" + penaltyAmount;
+        
         penaltyTextUI.rectTransform.localPosition = penaltyOriginalPos;
         
         Color textColor = penaltyTextUI.color;
@@ -175,50 +147,14 @@ public class Level7Part2Manager : MonoBehaviour
 
         penaltyTextUI.gameObject.SetActive(false);
     }
-    // ---------------------------------------------------
 
     IEnumerator ShowFeedback(GameObject icon) { if(icon) { icon.SetActive(true); yield return new WaitForSeconds(1.0f); icon.SetActive(false); } }
 
     void UpdateScoreDisplay() { if(scoreTextUI != null) scoreTextUI.text = currentScore + " / " + itemsNeeded; }
 
-    // --- WIN / LOSE LOGIC ---
-
-    void FinalizeGameOver()
-    {
-        timeLimit = 0;
-        isGameActive = false;
-        if(timerTextUI != null) timerTextUI.text = "00";
-        
-        if(losePanel != null) losePanel.SetActive(true); 
-        if (AudioManager.instance != null) { AudioManager.instance.PlaySFX(AudioManager.instance.loseSound); AudioManager.instance.PauseBGM(); }
-        
-        if(loseTimeText != null) loseTimeText.text = "Time Left: 00:00";
-        if(loseStar1) loseStar1.color = missingColor; if(loseStar2) loseStar2.color = missingColor; if(loseStar3) loseStar3.color = missingColor;
-    }
-
-    void ShowWinScreen()
-    {
-        winPanel.SetActive(true);
-        if (AudioManager.instance != null) { AudioManager.instance.PlaySFX(AudioManager.instance.winSound); AudioManager.instance.PauseBGM(); }
-
-        float scoreTime = finalTimeRecorded; 
-
-        if(star1) star1.color = missingColor; if(star2) star2.color = missingColor; if(star3) star3.color = missingColor;
-        if(star1) star1.color = earnedColor;
-        if (scoreTime >= silverStarThreshold && star2) star2.color = earnedColor;
-        if (scoreTime >= goldStarThreshold && star3) star3.color = earnedColor;
-
-        float min = Mathf.FloorToInt(scoreTime / 60); float sec = Mathf.FloorToInt(scoreTime % 60);
-        if(timeFinishedText != null) timeFinishedText.text = string.Format("Time Left: {0:00}:{1:00}", min, sec);
-
-        // SAVE RECORD & UNLOCK NEXT LEVEL
-        float currentBest = PlayerPrefs.GetFloat("Level7Part2_BestTime", 0);
-        if (scoreTime > currentBest) { PlayerPrefs.SetFloat("Level7Part2_BestTime", scoreTime); }
-        PlayerPrefs.SetInt("Level8_Unlocked", 1);
-        PlayerPrefs.Save();
-    }
-
     // --- BUTTONS ---
+    // PAALALA: Pansinin na ang RetryLevel dito ay bumabalik sa "Level7_Dengue" (Phase 1). 
+    // Kung gusto mong bumalik sa Phase 1 pag natalo, ito ang gamitin mong function sa mga buttons mo imbes na yung nasa StarManager!
     public void RetryLevel() { Time.timeScale = 1; SceneManager.LoadScene("Level7_Dengue"); } 
     public void PauseGame() { pausePanel.SetActive(true); Time.timeScale = 0; }
     public void ResumeGame() { pausePanel.SetActive(false); Time.timeScale = 1; }

@@ -25,9 +25,16 @@ public class InventoryManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+
+            transform.SetParent(null);
+
             DontDestroyOnLoad(gameObject);
             LoadSavedInventory();
-            InventoryUI.Instance.RefreshUI(GetSavedInventory());
+            
+            if (InventoryUI.Instance != null)
+            {
+                InventoryUI.Instance.RefreshUI(GetSavedInventory());
+            }
         }
         else
         {

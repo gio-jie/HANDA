@@ -117,9 +117,6 @@ public class Level1Manager : MonoBehaviour
         if (currentScore >= itemsNeeded)
         {
             isGameActive = false; 
-            
-            PlayerPrefs.SetInt("Level2_Unlocked", 1);
-            PlayerPrefs.Save();
 
             HideAllItems(); // TAWAGIN ANG CLEANUP BAGO MAG-WIN!
 

@@ -21,14 +21,10 @@ public class Level7Manager : MonoBehaviour
     public Sprite[] jobertPantalSprites; 
     public Sprite jobertHappySprite; 
 
-    // ==========================================
-    // --- BAGONG DAGDAG: VOLUME SLIDER ---
-    // ==========================================
     [Header("Audio (SFX)")]
     public AudioClip biteSound; 
-    [Range(0f, 1f)] // Gagawin nitong slider ang volume sa Inspector!
-    public float biteVolume = 0.5f; // Default ay kalahati (50%)
-    // ==========================================
+    [Range(0f, 1f)] 
+    public float biteVolume = 0.5f; 
 
     [Header("Health UI (Hearts)")]
     public Image[] heartIcons; 
@@ -38,7 +34,6 @@ public class Level7Manager : MonoBehaviour
     public float fadeDuration = 1f;
 
     [Header("UI Panels")]
-    public GameObject losePanel; 
     public GameObject pausePanel;
     
     [Header("In-Game UI")]
@@ -80,6 +75,7 @@ public class Level7Manager : MonoBehaviour
 
             if (jobertHappySprite != null) jobertRenderer.sprite = jobertHappySprite;
 
+            // HINDI TAYO TATAWAG NG WIN PANEL DITO, DIDERETSO TAYO SA PHASE 2!
             Invoke("LoadPhase2", 1.5f);
         }
     }
@@ -90,17 +86,14 @@ public class Level7Manager : MonoBehaviour
 
         currentHealth--; 
 
-        // --- DITO NATIN INAPPLY YUNG VOLUME ---
         if (biteSound != null)
         {
-            // Babasahin na niya yung biteVolume na sinet mo sa Inspector!
             AudioSource.PlayClipAtPoint(biteSound, Camera.main.transform.position, biteVolume);
         }
         else if (AudioManager.instance != null) 
         {
             AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
         }
-        // ----------------------------------------
 
         if (currentHealth >= 0 && currentHealth < heartIcons.Length)
         {
@@ -121,14 +114,15 @@ public class Level7Manager : MonoBehaviour
             jobertRenderer.sprite = jobertPantalSprites[damageTaken];
         }
 
+        // KUNG NAUBOS ANG BUHAY (GAME OVER)
         if (currentHealth <= 0)
         {
             isGameActive = false;
-            if (losePanel != null) losePanel.SetActive(true);
-            if (AudioManager.instance != null) 
+            
+            // --- TAWAGIN ANG STAR MANAGER PARA SA LOSE PANEL ---
+            if (StarManager.Instance != null)
             {
-                AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
-                AudioManager.instance.PauseBGM();
+                StarManager.Instance.EndLevel(false); 
             }
         }
     }

@@ -24,18 +24,13 @@ public class Level8Part1Manager : MonoBehaviour
     public TMP_Text goodJobText; 
     public float fadeDuration = 1.5f; 
 
-    // ==========================================
-    // --- BAGONG DAGDAG: PENALTY VISUALS ---
-    // ==========================================
     [Header("Penalty Visuals (- Electricity)")]
-    public Image penaltyIconImage; // Dito ide-drag yung ginawa mong Image kanina
-    public float penaltyShowDuration = 0.5f; // Gaano katagal nakalitaw bago mag-fade
-    public float penaltyFadeDuration = 1.0f; // Gaano katagal ang fading
-    private Coroutine currentPenaltyRoutine; // Para hindi magpatong-patong ang animation
-    // ==========================================
+    public Image penaltyIconImage; 
+    public float penaltyShowDuration = 0.5f; 
+    public float penaltyFadeDuration = 1.0f; 
+    private Coroutine currentPenaltyRoutine; 
 
     [Header("UI Panels")]
-    public GameObject losePanel;
     public GameObject pausePanel;
 
     [Header("Game Data")]
@@ -57,13 +52,19 @@ public class Level8Part1Manager : MonoBehaviour
 
         if (goodJobText != null) goodJobText.gameObject.SetActive(false);
         
-        // Siguraduhing nakatago ang penalty icon sa simula
         if (penaltyIconImage != null) penaltyIconImage.gameObject.SetActive(false);
     }
 
     void Update()
     {
         if (!isGameActive) return;
+
+        // --- BAGONG DAGDAG: StarManager Timeout/Fail Check ---
+        if (StarManager.Instance != null && StarManager.Instance.GetRemainingSeconds() <= 0)
+        {
+            GameOverBlackout();
+            return;
+        }
 
         currentPower -= powerDrainRate * Time.deltaTime;
         
@@ -98,49 +99,54 @@ public class Level8Part1Manager : MonoBehaviour
         if (currentPower > maxPower) currentPower = maxPower; 
     }
 
-    // ==========================================
-    // --- BAGONG DAGDAG: PENALTY TRIGGER ---
-    // ==========================================
-    // Ito ang tatawagin ng DropZone kapag nagkamali
     public void TriggerPenaltyFeedback()
     {
-        if (penaltyIconImage == null) return;
+        if (!isGameActive) return;
 
-        // Kung may tumatakbo pang animation, itigil muna para mag-reset
-        if (currentPenaltyRoutine != null) StopCoroutine(currentPenaltyRoutine);
-        
-        currentPenaltyRoutine = StartCoroutine(AnimatePenaltyRoutine());
+        if (penaltyIconImage != null)
+        {
+            if (currentPenaltyRoutine != null) StopCoroutine(currentPenaltyRoutine);
+            currentPenaltyRoutine = StartCoroutine(AnimatePenaltyRoutine());
+        }
+
+        // --- TAWAGIN ANG STAR MANAGER PARA SA PENALTY LOGIC ---
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.RegisterWrongItem();
+            
+            if (StarManager.Instance.GetRemainingSeconds() <= 0 || StarManager.Instance.GetCurrentStars() == 0)
+            {
+                GameOverBlackout();
+            }
+        }
     }
 
-    // Ang animation ng paglabas at pag-fade
     IEnumerator AnimatePenaltyRoutine()
     {
-        penaltyIconImage.gameObject.SetActive(true); // Palitawin
+        penaltyIconImage.gameObject.SetActive(true); 
 
-        // I-reset ang kulay sa solid (hindi transparent)
         Color c = penaltyIconImage.color;
         c.a = 1f;
         penaltyIconImage.color = c;
 
-        // Maghintay saglit para makita ng player (e.g., 0.5 seconds)
         yield return new WaitForSeconds(penaltyShowDuration);
 
-        // Unti-unting i-fade out
         float timer = 0f;
         while (timer < penaltyFadeDuration)
         {
             timer += Time.deltaTime;
-            c.a = Mathf.Lerp(1f, 0f, timer / penaltyFadeDuration); // Maging transparent
+            c.a = Mathf.Lerp(1f, 0f, timer / penaltyFadeDuration); 
             penaltyIconImage.color = c;
             yield return null;
         }
 
-        penaltyIconImage.gameObject.SetActive(false); // Itago ulit pag tapos na
+        penaltyIconImage.gameObject.SetActive(false); 
     }
-    // ==========================================
 
     void GameOverBlackout()
     {
+        if (!isGameActive) return;
+
         isGameActive = false;
         currentPower = 0;
         if (powerBarFill != null) powerBarFill.fillAmount = 0;
@@ -152,11 +158,10 @@ public class Level8Part1Manager : MonoBehaviour
             darknessOverlay.color = finalColor;
         }
 
-        if (losePanel != null) losePanel.SetActive(true);
-        if (AudioManager.instance != null) 
+        // --- IPASA ANG LOSE PANEL SA STAR MANAGER ---
+        if (StarManager.Instance != null)
         {
-            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
-            AudioManager.instance.PauseBGM();
+            StarManager.Instance.EndLevel(false);
         }
     }
 
@@ -166,7 +171,9 @@ public class Level8Part1Manager : MonoBehaviour
 
         familiesServed++;
         UpdateUI();
-        
+
+        if (StarManager.Instance != null) StarManager.Instance.RegisterCorrectItem();
+
         if (familiesServed >= totalFamiliesToServe)
         {
             isGameActive = false;

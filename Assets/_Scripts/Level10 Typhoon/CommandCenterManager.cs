@@ -30,17 +30,13 @@ public class CommandCenterManager : MonoBehaviour
 
     [Header("UI References")]
     public TMP_Text timerText;
-    public GameObject losePanel;
     public GameObject pausePanel; 
 
-    // ==========================================
-    // --- BAGONG DAGDAG: TIME'S UP POPUP ---
-    // ==========================================
     [Header("Win Transition Visuals")]
     public GameObject timesUpPopup; // Dito ide-drag yung buong popup (Jobert + Text)
-    // ==========================================
 
-    public CertificateUIManager certUIManager; 
+    [Header("Certificate Transition")]
+    public string certificateSceneName = "Stage1_Certificate"; 
 
     [Header("Zones & Emergencies")]
     public CrisisZone[] allZones; 
@@ -60,12 +56,8 @@ public class CommandCenterManager : MonoBehaviour
 
     void Start()
     {
-        if (losePanel) losePanel.SetActive(false);
         if (pausePanel) pausePanel.SetActive(false); 
-        
-        // Siguraduhing tago ang popup sa simula
         if (timesUpPopup) timesUpPopup.SetActive(false);
-
         spawnTimer = 2f; 
     }
 
@@ -166,68 +158,49 @@ public class CommandCenterManager : MonoBehaviour
         StartCoroutine(WinTransitionRoutine());
     }
 
-    // ==========================================
-    // --- BINAGO: IPAPAKITA NA ANG POPUP ---
-    // ==========================================
     IEnumerator WinTransitionRoutine()
     {
         // 1. Ipakita ang text at image ni Jobert
-        if (timesUpPopup) 
-        {
-            timesUpPopup.SetActive(true);
-        }
+        if (timesUpPopup) timesUpPopup.SetActive(true);
 
-        // 2. Maghintay ng 3 seconds (konting dagdag para ma-enjoy yung visual)
+        // 2. Tiyak na tatambay na ito ng 3 seconds!
         yield return new WaitForSeconds(3.0f);
 
-        // 3. Itago muna ang Popup bago ilabas ang Certificate
-        if (timesUpPopup) 
-        {
-            timesUpPopup.SetActive(false);
-        }
+        // 3. Itago muna ang Popup
+        if (timesUpPopup) timesUpPopup.SetActive(false);
 
-        // 4. Saka palitawin ang Certificate at patunugin ang Win Sound!
-        if (certUIManager != null) 
+        // 4. IPASA SA STAR MANAGER ANG WIN PANEL
+        if (StarManager.Instance != null)
         {
-            certUIManager.ShowWinWithSmallCert();
-        }
-
-        if (AudioManager.instance) 
-        { 
-            AudioManager.instance.PlaySFX(AudioManager.instance.winSound); 
+            StarManager.Instance.EndLevel(true);
         }
     }
-    // ==========================================
 
     void LoseGame(string reason)
     {
         if (!isGameActive) return;
         isGameActive = false;
-        if (losePanel) losePanel.SetActive(true);
-        if (AudioManager.instance) { AudioManager.instance.PlaySFX(AudioManager.instance.loseSound); AudioManager.instance.PauseBGM(); }
+        
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.EndLevel(false);
+        }
     }
 
-    public void PauseGame() 
-    { 
-        if(pausePanel) pausePanel.SetActive(true); 
-        Time.timeScale = 0; 
+    public void GoToCertificateScene()
+    {
+        Time.timeScale = 1;
+
+        // --- BAGONG DAGDAG: I-UNLOCK ANG STAGE 2 (FLOOD) ---
+        PlayerPrefs.SetInt("Flood_Unlocked", 1);
+        PlayerPrefs.Save();
+        // ---------------------------------------------------
+
+        SceneManager.LoadScene(certificateSceneName);
     }
 
-    public void ResumeGame() 
-    { 
-        if(pausePanel) pausePanel.SetActive(false); 
-        Time.timeScale = 1; 
-    }
-
-    public void RetryLevel() 
-    { 
-        Time.timeScale = 1; 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
-    }
-
-    public void QuitToLevelSelect() 
-    { 
-        Time.timeScale = 1; 
-        SceneManager.LoadScene("TyphoonLevelSelect"); 
-    }
+    public void PauseGame() { if(pausePanel) pausePanel.SetActive(true); Time.timeScale = 0; }
+    public void ResumeGame() { if(pausePanel) pausePanel.SetActive(false); Time.timeScale = 1; }
+    public void RetryLevel() { Time.timeScale = 1; SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void QuitToLevelSelect() { Time.timeScale = 1; SceneManager.LoadScene("TyphoonLevelSelect"); }
 }

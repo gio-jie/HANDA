@@ -22,11 +22,9 @@ public class Level10Part1Manager : MonoBehaviour
     public RadioScenario[] scenarios;
     private int currentScenarioIndex = 0;
 
-    // --- BAGONG DAGDAG: TUNOG NG RADYO BAGO MAGSALITA ---
     [Header("Radio Effect Audio")]
     public AudioClip radioStaticSound; 
-    public float staticDuration = 1.2f; // Gaano katagal tutunog ang static bago ang boses
-    // ----------------------------------------------------
+    public float staticDuration = 1.2f; 
 
     [Header("Health System")]
     public int hearts = 5;
@@ -52,7 +50,6 @@ public class Level10Part1Manager : MonoBehaviour
     public TMP_Text feedbackText;
 
     [Header("Panels")]
-    public GameObject losePanel;
     public GameObject phase2TransitionPanel; 
     public GameObject pausePanel; 
 
@@ -77,6 +74,17 @@ public class Level10Part1Manager : MonoBehaviour
 
     void Update()
     {
+        // --- BAGONG DAGDAG: StarManager Timeout Check ---
+        if (StarManager.Instance != null && StarManager.Instance.GetRemainingSeconds() <= 0)
+        {
+            if (isWaitingForAnswer)
+            {
+                isWaitingForAnswer = false;
+                GameOver();
+            }
+            return;
+        }
+
         if (isWaitingForAnswer)
         {
             currentAnswerTime -= Time.deltaTime;
@@ -108,7 +116,6 @@ public class Level10Part1Manager : MonoBehaviour
     {
         isWaitingForAnswer = false;
         
-        // --- BINAGO: I-PLAY MUNA ANG RADIO STATIC ---
         timerText.text = "INCOMING..."; 
         timerText.color = Color.cyan;
 
@@ -117,9 +124,7 @@ public class Level10Part1Manager : MonoBehaviour
             AudioManager.instance.PlaySFX(radioStaticSound);
         }
 
-        // Maghihintay muna matapos yung static bago ilabas ang bubble at audio
         yield return new WaitForSeconds(staticDuration);
-        // --------------------------------------------
 
         timerText.text = "LISTEN...";
         timerText.color = Color.yellow;
@@ -176,7 +181,12 @@ public class Level10Part1Manager : MonoBehaviour
         if (PlayerPrefs.GetInt("VibrationOn", 1) == 1) Handheld.Vibrate();
 
         DeductHeart();
-        NextScenario();
+        
+        // Magpo-proceed lang sa next kung may buhay pa
+        if (hearts > 0)
+        {
+            NextScenario();
+        }
     }
 
     void NextScenario()
@@ -256,8 +266,11 @@ public class Level10Part1Manager : MonoBehaviour
 
     void GameOver()
     {
-        if (losePanel) losePanel.SetActive(true);
-        if (AudioManager.instance) AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
+        // --- IPASA ANG LOSE PANEL SA STAR MANAGER ---
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.EndLevel(false);
+        }
     }
 
     void GoToPhase2()

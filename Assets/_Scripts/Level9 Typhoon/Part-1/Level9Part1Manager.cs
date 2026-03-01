@@ -9,19 +9,12 @@ public class Level9Part1Manager : MonoBehaviour
     public static Level9Part1Manager instance;
 
     [Header("Game Settings")]
-    public float timeLimit = 60f; // 1 minute para hanapin ang hazards sa dilim
-    public float penaltyTime = 5f;
     public int totalHazards = 4; // Live Wire, Ahas, Puno, Salamin
     public int resolvedHazards = 0;
 
     [Header("UI Feedback")]
-    public TMP_Text timerTextUI;
     public TMP_Text scoreTextUI;
     
-    // --- BAGONG DAGDAG: TAGATANDA NG KULAY ---
-    private Color originalTimerColor; 
-    // -----------------------------------------
-
     [Header("Penalty Animation")]
     public TMP_Text penaltyTextUI;
     public float fallSpeed = 50f;
@@ -34,7 +27,6 @@ public class Level9Part1Manager : MonoBehaviour
     public float transitionSpeed = 1.5f;
 
     [Header("UI Panels")]
-    public GameObject losePanel;
     public GameObject pausePanel;
 
     [HideInInspector] public bool isGameActive = true;
@@ -43,12 +35,6 @@ public class Level9Part1Manager : MonoBehaviour
     {
         instance = this;
         Time.timeScale = 1;
-
-        // --- BAGONG DAGDAG: I-SAVE ANG KULAY MULA SA INSPECTOR ---
-        if (timerTextUI != null)
-        {
-            originalTimerColor = timerTextUI.color; 
-        }
     }
 
     void Start()
@@ -72,33 +58,13 @@ public class Level9Part1Manager : MonoBehaviour
 
     void Update()
     {
-        if (isGameActive && timeLimit > 0)
+        if (isGameActive && StarManager.Instance != null)
         {
-            timeLimit -= Time.deltaTime;
-            UpdateTimerDisplay(timeLimit);
-
-            if (timeLimit <= 0)
+            // Kung naubos ang oras sa StarManager, I-GAME OVER!
+            if (StarManager.Instance.GetRemainingSeconds() <= 0)
             {
                 FinalizeGameOver();
             }
-        }
-    }
-
-    // --- BINAGO: GINAWANG MINUTES AND SECONDS + CUSTOM COLOR ---
-    void UpdateTimerDisplay(float time)
-    {
-        if (timerTextUI != null)
-        {
-            if (time < 0) time = 0;
-
-            int minutes = Mathf.FloorToInt(time / 60); 
-            int seconds = Mathf.FloorToInt(time % 60); 
-
-            // Format: MM:SS
-            timerTextUI.text = string.Format("<mspace=0.6em>{0:00}:{1:00}</mspace>", minutes, seconds);
-            
-            // Babalik sa custom color mo imbis na laging white!
-            timerTextUI.color = (time <= 10) ? Color.red : originalTimerColor;
         }
     }
 
@@ -120,6 +86,12 @@ public class Level9Part1Manager : MonoBehaviour
 
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);
 
+        // --- IPASA SA STAR MANAGER ANG PAGKA-TAMA ---
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.RegisterCorrectItem();
+        }
+
         // KUNG TAPOS NA LAHAT NG HAZARDS
         if (resolvedHazards >= totalHazards)
         {
@@ -136,19 +108,26 @@ public class Level9Part1Manager : MonoBehaviour
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.wrongSound);
         if (PlayerPrefs.GetInt("VibrationOn", 1) == 1) Handheld.Vibrate();
 
-        timeLimit -= penaltyTime;
         if (penaltyTextUI != null) StartCoroutine(AnimatePenaltyText());
 
-        if (timeLimit <= 0) FinalizeGameOver();
-        
-        // --- BAGONG DAGDAG: I-update agad ang display pagkabawas ---
-        UpdateTimerDisplay(timeLimit);
+        // --- TAWAGIN ANG STAR MANAGER PARA SA PENALTY ---
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.RegisterWrongItem();
+            
+            if (StarManager.Instance.GetRemainingSeconds() <= 0 || StarManager.Instance.GetCurrentStars() == 0)
+            {
+                FinalizeGameOver();
+            }
+        }
     }
 
     IEnumerator AnimatePenaltyText()
     {
         penaltyTextUI.gameObject.SetActive(true);
-        penaltyTextUI.text = "-" + penaltyTime;
+        // Basahin ang penalty time mula sa Inspector ng StarManager!
+        float penaltyAmount = (StarManager.Instance != null) ? StarManager.Instance.wrongItemPenalty : 5f;
+        penaltyTextUI.text = "-" + penaltyAmount;
         penaltyTextUI.rectTransform.localPosition = penaltyOriginalPos;
 
         Color c = penaltyTextUI.color; c.a = 1f; penaltyTextUI.color = c;
@@ -198,18 +177,12 @@ public class Level9Part1Manager : MonoBehaviour
 
     void FinalizeGameOver()
     {
-        timeLimit = 0;
         isGameActive = false;
         
-        // --- BINAGO: GINAWANG 00:00 ---
-        if (timerTextUI != null) timerTextUI.text = "00:00";
-        
-        if (losePanel != null) losePanel.SetActive(true);
-
-        if (AudioManager.instance != null)
+        // --- IPASA ANG LOSE PANEL SA STAR MANAGER ---
+        if (StarManager.Instance != null)
         {
-            AudioManager.instance.PlaySFX(AudioManager.instance.loseSound);
-            AudioManager.instance.PauseBGM();
+            StarManager.Instance.EndLevel(false);
         }
     }
 
