@@ -103,7 +103,7 @@ public class Level3Manager : MonoBehaviour
 
     void UpdateScoreDisplay()
     {
-        if(scoreText != null) scoreText.text = "Hazards: " + currentScore + "/" + itemsNeeded;
+        if(scoreText != null) scoreText.text = "" + currentScore + "/" + itemsNeeded;
     }
 
     void HideCheck() { if(checkIcon != null) checkIcon.SetActive(false); }

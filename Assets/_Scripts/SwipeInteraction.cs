@@ -43,10 +43,30 @@ public class SwipeInteraction : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     void CompleteTask()
     {
+        if (taskDone) return; // Extra safety check!
         taskDone = true;
 
         // 1. Ipakita muna ang "Done" object (Unplugged/Off state)
-        if (doneObject != null) doneObject.SetActive(true);
+        if (doneObject != null) 
+        {
+            doneObject.SetActive(true);
+            
+            // --- BAGONG DAGDAG: THE FIX ---
+            // Sisiguraduhin nating hindi mapipindot o maswa-swipe ang Done Object!
+            SwipeInteraction doneScript = doneObject.GetComponent<SwipeInteraction>();
+            if (doneScript != null)
+            {
+                doneScript.enabled = false; // Papatayin ang script kung meron man
+            }
+            
+            // Opsiyonal: Patayin din ang Raycast Target para hindi humarang sa ibang touch
+            Image doneImage = doneObject.GetComponent<Image>();
+            if (doneImage != null)
+            {
+                doneImage.raycastTarget = false; 
+            }
+            // ------------------------------
+        }
 
         // 2. Tawagin ang Manager
         if (manager != null)
@@ -62,9 +82,7 @@ public class SwipeInteraction : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             }
         }
         
-        // 3. ITO ANG FIX: Itago lang ang sarili KUNG "Done" pa rin ang status.
-        // Kung tinawag ng Manager ang ResetToActive(), magiging FALSE na ang taskDone,
-        // kaya HINDI na niya itatago ang sarili niya.
+        // 3. Itago lang ang sarili KUNG "Done" pa rin ang status.
         if (taskDone)
         {
             gameObject.SetActive(false);

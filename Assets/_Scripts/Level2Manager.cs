@@ -44,7 +44,7 @@ public class Level2Manager : MonoBehaviour
     void Start()
     {
         UpdateToggleVisuals();
-        if(scoreText != null) scoreText.text = "Repairs: 0/" + totalTasks;
+        if(scoreText != null) scoreText.text = "0/" + totalTasks;
         
         // Resume Music
         if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
@@ -74,6 +74,9 @@ public class Level2Manager : MonoBehaviour
         else if (clickedButton.name.Contains("Phone")) toolName = "Phone";
         else if (clickedButton.name.Contains("Toy")) toolName = "Toy";
         else if (clickedButton.name.Contains("Remote")) toolName = "Remote";
+        else if (clickedButton.name.Contains("Phone (1)")) toolName = "Phone (1)";
+        else if (clickedButton.name.Contains("Phone (2)")) toolName = "Phone (2)";
+        else if (clickedButton.name.Contains("Phone (3)")) toolName = "Phone (3)";
 
         currentSelectedTool = toolName;
         
@@ -102,7 +105,7 @@ public class Level2Manager : MonoBehaviour
         if (!isGameActive) return;
 
         tasksDone++;
-        if(scoreText != null) scoreText.text = "Repairs: " + tasksDone + "/" + totalTasks;
+        if(scoreText != null) scoreText.text = "" + tasksDone + "/" + totalTasks;
 
         // Play Correct Sound
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.correctSound);

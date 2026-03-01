@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic; // --- BAGONG DAGDAG: Kailangan ito para sa List ---
 
 public class Level4Manager : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class Level4Manager : MonoBehaviour
     [Header("Game Settings")]
     public int plugsConnected = 3;
     public SwipeInteraction breakerScript;
+    
+    // --- BAGONG DAGDAG: MEMORY NG MGA NAHUGOT NA ---
+    private List<GameObject> unpluggedDevices = new List<GameObject>();
+    // -----------------------------------------------
     
     [Header("Game State")]
     public bool isGameActive = true;
@@ -63,6 +68,17 @@ public class Level4Manager : MonoBehaviour
     {
         if (!isGameActive) return;
 
+        // --- BAGONG DAGDAG: I-CHECK KUNG NAHUGOT NA ITO DATI ---
+        if (unpluggedDevices.Contains(plugObject))
+        {
+            Debug.Log("Nahugot na ito! Ignoring swipe.");
+            return; // Wag nang ituloy ang pagbawas ng score!
+        }
+
+        // KUNG HINDI PA, IDAGDAG SA LISTAHAN PARA MATANDAAN
+        unpluggedDevices.Add(plugObject);
+        // ---------------------------------------------------------
+
         plugsConnected--;
         UpdateStatusDisplay();
 
@@ -76,7 +92,7 @@ public class Level4Manager : MonoBehaviour
     {
         if (!isGameActive) return;
 
-        if (plugsConnected == 0)
+        if (plugsConnected <= 0) // Ginawa kong <= 0 para extra safe
         {
             // WIN!
             Debug.Log("LEVEL COMPLETE! Power Safe.");
@@ -126,7 +142,6 @@ public class Level4Manager : MonoBehaviour
         }
     }
 
-    // --- BAGONG DAGDAG: DELAY COROUTINE PARA HINDI MABIGLA ---
     IEnumerator LevelCompleteDelay()
     {
         yield return new WaitForSeconds(1.0f);
