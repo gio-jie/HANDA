@@ -124,6 +124,12 @@ public class SceneController : MonoBehaviour
         SceneManager.LoadScene("Level10_Part2");
     }
 
+    public void GoToStage1_Certificate()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Stage1_Certificate");
+    }
+
 
     //Scenario 2 --- FLOOD ----
 

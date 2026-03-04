@@ -145,17 +145,17 @@ public class Patient1Wound : MonoBehaviour, IDropHandler
 
         if (currentStep == 0)
         {
-            statusText.text = "Need: Cotton w/ Alcohol";
+            statusText.text = "Clean the wound.";
             statusText.color = Color.white;
         }
         else if (currentStep == 1)
         {
-            statusText.text = "Need: Betadine";
+            statusText.text = "Apply antiseptic solution (Betadine)";
             statusText.color = Color.white;
         }
         else if (currentStep == 2)
         {
-            statusText.text = "Need: Bandage";
+            statusText.text = "Cover it with a bandage";
             statusText.color = Color.white;
         }
         else if (currentStep == 3)
