@@ -128,7 +128,7 @@ public class Level9Part2Manager : MonoBehaviour
         {
             isGameActive = false;
             
-            if (statusText != null) statusText.text = "Malinis at ligtas na ang bahay!";
+            if (statusText != null) statusText.text = "The house is now clean and safe!";
             
             // PALITAN ANG BACKGROUND AT TUMUNOG
             if (backgroundImage != null && cleanBackgroundSprite != null)

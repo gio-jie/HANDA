@@ -1,33 +1,43 @@
 using UnityEngine;
-using TMPro; // Kailangan para sa Text Mesh Pro
+using TMPro;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
     [Header("UI Components")]
-    public TextMeshProUGUI dialogueText; // Kung saan lalabas ang salita
-    public GameObject dialoguePanel;     // Ang buong panel ni Jobert
-    public Button nextButton;            // Ang button na pipindutin
-    public TextMeshProUGUI buttonText;   // Text ng button (Next -> Go)
+    public TextMeshProUGUI dialogueText; 
+    public GameObject dialoguePanel;    
+    public Button nextButton;           
+    public TextMeshProUGUI buttonText;   
 
-    [Header("Jobert's Script")]
-    [TextArea(3, 10)] // Para malaki ang box sa Inspector
-    public string[] sentences; // Dito natin ita-type yung script
+    // --- BAGONG DAGDAG: Skip Button ---
+    public Button skipButton;
 
-    private int index = 0; // Pang-ilang sentence na tayo?
+    [Header("Jobert's Script & Audio")]
+    [TextArea(3, 10)] 
+    public string[] sentences; 
+    
+    // --- BAGONG DAGDAG: Para sa Boses ni Jobert ---
+    public AudioClip[] voiceOvers;
+    public AudioSource audioSource;
 
-    public int CurrentIndex => index;
+    private int index = 0;
+
+    // --- FIX PARA SA SCRIPT NI DEV-NADINE (IntroVisualController) ---
+    public int CurrentIndex 
+    {
+        get { return index; }
+    }
+    // ----------------------------------------------------------------
 
     void Start()
     {
-        // CHECKING: Kung "1" ang value nito, ibig sabihin nakita na. ITAGO ang panel.
         if (PlayerPrefs.GetInt("JobertTriviaSeen", 0) == 1)
         {
             dialoguePanel.SetActive(false);
-            return; // Tigil na dito, wag na ituloy ang iba.
+            return;
         }
 
-        // Kung "0", tuloy ang script...
         index = 0;
         dialoguePanel.SetActive(true);
         UpdateDialogue();
@@ -48,10 +58,23 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    public void SkipDialogue()
+    {
+        EndDialogue();
+    }
+
     void UpdateDialogue()
     {
         // Update text
         dialogueText.text = sentences[index];
+
+        // Patugtugin ang voice over kung meron man tayong nilagay sa Inspector
+        if (audioSource != null && voiceOvers.Length > index && voiceOvers[index] != null)
+        {
+            audioSource.Stop(); // Patayin muna yung nakaraang boses bago mag-play ng bago
+            audioSource.clip = voiceOvers[index];
+            audioSource.Play();
+        }
 
         // Check kung last sentence na (Change button text)
         if (index == sentences.Length - 1)
@@ -66,6 +89,9 @@ public class DialogueManager : MonoBehaviour
 
     void EndDialogue()
     {
+        // Patayin ang tunog pagka-close ng panel
+        if (audioSource != null) audioSource.Stop();
+
         // MARKAHAN: Tapos na magsalita, i-save na natin na "Seen" na siya.
         PlayerPrefs.SetInt("JobertTriviaSeen", 1);
         PlayerPrefs.Save();
