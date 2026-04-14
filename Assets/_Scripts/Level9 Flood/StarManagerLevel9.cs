@@ -200,7 +200,7 @@ public class StarManagerLevel9 : MonoBehaviour
             float timer = 0f;
             float duration = 0.3f;
             Color startColor = taskText.color;
-            Color targetColor = Color.white;
+            Color targetColor = new Color(152f/255f, 152f/255f, 152f/255f);
 
             while (timer < duration)
             {
