@@ -82,4 +82,15 @@ public class CertificateManager : MonoBehaviour
         yield return new WaitForSeconds(popupDuration);
         popupPanel.SetActive(false);
     }
+
+    // --- BUG FIX FOR NEXT STAGE ---
+    public void GoToNextStage()
+    {
+        Time.timeScale = 1;
+
+        PlayerPrefs.SetInt("Flood_Unlocked", 1);
+        PlayerPrefs.Save();
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene("FloodLevelSelect"); 
+    }
 }
