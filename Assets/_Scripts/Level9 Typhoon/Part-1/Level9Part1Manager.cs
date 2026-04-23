@@ -149,7 +149,7 @@ public class Level9Part1Manager : MonoBehaviour
         if (goodJobText != null)
         {
             goodJobText.gameObject.SetActive(true);
-            goodJobText.text = "Good Job! Pasok na tayo.";
+            goodJobText.text = "Good job! Let's go inside!";
         }
 
         yield return new WaitForSeconds(1.5f);
