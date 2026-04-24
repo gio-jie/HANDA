@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement; // DAGDAG PARA SA SCENE CHECK
 
 public class DialogueManager : MonoBehaviour
 {
@@ -9,43 +10,53 @@ public class DialogueManager : MonoBehaviour
     public GameObject dialoguePanel;    
     public Button nextButton;           
     public TextMeshProUGUI buttonText;   
-
-    // --- BAGONG DAGDAG: Skip Button ---
     public Button skipButton;
 
     [Header("Jobert's Script & Audio")]
     [TextArea(3, 10)] 
     public string[] sentences; 
-    
-    // --- BAGONG DAGDAG: Para sa Boses ni Jobert ---
     public AudioClip[] voiceOvers;
     public AudioSource audioSource;
 
     private int index = 0;
+    
+    // --- BAGONG DAGDAG: DYNAMIC SAVE KEY ---
+    private string saveKey = "JobertTriviaSeen"; // Default pang-Typhoon
 
-    // --- FIX PARA SA SCRIPT NI DEV-NADINE (IntroVisualController) ---
     public int CurrentIndex 
     {
         get { return index; }
     }
-    // ----------------------------------------------------------------
+
+    void Awake()
+    {
+        // AUTO-DETECT: Alamin kung nasaang stage tayo para hindi mag-conflict kay Nadine!
+        if (SceneManager.GetActiveScene().name.Contains("Flood"))
+        {
+            saveKey = "FloodIntroSeen"; // Gamitin ang kay Nadine
+        }
+        else
+        {
+            saveKey = "JobertTriviaSeen"; // Gamitin ang sa'yo, Gio
+        }
+    }
 
     void Start()
     {
-        if (PlayerPrefs.GetInt("JobertTriviaSeen", 0) == 1)
+        // Gagamitin na niya ngayon kung anong saveKey ang nabasa niya sa Awake
+        if (PlayerPrefs.GetInt(saveKey, 0) == 1)
         {
-            dialoguePanel.SetActive(false);
+            if (dialoguePanel != null) dialoguePanel.SetActive(false);
             return;
         }
 
         index = 0;
-        dialoguePanel.SetActive(true);
+        if (dialoguePanel != null) dialoguePanel.SetActive(true);
         UpdateDialogue();
     }
 
     public void NextSentence()
     {
-        // Kung hindi pa tapos, next line
         if (index < sentences.Length - 1)
         {
             index++;
@@ -53,7 +64,6 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            // Kung tapos na, isara ang panel
             EndDialogue();
         }
     }
@@ -65,18 +75,16 @@ public class DialogueManager : MonoBehaviour
 
     void UpdateDialogue()
     {
-        // Update text
-        dialogueText.text = sentences[index];
+        if (dialogueText != null && sentences.Length > 0)
+            dialogueText.text = sentences[index];
 
-        // Patugtugin ang voice over kung meron man tayong nilagay sa Inspector
         if (audioSource != null && voiceOvers.Length > index && voiceOvers[index] != null)
         {
-            audioSource.Stop(); // Patayin muna yung nakaraang boses bago mag-play ng bago
+            audioSource.Stop(); 
             audioSource.clip = voiceOvers[index];
             audioSource.Play();
         }
 
-        // Check kung last sentence na (Change button text)
         if (index == sentences.Length - 1)
         {
             if(buttonText != null) buttonText.text = "LET'S GO!";
@@ -89,13 +97,12 @@ public class DialogueManager : MonoBehaviour
 
     void EndDialogue()
     {
-        // Patayin ang tunog pagka-close ng panel
         if (audioSource != null) audioSource.Stop();
 
-        // MARKAHAN: Tapos na magsalita, i-save na natin na "Seen" na siya.
-        PlayerPrefs.SetInt("JobertTriviaSeen", 1);
+        // I-SAVE ANG TAMANG KEY DEPENDE SA STAGE!
+        PlayerPrefs.SetInt(saveKey, 1);
         PlayerPrefs.Save();
 
-        dialoguePanel.SetActive(false);
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
     }
 }
