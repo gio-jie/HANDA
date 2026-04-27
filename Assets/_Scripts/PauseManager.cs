@@ -94,4 +94,11 @@ public class PauseManager : MonoBehaviour
         if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
         SceneManager.LoadScene("FloodLevelSelect");
     }
+
+    public void ExitStage3()
+    {
+        Time.timeScale = 1;
+        if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
+        SceneManager.LoadScene("EarthquakeLevelSelect");
+    }
 }
