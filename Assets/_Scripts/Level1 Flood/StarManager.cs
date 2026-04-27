@@ -37,6 +37,9 @@ public class StarManager : MonoBehaviour
 
     private Coroutine sliderCoroutine;
     private bool levelEnded = false;
+    
+    // --- BAGONG DAGDAG PARA SA PHASE 2 ---
+    public bool isTimerPaused = false; 
 
     [Header("Penalty Settings")]
     public float wrongItemPenalty = 5f;
@@ -51,7 +54,6 @@ public class StarManager : MonoBehaviour
         remainingTime = levelDuration;
         timePerStar = levelDuration / 3f;
 
-        // Safety checks for Inventory
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.ClearRuntimeInventory();
@@ -72,7 +74,8 @@ public class StarManager : MonoBehaviour
 
     void Update()
     {
-        if (levelEnded) return;
+        // --- UPDATED: Wag magbawas ng oras kapag naka-pause na (Phase 2) ---
+        if (levelEnded || isTimerPaused) return;
 
         remainingTime -= Time.deltaTime;
         remainingTime = Mathf.Max(0f, remainingTime);
@@ -85,6 +88,33 @@ public class StarManager : MonoBehaviour
         if (remainingTime <= 0f)
             TriggerLose();
     }
+
+    // ==========================================
+    // --- MGA BAGONG DAGDAG PARA SA HEARTS ---
+    // ==========================================
+    public void PauseTimer()
+    {
+        isTimerPaused = true;
+    }
+
+    public void SetStarsByHearts(int hearts)
+    {
+        int newStars = 0;
+        
+        if (hearts >= 4) newStars = 3;      // 4 to 5 Hearts = 3 Stars
+        else if (hearts >= 2) newStars = 2; // 2 to 3 Hearts = 2 Stars
+        else if (hearts == 1) newStars = 1; // 1 Heart = 1 Star
+        else newStars = 0;                  // 0 Hearts = 0 Stars
+
+        // Optional: Para hindi tumaas ang stars kung mababa na nakuha niya sa Phase 1
+        newStars = Mathf.Min(newStars, currentStars);
+
+        if (newStars != currentStars)
+        {
+            UpdateStars(newStars);
+        }
+    }
+    // ==========================================
 
     public void RefreshStars()
     {
@@ -306,19 +336,8 @@ public class StarManager : MonoBehaviour
         EndLevel(false);
     }
 
-    public void RetryLevel()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    public void LoadNextLevel()
-    {
-        Time.timeScale = 1f;
-        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        SceneManager.LoadScene(nextSceneIndex);
-    }
-
+    public void RetryLevel() { Time.timeScale = 1f; SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); }
+    public void LoadNextLevel() { Time.timeScale = 1f; int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1; SceneManager.LoadScene(nextSceneIndex); }
     public int GetCurrentStars() => currentStars;
     public int GetRemainingSeconds() => Mathf.CeilToInt(remainingTime);
     public int GetSavedStars() => PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex, 0);

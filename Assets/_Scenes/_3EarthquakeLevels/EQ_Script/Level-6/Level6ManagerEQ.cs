@@ -35,26 +35,21 @@ public class Level6ManagerEQ : MonoBehaviour
 
     [Header("Phase 2 Settings (Runner)")]
     public Slider distanceSlider;
-    public float phase2Duration = 30f; 
-    private float phase2Timer = 0f;
     public bool isPhase2Active = false;
 
-    // ===============================================
-    // --- UPDATED: PHASE 2 HEALTH SYSTEM (ANIMATED) ---
-    // ===============================================
     [Header("Phase 2 Health System")]
     public int currentHealth = 5;
-    public Image[] heartIcons; // GINAGAWANG IMAGE PARA MAPALITAN ANG SPRITE
+    public Image[] heartIcons; 
     public Sprite emptyHeartSprite; 
     public Image fallingHeartPrefab; 
     public float heartFallSpeed = 200f;
     public float heartFadeDuration = 1f;
 
-    [Header("Damage Effects")]
-    public AudioClip jobertHurtVO; // Dito mo ilalagay yung voice ni Jobert!
-
     [Header("Phase 2 Warning System")]
     public GameObject[] laneWarningIcons; 
+
+    [Header("Damage Effects")]
+    public AudioClip jobertHurtVO;
 
     [Header("Toggle Buttons")]
     public Image soundButtonImage; 
@@ -80,9 +75,7 @@ public class Level6ManagerEQ : MonoBehaviour
             penaltyTextUI.gameObject.SetActive(false);
         }
 
-        // Itago ang falling heart sa simula
         if (fallingHeartPrefab != null) fallingHeartPrefab.gameObject.SetActive(false);
-
         UpdateScoreDisplay();
         
         if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
@@ -90,7 +83,6 @@ public class Level6ManagerEQ : MonoBehaviour
 
     void Update()
     {
-        // PHASE 1 LOGIC (Tagging Timer lang ang natira)
         if (isGameActive && !isPhase2Active && StarManager.Instance != null)
         {
             if (StarManager.Instance.GetRemainingSeconds() <= 0)
@@ -162,6 +154,12 @@ public class Level6ManagerEQ : MonoBehaviour
     void TriggerAftershock()
     {
         isGameActive = false; 
+
+        // ==========================================
+        // I-PAUSE ANG TIMER NG STAR MANAGER DITO!
+        // ==========================================
+        if (StarManager.Instance != null) StarManager.Instance.PauseTimer();
+
         StartCoroutine(Phase2TransitionRoutine());
     }
 
@@ -196,8 +194,10 @@ public class Level6ManagerEQ : MonoBehaviour
 
         isGameActive = true; 
         isPhase2Active = true; 
-        phase2Timer = 0f;
-        
+
+        // I-sync agad ang stars sa buhay bago pa man magsimula ang pagtakbo
+        if (StarManager.Instance != null) StarManager.Instance.SetStarsByHearts(currentHealth);
+
         if (distanceSlider != null) 
         {
             distanceSlider.value = 0f;
@@ -205,9 +205,7 @@ public class Level6ManagerEQ : MonoBehaviour
         }
     }
 
-    // ====================================================
-    // --- UPDATED PHASE 2 GAMEPLAY METHODS (ANIMATED) ---
-    // ====================================================
+    // --- PHASE 2 GAMEPLAY METHODS ---
     public void TakeDamage()
     {
         if (currentHealth <= 0) return;
@@ -217,18 +215,24 @@ public class Level6ManagerEQ : MonoBehaviour
         if (PlayerPrefs.GetInt("VibrationOn", 1) == 1) Handheld.Vibrate();
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.warningSound); 
 
-        // --- BAGONG DAGDAG: EFFECTS AT VOICE OVER ---
         if (AudioManager.instance != null && jobertHurtVO != null)
         {
-            AudioManager.instance.PlaySFX(jobertHurtVO); // Tutunog ang "Aray!"
+            AudioManager.instance.PlaySFX(jobertHurtVO);
         }
 
         RunnerPlayer player = FindFirstObjectByType<RunnerPlayer>();
-        if (player != null) player.PlayDamageFlicker(); // Tatawagin ang Kundap-Kundap
+        if (player != null) player.PlayDamageFlicker(); 
 
         MovingRoad road = FindFirstObjectByType<MovingRoad>();
-        if (road != null) road.SlowDownRoad(); // Tatawagin ang Slowdown
-        // ---------------------------------------------
+        if (road != null) road.SlowDownRoad(); 
+
+        // ==========================================
+        // I-UPDATE ANG STAR SLIDER BASE SA HEARTS!
+        // ==========================================
+        if (StarManager.Instance != null)
+        {
+            StarManager.Instance.SetStarsByHearts(currentHealth);
+        }
 
         if (currentHealth >= 0 && currentHealth < heartIcons.Length)
         {
@@ -305,6 +309,8 @@ public class Level6ManagerEQ : MonoBehaviour
         if (winningPosePanel != null) winningPosePanel.SetActive(true);
         yield return new WaitForSeconds(3f);
         if (winningPosePanel != null) winningPosePanel.SetActive(false);
+        
+        // Tatawagin natin ang totoong WIN sa dulo!
         if (StarManager.Instance != null) StarManager.Instance.EndLevel(true);
     }
 
