@@ -88,15 +88,26 @@ public class HUDStatsManager : MonoBehaviour
                 progress = (float)lvl9Part1.resolvedHazards / lvl9Part1.totalHazards;
         }
 
-        // ==========================================
-        // --- BAGONG DAGDAG: LEVEL 9 PART 2 ---
-        // ==========================================
+        // --- LEVEL 9 PART 2 ---
         Level9Part2Manager lvl9Part2 = FindFirstObjectByType<Level9Part2Manager>();
         if (lvl9Part2 != null)
         {
             if (lvl9Part2.totalHazards > 0)
             {
                 progress = (float)lvl9Part2.clearedHazards / lvl9Part2.totalHazards;
+            }
+        }
+
+        // ==========================================
+        // --- BAGONG DAGDAG: EARTHQUAKE LEVEL 6 ---
+        // ==========================================
+        Level6ManagerEQ lvl6EQ = FindFirstObjectByType<Level6ManagerEQ>();
+        if (lvl6EQ != null)
+        {
+            if (lvl6EQ.buildingsRequired > 0)
+            {
+                // Kino-compute natin yung na-tag divided by total na kailangan
+                progress = (float)lvl6EQ.buildingsTagged / lvl6EQ.buildingsRequired;
             }
         }
 
