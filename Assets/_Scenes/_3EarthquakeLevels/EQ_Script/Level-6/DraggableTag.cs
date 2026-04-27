@@ -20,6 +20,14 @@ public class DraggableTag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     {
         // I-save ang orihinal na pwesto para kung mali ang drop, babalik siya dito
         startPosition = rectTransform.anchoredPosition;
+
+        // ========================================================
+        // --- BAGONG DAGDAG: IPAIBAW ANG BUONG TAGS CONTAINER! ---
+        // ========================================================
+        // Dahil nasa loob ng Tags_Container ang script na ito, 
+        // iuutos natin sa "parent" (Tags_Container) na pumunta sa pinaka-ibabaw ng Phase1_Panel!
+        transform.parent.SetAsLastSibling();
+        // ========================================================
         
         // Gawing medyo transparent habang dina-drag at patayin ang block raycasts
         canvasGroup.alpha = 0.6f;

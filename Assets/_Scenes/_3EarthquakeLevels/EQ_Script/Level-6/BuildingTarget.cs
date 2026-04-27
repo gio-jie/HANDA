@@ -8,6 +8,7 @@ public class BuildingTarget : MonoBehaviour, IDropHandler, IPointerClickHandler
     [Header("Building Settings")]
     public string correctTag; 
     private bool isInspected = false; 
+    private int originalSiblingIndex;
 
     [Header("Zoom Settings")]
     public float zoomScale = 2f; 
@@ -31,6 +32,13 @@ public class BuildingTarget : MonoBehaviour, IDropHandler, IPointerClickHandler
 
         if (!isZoomed)
         {
+            // ==========================================
+            // --- BAGONG DAGDAG: IPAIBAW ANG BUILDING ---
+            // ==========================================
+            originalSiblingIndex = transform.GetSiblingIndex(); // Tandaan ang orihinal na layer
+            transform.SetAsLastSibling(); // I-bato sa pinaka-ibabaw ng screen
+            // ==========================================
+
             if (Level6ManagerEQ.instance != null) 
                 Level6ManagerEQ.instance.OnBuildingZoomedIn(this.transform);
             
@@ -110,6 +118,12 @@ public class BuildingTarget : MonoBehaviour, IDropHandler, IPointerClickHandler
         if (Level6ManagerEQ.instance != null) 
             Level6ManagerEQ.instance.OnBuildingZoomedOut();
         
+        // ==========================================
+        // --- BAGONG DAGDAG: IBALIK SA DATING LAYER ---
+        // ==========================================
+        transform.SetSiblingIndex(originalSiblingIndex); 
+        // ==========================================
+
         StartCoroutine(ZoomRoutine(originalPos, originalScale));
     }
 }

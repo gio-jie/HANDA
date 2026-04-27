@@ -614,9 +614,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 494989330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -100}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &45755944
@@ -3116,9 +3116,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 494989330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 212.27295, y: -100}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &453740937
@@ -6364,7 +6364,6 @@ MonoBehaviour:
   fallSpeed: 50
   fadeDuration: 1
   distanceSlider: {fileID: 1414951277}
-  phase2Duration: 30
   isPhase2Active: 0
   currentHealth: 5
   heartIcons:
@@ -6377,11 +6376,11 @@ MonoBehaviour:
   fallingHeartPrefab: {fileID: 718981828}
   heartFallSpeed: 200
   heartFadeDuration: 1
-  jobertHurtVO: {fileID: 0}
   laneWarningIcons:
   - {fileID: 453380854}
   - {fileID: 1013470702}
   - {fileID: 1572088143}
+  jobertHurtVO: {fileID: 0}
   soundButtonImage: {fileID: 0}
   musicButtonImage: {fileID: 0}
   onColor: {r: 0, g: 1, b: 0, a: 1}
@@ -6902,7 +6901,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1000886315
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9794,9 +9793,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 494989330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 436.81885, y: -100}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1446585245
@@ -10006,7 +10005,7 @@ RectTransform:
   m_Father: {fileID: 179242573}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 4.5301, y: 0.7364}
   m_SizeDelta: {x: 14.3934, y: -4.9085}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -12250,6 +12249,7 @@ MonoBehaviour:
   winPanelBestTimeText: {fileID: 1569703607}
   activeColor: {r: 1, g: 1, b: 1, a: 1}
   inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  isTimerPaused: 0
   wrongItemPenalty: 5
   maxConsecutiveWrongs: 9999
 --- !u!1 &1758173069
@@ -12699,9 +12699,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 494989330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 549.0918, y: -100}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1813141168
@@ -13674,9 +13674,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 494989330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 324.5459, y: -100}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1884932528
@@ -14399,7 +14399,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1983181289
 RectTransform:
   m_ObjectHideFlags: 0
