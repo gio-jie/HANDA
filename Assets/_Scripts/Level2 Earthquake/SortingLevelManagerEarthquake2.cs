@@ -4,9 +4,9 @@ using System.Linq;
 using System.Collections;
 using TMPro;
 
-public class SortingLevelManager : MonoBehaviour
+public class SortingLevelManagerEarthquake2 : MonoBehaviour
 {
-    public static SortingLevelManager Instance;
+    public static SortingLevelManagerEarthquake2 Instance;
 
     public GameObject cardPrefab;
     public Transform cardParent;
@@ -147,7 +147,7 @@ public class SortingLevelManager : MonoBehaviour
     void EndLevel()
     {
         ResultsUI.Instance.ShowResults(results);
-        StarManagerLevel3.Instance.ShowEndPanel();
+        StarManagerEarthquake2.Instance.ShowEndPanel();
     }
 
     public void OnSkip()

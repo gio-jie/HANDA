@@ -4,13 +4,14 @@ using TMPro;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class StarManagerLevel3 : MonoBehaviour
+public class StarManagerEarthquake2 : MonoBehaviour
 {
-    public static StarManagerLevel3 Instance;
+    public static StarManagerEarthquake2 Instance;
 
     [Header("Level Info")]
+    public string stagePrefix = "";
     public int levelIndex;
-    public float levelDuration = 120f;
+    public float levelDuration;
 
     [Header("UI Elements")]
     public Image[] stars;
@@ -58,9 +59,6 @@ public class StarManagerLevel3 : MonoBehaviour
         UpdateSliderImmediate();
         UpdateTimerText();
 
-        if (InventoryUI.Instance != null)
-            InventoryUI.Instance.RefreshUI(InventoryManager.Instance.GetSavedInventory());
-
         HideAllPanels();
     }
 
@@ -79,7 +77,7 @@ public class StarManagerLevel3 : MonoBehaviour
 
         if (remainingTime <= 0f)
         {
-            TriggerLose(); // ✅ guaranteed single trigger
+            TriggerLose(); // ✅ only runs once now
         }
     }
 
@@ -171,13 +169,13 @@ public class StarManagerLevel3 : MonoBehaviour
 
     private void TriggerLose()
     {
-        // ✅ CRITICAL FIX
+        // ✅ CRITICAL FIX: prevents double trigger
         if (levelEnded) return;
 
         levelEnded = true;
         currentStars = 0;
 
-        // ensure ONLY lose panel is visible
+        // ✅ Ensure ONLY lose panel shows
         if (endPanel) endPanel.SetActive(false);
         if (winPanel) winPanel.SetActive(false);
 
@@ -189,7 +187,7 @@ public class StarManagerLevel3 : MonoBehaviour
             int minutes = remainingSeconds / 60;
             int seconds = remainingSeconds % 60;
 
-            int bestSeconds = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+            int bestSeconds = PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex + "_BestTime", 0);
             int bestMin = bestSeconds / 60;
             int bestSec = bestSeconds % 60;
 
@@ -215,7 +213,8 @@ public class StarManagerLevel3 : MonoBehaviour
 
     public void ShowEndPanel()
     {
-        if (levelEnded) return; // ❗ prevents conflict with lose
+        // ❗ Only allow if NOT already ended (prevents conflict with lose)
+        if (levelEnded) return;
 
         levelEnded = true;
 
@@ -245,7 +244,7 @@ public class StarManagerLevel3 : MonoBehaviour
         int minutes = remainingSeconds / 60;
         int seconds = remainingSeconds % 60;
 
-        int bestSeconds = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+        int bestSeconds = PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex + "_BestTime", 0);
         int bestMin = bestSeconds / 60;
         int bestSec = bestSeconds % 60;
 
@@ -270,10 +269,10 @@ public class StarManagerLevel3 : MonoBehaviour
 
     public void SaveStars()
     {
-        int previous = PlayerPrefs.GetInt("Level_" + levelIndex, 0);
+        int previous = PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex, 0);
 
         if (currentStars > previous)
-            PlayerPrefs.SetInt("Level_" + levelIndex, currentStars);
+            PlayerPrefs.SetInt(stagePrefix + "Level_" + levelIndex, currentStars);
 
         PlayerPrefs.Save();
         SaveBestTime();
@@ -282,11 +281,11 @@ public class StarManagerLevel3 : MonoBehaviour
     private void SaveBestTime()
     {
         int remainingSeconds = Mathf.CeilToInt(remainingTime);
-        int previousBest = PlayerPrefs.GetInt("Level_" + levelIndex + "_BestTime", 0);
+        int previousBest = PlayerPrefs.GetInt(stagePrefix + "Level_" + levelIndex + "_BestTime", 0);
 
         if (remainingSeconds > previousBest)
         {
-            PlayerPrefs.SetInt("Level_" + levelIndex + "_BestTime", remainingSeconds);
+            PlayerPrefs.SetInt(stagePrefix + "Level_" + levelIndex + "_BestTime", remainingSeconds);
             PlayerPrefs.Save();
         }
     }
