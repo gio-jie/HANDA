@@ -8,15 +8,15 @@ public class Level7Player : MonoBehaviour
     public Level7ManagerEQ manager;
 
     private Rigidbody2D rb;
-    private Animator anim; // BAGONG DAGDAG
-    private SpriteRenderer spriteRenderer; // PARA SA MIRRORING
+    private Animator anim; 
+    private SpriteRenderer spriteRenderer; 
     public bool isDead = false;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>(); // Kuhanin ang Animator
-        spriteRenderer = GetComponent<SpriteRenderer>(); // Kuhanin ang SpriteRenderer
+        anim = GetComponent<Animator>(); 
+        spriteRenderer = GetComponent<SpriteRenderer>(); 
 
         if (manager == null) manager = FindFirstObjectByType<Level7ManagerEQ>();
         if (joystick == null) joystick = FindFirstObjectByType<VirtualJoystick>();
@@ -53,11 +53,11 @@ public class Level7Player : MonoBehaviour
     }
 
     // ========================================================
-    // --- BAGO: PROXIMITY DETECTION PARA SA KALAT AT SUSI ---
+    // --- PROXIMITY DETECTION PARA SA KALAT, SUSI, AT EXTINGUISHER ---
     // ========================================================
     void OnTriggerEnter2D(Collider2D other)
     {
-        // Kapag dumikit sa kalat o sirang pinto
+        // Kapag dumikit sa kalat, sirang pinto, o apoy
         if (other.gameObject.CompareTag("Obstacle")) 
         {
             if (warningIcon != null) warningIcon.SetActive(true); 
@@ -68,6 +68,12 @@ public class Level7Player : MonoBehaviour
         {
             Destroy(other.gameObject); // Mawawala sa map yung susi
             if (manager != null) manager.PickUpKey(); // Ipapasa sa UI panel yung susi
+        }
+        // Kapag dinaanan yung Fire Extinguisher
+        else if (other.gameObject.CompareTag("ExtinguisherPickup"))
+        {
+            Destroy(other.gameObject); // Mawawala sa map yung extinguisher
+            if (manager != null) manager.PickUpExtinguisher(); // Ipapasa sa UI panel yung extinguisher
         }
     }
 
