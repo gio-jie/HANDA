@@ -62,8 +62,6 @@ public class GameManagerLevel2 : MonoBehaviour
         {
             pauseMenu.SetActive(true);
             if (AudioManager.instance != null) AudioManager.instance.PauseBGM();
-
-            //AudioListener.pause = true;
         }
     }
 
@@ -77,7 +75,6 @@ public class GameManagerLevel2 : MonoBehaviour
 
         if (pauseMenu != null)
         {
-            //pauseMenu.SetActive(false);
             if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
         }
     }

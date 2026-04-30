@@ -6,7 +6,7 @@ using TMPro;
 public class IntroVisualController : MonoBehaviour
 {
     [Header("References")]
-    public DialogueManager dialogueManager;
+    public DialogueManagerStage2 dialogueManagerStage2;
 
     [Header("NPC")]
     public Image npcImage;
@@ -90,15 +90,18 @@ public class IntroVisualController : MonoBehaviour
         {
             EnterIntroMode();
             HideAll();
+
+            if (dialogueBackground != null)
+                dialogueBackground.gameObject.SetActive(true);
         }
         else
         {
             ExitIntroMode();
-            if (dialogueManager != null)
-            {
-                PlayerPrefs.SetInt("FloodIntroSeen", 1);
-                PlayerPrefs.Save();
-            }
+            // if (dialogueManager != null)
+            // {
+            //     PlayerPrefs.SetInt("FloodIntroSeen", 1);
+            //     PlayerPrefs.Save();
+            // }
         }
 
         if (npcImage != null)
@@ -116,9 +119,9 @@ public class IntroVisualController : MonoBehaviour
 
     void Update()
     {
-        if (dialogueManager == null) return;
+        if (dialogueManagerStage2 == null) return;
 
-        int index = dialogueManager.CurrentIndex;
+        int index = dialogueManagerStage2.CurrentIndex;
         if (index == lastIndex) return;
 
         lastIndex = index;
@@ -228,6 +231,9 @@ public class IntroVisualController : MonoBehaviour
         }
         else if (index == 11)
         {
+            PlayerPrefs.SetInt("FloodIntroSeen", 1);
+            PlayerPrefs.Save();
+
             ExitIntroMode();
         }
     }
@@ -575,8 +581,11 @@ public class IntroVisualController : MonoBehaviour
         if (gameplayUIRoot != null)
             gameplayUIRoot.SetActive(false);
 
-        PlayerPrefs.SetInt("FloodIntroSeen", 1);
-            PlayerPrefs.Save();
+        if (dialogueBackground != null)
+            dialogueBackground.gameObject.SetActive(true);
+
+        // PlayerPrefs.SetInt("FloodIntroSeen", 1);
+        //     PlayerPrefs.Save();
     }
 
     void ExitIntroMode()
@@ -591,5 +600,8 @@ public class IntroVisualController : MonoBehaviour
     public void Skip()
     {
         ExitIntroMode();
+
+        PlayerPrefs.SetInt("FloodIntroSeen", 1);
+        PlayerPrefs.Save();
     }
 }
