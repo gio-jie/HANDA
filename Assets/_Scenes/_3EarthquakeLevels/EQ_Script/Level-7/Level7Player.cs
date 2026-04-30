@@ -4,48 +4,51 @@ public class Level7Player : MonoBehaviour
 {
     public float moveSpeed = 500f; 
     public VirtualJoystick joystick; 
-
-    [Header("Level 7 Additions")]
     public GameObject warningIcon; 
-    public Level7ManagerEQ manager; // Ginawa nating public ito!
+    public Level7ManagerEQ manager;
 
     private Rigidbody2D rb;
+    private Animator anim; // BAGONG DAGDAG
+    private SpriteRenderer spriteRenderer; // PARA SA MIRRORING
     public bool isDead = false;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>(); // Kuhanin ang Animator
+        spriteRenderer = GetComponent<SpriteRenderer>(); // Kuhanin ang SpriteRenderer
 
-        // Kung hindi mo na-drag sa inspector, susubukan pa rin niyang hanapin
         if (manager == null) manager = FindFirstObjectByType<Level7ManagerEQ>();
-
         if (joystick == null) joystick = FindFirstObjectByType<VirtualJoystick>();
         if (warningIcon != null) warningIcon.SetActive(false); 
     }
 
     void FixedUpdate()
     {
-        if (isDead) 
-        {
-            rb.linearVelocity = Vector2.zero; 
-            return;
-        }
+        if (isDead) { rb.linearVelocity = Vector2.zero; return; }
 
-        float x = 0; float y = 0;
-        
-        if (joystick != null)
-        {
-            x = joystick.Horizontal();
-            y = joystick.Vertical();
-        }
+        float x = (joystick != null) ? joystick.Horizontal() : 0;
+        float y = (joystick != null) ? joystick.Vertical() : 0;
 
         Vector2 movement = new Vector2(x, y);
         rb.linearVelocity = movement * moveSpeed * Time.fixedDeltaTime;
 
-        if (x != 0 || y != 0)
+        // ========================================================
+        // --- ANIMATION LOGIC ---
+        // ========================================================
+        if (movement != Vector2.zero)
         {
-            float angle = Mathf.Atan2(y, x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle - 90);
+            anim.SetBool("IsMoving", true);
+            anim.SetFloat("MoveX", x);
+            anim.SetFloat("MoveY", y);
+
+            // MIRRORING LOGIC: I-flip ang sprite kapag papuntang kaliwa (x < 0)
+            if (x < 0) spriteRenderer.flipX = true;
+            else if (x > 0) spriteRenderer.flipX = false;
+        }
+        else
+        {
+            anim.SetBool("IsMoving", false);
         }
     }
 
