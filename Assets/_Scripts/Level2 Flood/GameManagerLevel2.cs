@@ -71,9 +71,10 @@ public class GameManagerLevel2 : MonoBehaviour
 
         Time.timeScale = 1f;
 
+        AudioListener.pause = false;
+
         if (pauseMenu != null)
         {
-            pauseMenu.SetActive(false);
             if (AudioManager.instance != null) AudioManager.instance.ResumeBGM();
         }
     }

@@ -1684,7 +1684,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1869964416}
-        m_TargetAssemblyTypeName: DialogueManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: DialogueManager2, Assembly-CSharp
         m_MethodName: NextSentence
         m_Mode: 1
         m_Arguments:
@@ -1695,7 +1695,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 629775942}
         m_TargetAssemblyTypeName: ButtonSound, Assembly-CSharp
         m_MethodName: Click
         m_Mode: 1
@@ -6072,7 +6072,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 629775942}
         m_TargetAssemblyTypeName: ButtonSound, Assembly-CSharp
         m_MethodName: Click
         m_Mode: 1
@@ -6689,7 +6689,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 921849dc63b0b614d8e273788edc314e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IntroVisualController
-  dialogueManager: {fileID: 1869964416}
+  dialogueManagerStage2: {fileID: 1869964416}
   npcImage: {fileID: 1939226375}
   neutralSprite: {fileID: -3580017335220840665, guid: f624e2f66fc5f8245a7d1ba14e1bb03c, type: 3}
   dykSprite: {fileID: -7075947304784889272, guid: 5c3a2dc6a9439214dbc58e975dc9720a, type: 3}
@@ -11638,14 +11638,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1869964412}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2953fe419aa80f54ab81c832712863d1, type: 3}
+  m_Script: {fileID: 11500000, guid: e0d0273b190c49c45bef751d9d4dd129, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager2
   dialogueText: {fileID: 1251330274}
   dialoguePanel: {fileID: 1869964412}
   nextButton: {fileID: 265356447}
   buttonText: {fileID: 1366149765}
-  skipButton: {fileID: 0}
+  skipButton: {fileID: 948920133}
   sentences:
   - After a strong typhoon, floods can happen.
   - Did you know? In the Philippines, Cagayan is one of the places most affected
@@ -12695,6 +12695,7 @@ MonoBehaviour:
   totalLevels: 10
   certificateButton: {fileID: 554990716}
   certificateSceneName: Flood_Certificate
+  stagePrefix: 
 --- !u!4 &1997578477
 Transform:
   m_ObjectHideFlags: 0

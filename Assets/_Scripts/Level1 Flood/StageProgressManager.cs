@@ -19,6 +19,8 @@ public class StageProgressManager : MonoBehaviour
     public GameObject certificateButton;
     public string certificateSceneName = "Flood_Certificate";
 
+    public string stagePrefix = "";
+
     void Awake()
     {
         Instance = this;
@@ -35,7 +37,7 @@ public class StageProgressManager : MonoBehaviour
 
         for (int i = 1; i <= totalLevels; i++)
         {
-            int stars = PlayerPrefs.GetInt("Level_" + i, 0);
+            int stars = PlayerPrefs.GetInt(stagePrefix + "Level_" + i, 0);
             if (stars > 0) completedLevels++;
         }
 

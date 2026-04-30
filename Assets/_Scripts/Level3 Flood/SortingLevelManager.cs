@@ -46,15 +46,15 @@ public class SortingLevelManager : MonoBehaviour
         ShowNextCard();
     }
 
-    void Update()
-    {
-        timer -= Time.deltaTime;
+    // void Update()
+    // {
+    //     timer -= Time.deltaTime;
 
-        if (timer <= 0f)
-        {
-            EndLevel();
-        }
-    }
+    //     if (timer <= 0f)
+    //     {
+    //         EndLevel();
+    //     }
+    // }
 
     public void ShowNextCard()
     {
