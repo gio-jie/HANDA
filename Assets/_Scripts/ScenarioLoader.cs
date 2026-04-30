@@ -71,6 +71,6 @@ public class ScenarioLoader : MonoBehaviour
 
     public void LoadEarthquakeScenario()
     {
-        SceneManager.LoadScene("EarthquakeLevelSelect"); // Palitan mo ng tamang scene name
+        SceneManager.LoadScene("_ComingSoon"); // Palitan mo ng tamang scene name
     }
 }
