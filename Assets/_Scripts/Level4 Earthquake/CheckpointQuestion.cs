@@ -4,6 +4,7 @@ using UnityEngine;
 public class CheckpointQuestion
 {
     public string question;
+    public string description;
 
     public Sprite choiceAImage;
     public Sprite choiceBImage;
