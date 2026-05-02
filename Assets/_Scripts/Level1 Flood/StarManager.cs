@@ -148,7 +148,18 @@ public class StarManager : MonoBehaviour
             TriggerLose();
         }
     }
+    //Bonus on level 8 EQ-----
+    public void AddBonusTime(float bonusSeconds)
+    {
+        if (levelEnded) return;
 
+        remainingTime += bonusSeconds;
+        UpdateTimerText();
+        
+        int newStars = Mathf.Clamp(Mathf.CeilToInt(remainingTime / timePerStar), 0, 3);
+        if (newStars != currentStars) UpdateStars(newStars);
+    }
+    //--------------------
     private void UpdateTimerText()
     {
         int minutes = Mathf.FloorToInt(remainingTime / 60f);
