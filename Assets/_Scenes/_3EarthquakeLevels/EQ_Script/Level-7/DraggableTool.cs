@@ -52,6 +52,10 @@ public class DraggableTool : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             Level8ManagerEQ.instance.UseTool(toolName);
         }
+        else if (Level9ManagerEQ.instance != null) 
+        {
+            Level9ManagerEQ.instance.UseTool(toolName);
+        }
 
         // Ibalik palagi ang tool sa gilid ng panel para magamit ulit sa susunod na kalat
         rectTransform.anchoredPosition = startPosition;

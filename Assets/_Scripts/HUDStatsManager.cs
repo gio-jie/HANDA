@@ -99,15 +99,27 @@ public class HUDStatsManager : MonoBehaviour
         }
 
         // ==========================================
-        // --- BAGONG DAGDAG: EARTHQUAKE LEVEL 6 ---
+        // --- EARTHQUAKE LEVEL 6 ---
         // ==========================================
         Level6ManagerEQ lvl6EQ = FindFirstObjectByType<Level6ManagerEQ>();
         if (lvl6EQ != null)
         {
             if (lvl6EQ.buildingsRequired > 0)
             {
-                // Kino-compute natin yung na-tag divided by total na kailangan
                 progress = (float)lvl6EQ.buildingsTagged / lvl6EQ.buildingsRequired;
+            }
+        }
+
+        // ==========================================
+        // --- BAGONG DAGDAG: EARTHQUAKE LEVEL 9 ---
+        // ==========================================
+        Level9ManagerEQ lvl9EQ = FindFirstObjectByType<Level9ManagerEQ>();
+        if (lvl9EQ != null)
+        {
+            if (lvl9EQ.totalVehicles > 0)
+            {
+                // Kino-compute kung ilang sasakyan na ang na-drag out of 10
+                progress = (float)lvl9EQ.clearedVehicles / lvl9EQ.totalVehicles;
             }
         }
 
