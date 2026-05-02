@@ -236,6 +236,36 @@ public class SceneController : MonoBehaviour
         SceneManager.LoadScene("Earthquake_Level5");
     }
 
+    public void GoToEarthquakeLevel6()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Earthquake_Level6");
+    }
+
+    public void GoToEarthquakeLevel7()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Earthquake_Level7");
+    }
+
+    public void GoToEarthquakeLevel8()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Earthquake_Level8");
+    }
+
+    public void GoToEarthquakeLevel9()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Earthquake_Level9");
+    }
+
+    public void GoToEarthquakeLevel10()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Earthquake_Level10");
+    }
+
     // Scenario 4 --- LANDSLIDE ---
 
     public void GoToLandslideLevelSelect()

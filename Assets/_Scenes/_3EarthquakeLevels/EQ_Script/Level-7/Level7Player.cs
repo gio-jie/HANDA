@@ -25,7 +25,15 @@ public class Level7Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isDead) { rb.linearVelocity = Vector2.zero; return; }
+        // ========================================================
+        // BAGONG DAGDAG: Bawal gumalaw kung hindi pa active ang game (Intro playing)
+        // ========================================================
+        if (isDead || (manager != null && !manager.isGameActive)) 
+        { 
+            rb.linearVelocity = Vector2.zero; 
+            if (anim != null) anim.SetBool("IsMoving", false);
+            return; 
+        }
 
         float x = (joystick != null) ? joystick.Horizontal() : 0;
         float y = (joystick != null) ? joystick.Vertical() : 0;
@@ -33,16 +41,12 @@ public class Level7Player : MonoBehaviour
         Vector2 movement = new Vector2(x, y);
         rb.linearVelocity = movement * moveSpeed * Time.fixedDeltaTime;
 
-        // ========================================================
-        // --- ANIMATION LOGIC ---
-        // ========================================================
         if (movement != Vector2.zero)
         {
             anim.SetBool("IsMoving", true);
             anim.SetFloat("MoveX", x);
             anim.SetFloat("MoveY", y);
 
-            // MIRRORING LOGIC: I-flip ang sprite kapag papuntang kaliwa (x < 0)
             if (x < 0) spriteRenderer.flipX = true;
             else if (x > 0) spriteRenderer.flipX = false;
         }
@@ -74,6 +78,11 @@ public class Level7Player : MonoBehaviour
         {
             Destroy(other.gameObject); // Mawawala sa map yung extinguisher
             if (manager != null) manager.PickUpExtinguisher(); // Ipapasa sa UI panel yung extinguisher
+        }
+        else if (other.gameObject.CompareTag("Finish"))
+        {
+            Debug.Log("NAKATAPAK SA WIN ZONE!"); // Maglalagay tayo nito para sure
+            if (manager != null) manager.LevelComplete(); 
         }
     }
 
