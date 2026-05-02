@@ -41,7 +41,7 @@ public class ResetGameDataStage3 : MonoBehaviour
 
     public void ConfirmReset()
     {
-        //PlayerPrefs.DeleteKey("EarthquakeIntroSeen");
+        PlayerPrefs.DeleteKey("EarthquakeIntroSeen");
 
         for (int i = 1; i <= totalLevels; i++)
         {
