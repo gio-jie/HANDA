@@ -138,13 +138,16 @@ public class Level9ManagerEQ : MonoBehaviour
     // ==========================================
     IEnumerator TriggerEarthquakeQTE()
     {
-        isQTEActive = true;
         isGameActive = false; 
         if (StarManager.Instance != null) StarManager.Instance.PauseTimer(); 
         
         if (AudioManager.instance != null) AudioManager.instance.PlaySFX(AudioManager.instance.warningSound);
         if (PlayerPrefs.GetInt("VibrationOn", 1) == 1) Handheld.Vibrate();
 
+        // 1. PATAYIN MUNA ANG CAMERA FOLLOW PARA HINDI PIGILAN ANG SHAKE
+        if (cameraFollowScript != null) cameraFollowScript.enabled = false;
+
+        // 2. Screen Shake Effect (1 Second)
         Vector3 originalCamPos = mainCamera.transform.position;
         float shakeTimer = 0f;
         while (shakeTimer < 1f) 
@@ -157,9 +160,14 @@ public class Level9ManagerEQ : MonoBehaviour
         }
         mainCamera.transform.position = originalCamPos;
 
-        qtePanel.SetActive(true);
-        qteSlider.value = 0f;
-        currentQTETime = 0f; 
+        // 3. BUHAYIN ULIT ANG CAMERA FOLLOW PAGKATAPOS NG SHAKE
+        if (cameraFollowScript != null) cameraFollowScript.enabled = true;
+
+        // 4. DITO DAPAT MAG-START ANG TIMER AT QTE!
+        isQTEActive = true;      
+        currentQTETime = 0f;     
+        qteSlider.value = 0f;    
+        qtePanel.SetActive(true); 
     }
 
     public void SpamClickDuckCoverHold()
