@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Kailangan ito para makalipat ng scene
+using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
@@ -264,6 +264,12 @@ public class SceneController : MonoBehaviour
     {
         ResumeMusic();
         SceneManager.LoadScene("Earthquake_Level10");
+    }
+
+    public void GoToStage3_Certificate()
+    {
+        ResumeMusic();
+        SceneManager.LoadScene("Stage3_Certificate");
     }
 
     // Scenario 4 --- LANDSLIDE ---

@@ -98,9 +98,7 @@ public class HUDStatsManager : MonoBehaviour
             }
         }
 
-        // ==========================================
         // --- EARTHQUAKE LEVEL 6 ---
-        // ==========================================
         Level6ManagerEQ lvl6EQ = FindFirstObjectByType<Level6ManagerEQ>();
         if (lvl6EQ != null)
         {
@@ -110,16 +108,26 @@ public class HUDStatsManager : MonoBehaviour
             }
         }
 
-        // ==========================================
-        // --- BAGONG DAGDAG: EARTHQUAKE LEVEL 9 ---
-        // ==========================================
+        // --- EARTHQUAKE LEVEL 9 ---
         Level9ManagerEQ lvl9EQ = FindFirstObjectByType<Level9ManagerEQ>();
         if (lvl9EQ != null)
         {
             if (lvl9EQ.totalVehicles > 0)
             {
-                // Kino-compute kung ilang sasakyan na ang na-drag out of 10
                 progress = (float)lvl9EQ.clearedVehicles / lvl9EQ.totalVehicles;
+            }
+        }
+
+        // ==========================================
+        // --- BAGONG DAGDAG: LEVEL 10 TRIVIA ---
+        // ==========================================
+        Level10ManagerEQ lvl10 = FindFirstObjectByType<Level10ManagerEQ>();
+        if (lvl10 != null)
+        {
+            if (lvl10.questionPanels != null && lvl10.questionPanels.Length > 0)
+            {
+                // Progress based on ilang questions na ang nasagutan
+                progress = (float)lvl10.currentQuestionIndex / lvl10.questionPanels.Length;
             }
         }
 
@@ -130,7 +138,16 @@ public class HUDStatsManager : MonoBehaviour
         
         if (statsText != null) 
         {
-            statsText.text = Mathf.RoundToInt(progress * 100) + "%";
+            // Override para sa Level 10: Ipakita ang "0/10" format
+            if (lvl10 != null && lvl10.questionPanels != null)
+            {
+                statsText.text = lvl10.currentQuestionIndex + "/" + lvl10.questionPanels.Length;
+            }
+            // Para sa lahat ng ibang levels, percentage format pa rin
+            else
+            {
+                statsText.text = Mathf.RoundToInt(progress * 100) + "%";
+            }
         }
     }
 }
